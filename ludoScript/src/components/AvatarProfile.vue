@@ -3,17 +3,14 @@
         <!-- Columna izquierda: 3 cards -->
         <div class="flex flex-col gap-4">
             <Card v-for="item in leftItems" :key="item.id" class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl text-lg p-2 !text-gray-50 w-36  h-36">
-                <template #title>{{item.nombre}}</template>
                 <template #content>
                     <img src="" :alt="'Imagen de '+item.nombre">
-                    <p class="m-0">Precio: {{item.precio}}</p>
                 </template>
             </Card>
         </div>
 
         <!-- Card principal (centro) -->
         <Card class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl text-2xl p-4 !text-gray-50 w-96">
-            <template #title>{{mainItem.nombre}}</template>
             <template #content>
                 <img src="" :alt="'Imagen de '+mainItem.nombre" class="flex item-center">
             </template>
@@ -22,10 +19,8 @@
         <!-- Columna derecha: 3 cards -->
         <div class="flex flex-col gap-4">
             <Card v-for="item in rightItems" :key="item.id" class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl text-lg p-2 !text-gray-50 w-36 h-36">
-                <template #title>{{item.nombre}}</template>
                 <template #content>
                     <img src="" :alt="'Imagen de '+item.nombre">
-                    <p class="m-0">Precio: {{item.precio}}</p>
                 </template>
             </Card>
         </div>

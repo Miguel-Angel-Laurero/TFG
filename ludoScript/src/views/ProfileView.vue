@@ -2,7 +2,7 @@
     <section>
         <Header></Header>
     </section>
-    <section class="flex gap-4 justify-center">
+    <section class="flex gap-4">
         <Profile/>
     </section>
     <section>
