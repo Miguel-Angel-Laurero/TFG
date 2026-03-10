@@ -1,18 +1,18 @@
 <template>
   <div class="min-h-screen flex flex-col">
     <header>
-      <Cabeza/>
+      <Header/>
     </header>
     <main class="flex-grow">
       <Home />
     </main>
     <footer>
-      <Pata/>
+      <Footer/>
     </footer>
   </div>
 </template>
 <script setup>
   import Home from '@/components/Home.vue';
-  import Cabeza from '@/components/Header.vue';
-  import Pata from '@/components/Footer.vue';
+  import Header from '@/components/Header.vue';
+  import Footer from '@/components/Footer.vue';
 </script>

@@ -1,7 +1,8 @@
 <template>
-    <p>Hola mundo</p>
-    <Tabla/>
+    <section>
+        <p class="flex items-center">Hola mundo</p>
+    </section>
+    
 </template>
 <script setup>
-    import Tabla from './Tabla.vue';
 </script>

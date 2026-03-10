@@ -1,14 +1,15 @@
 <template>
-    <section>
-        <Header></Header>
-    </section>
-    <section class="flex gap-4">
-        <Profile/>
-    </section>
-    <section>
-        <Footer></Footer>
-    </section>
-
+  <div class="min-h-screen flex flex-col">
+    <header>
+      <Header/>
+    </header>
+    <main class="flex-grow">
+      <Profile />
+    </main>
+    <footer>
+      <Footer/>
+    </footer>
+  </div>
 </template>
 <script setup>
 import Footer from '@/components/Footer.vue';
