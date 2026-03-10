@@ -1,9 +1,17 @@
 <template>
-    <Header></Header>
-    <AvatarProfile></AvatarProfile>
+    <section>
+        <Header></Header>
+    </section>
+    <section class="flex gap-4 justify-center">
+        <Profile/>
+    </section>
+    <section>
+        <Footer></Footer>
+    </section>
 
 </template>
 <script setup>
-import AvatarProfile from '@/components/AvatarProfile.vue';
+import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
+import Profile from '@/components/Profile.vue';
 </script>

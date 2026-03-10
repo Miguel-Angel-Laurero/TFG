@@ -1,13 +1,15 @@
 <template>
-  <header>
-    <Cabeza/>
-  </header>
-  <main>
-    <Home />
-  </main>
-  <footer>
-    <Pata/>
-  </footer>
+  <div class="min-h-screen flex flex-col">
+    <header>
+      <Cabeza/>
+    </header>
+    <main class="flex-grow">
+      <Home />
+    </main>
+    <footer>
+      <Pata/>
+    </footer>
+  </div>
 </template>
 <script setup>
   import Home from '@/components/Home.vue';
