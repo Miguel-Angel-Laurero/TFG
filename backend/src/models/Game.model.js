@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../../config/database");
 
-const Game = sequelize.define('Game', {
+const Game = sequelize.define("Game", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -10,7 +10,7 @@ const Game = sequelize.define('Game', {
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: 'Users', key: 'id' },
+    references: { model: "Users", key: "id" },
   },
   gameName: {
     type: DataTypes.STRING(100),
@@ -26,7 +26,7 @@ const Game = sequelize.define('Game', {
     defaultValue: 0,
   },
   result: {
-    type: DataTypes.ENUM('win', 'loss', 'draw'),
+    type: DataTypes.ENUM("win", "loss", "draw"),
     allowNull: true,
   },
   playedAt: {

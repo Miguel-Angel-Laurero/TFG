@@ -1,13 +1,13 @@
-const { User } = require('../models');
-const { hashPassword } = require('../utils/bcrypt');
+const { User } = require("../models");
+const { hashPassword } = require("../utils/bcrypt");
 
 const getAll = async (req, res, next) => {
   try {
     // Solo admin puede listar todos los usuarios
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Acceso denegado' });
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Acceso denegado" });
     }
-    const users = await User.findAll({ attributes: { exclude: ['password'] } });
+    const users = await User.findAll({ attributes: { exclude: ["password"] } });
     res.json(users);
   } catch (err) {
     next(err);
@@ -17,11 +17,14 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (req.user.role !== 'admin' && req.user.id !== Number(id)) {
-      return res.status(403).json({ message: 'Acceso denegado' });
+    if (req.user.role !== "admin" && req.user.id !== Number(id)) {
+      return res.status(403).json({ message: "Acceso denegado" });
     }
-    const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    const user = await User.findByPk(id, {
+      attributes: { exclude: ["password"] },
+    });
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado" });
     res.json(user);
   } catch (err) {
     next(err);
@@ -31,12 +34,13 @@ const getById = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (req.user.role !== 'admin' && req.user.id !== Number(id)) {
-      return res.status(403).json({ message: 'Acceso denegado' });
+    if (req.user.role !== "admin" && req.user.id !== Number(id)) {
+      return res.status(403).json({ message: "Acceso denegado" });
     }
 
     const user = await User.findByPk(id);
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado" });
 
     const { username, avatar, password } = req.body;
     const updates = {};
@@ -55,13 +59,14 @@ const update = async (req, res, next) => {
 const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (req.user.role !== 'admin' && req.user.id !== Number(id)) {
-      return res.status(403).json({ message: 'Acceso denegado' });
+    if (req.user.role !== "admin" && req.user.id !== Number(id)) {
+      return res.status(403).json({ message: "Acceso denegado" });
     }
     const user = await User.findByPk(id);
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado" });
     await user.destroy();
-    res.json({ message: 'Usuario eliminado' });
+    res.json({ message: "Usuario eliminado" });
   } catch (err) {
     next(err);
   }
