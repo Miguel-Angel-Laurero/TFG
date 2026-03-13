@@ -14,7 +14,7 @@
                 </div>
                 <div class="text-center p-4 bg-purple-50 rounded-lg">
                     <p class="text-3xl font-bold text-purple-600">1,250</p>
-                    <p class="text-gray-600 text-sm font-medium">Puntos XP</p>
+                    <p class="text-gray-600 text-sm font-medium">GB RAM</p>
                 </div>
                 <div class="text-center p-4 bg-orange-50 rounded-lg">
                     <p class="text-3xl font-bold text-orange-600">89%</p>
