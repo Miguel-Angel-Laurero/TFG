@@ -22,9 +22,9 @@
 import { ref } from 'vue';
 const question = ref("¿Que es una interfaz?");
 const options = [
-    {id:"1", name:"Pregunta"},
-    {id:"2", name:"Pregunta"},
-    {id:"3", name:"Pregunta"},
-    {id:"4", name:"Pregunta"},
+    {id:"1", name:"Opcion"},
+    {id:"2", name:"Opcion"},
+    {id:"3", name:"Opcion"},
+    {id:"4", name:"Opcion"},
 ]
 </script>

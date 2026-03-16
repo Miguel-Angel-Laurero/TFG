@@ -1,7 +1,7 @@
 
 <template>
-    <div class="h-full w-full">
-        <Chart type="bar" :data="chartData" :options="chartOptions" class="w-full h-full min-h-[300px]"  />
+    <div class="w-full">
+        <Chart type="line" :data="chartData" :options="chartOptions" />
     </div>
 </template>
 

@@ -1,18 +1,13 @@
 <template>
-  <main class="home-container">
-    <HomeHero 
-    title="Bienvenido a la Tienda" 
-    cta-link="/shop" 
-    />
-    <section>
-      <h2 class="text-center text-gray-50">Minijuegos</h2>
-      <GameGrid />
+  <main class="h-screen w-full home-container overflow-hidden" >
+    <section class="grid grid-cols-2 lg:grid-cols-12 gap-8 h-full">
+        <div class="col-span-12 lg:col-span-8">
+          <GameGrid />
+        </div>
+        <div class="col-span-12 lg:col-span-4">
+          <UserStats />
+        </div>
     </section>
-
-    <!-- <section >
-      <h2 class="text-center text-gray-50">Estadísticas</h2>
-      <UserStats />
-    </section> -->
   </main>
 </template>
 <script setup>

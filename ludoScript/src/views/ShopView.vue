@@ -4,6 +4,7 @@
       <Header/>
     </header>
     <main class="flex-grow">
+      <Shop/>
     </main>
     <footer>
       <Footer/>
@@ -13,4 +14,5 @@
 <script setup>
   import Footer from '@/components/shared/Footer.vue';
   import Header from '@/components/shared/Header.vue';
+  import Shop from '@/components/shop/Shop.vue';
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center max-h-screen">
+  <div class="flex flex-col items-center justify-center">
     <component v-if="selectedGame" :is="selectedGame" />
   </div>
 </template>
