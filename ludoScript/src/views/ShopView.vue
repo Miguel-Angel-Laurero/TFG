@@ -1,10 +1,9 @@
 <template>
-  <div class="h-screen flex flex-col ">
+      <div class="min-h-screen flex flex-col">
     <header>
       <Header/>
     </header>
     <main class="flex-grow">
-      <Profile />
     </main>
     <footer>
       <Footer/>
@@ -14,5 +13,4 @@
 <script setup>
   import Footer from '@/components/shared/Footer.vue';
   import Header from '@/components/shared/Header.vue';
-  import Profile from '@/components/profile/Profile.vue';
 </script>

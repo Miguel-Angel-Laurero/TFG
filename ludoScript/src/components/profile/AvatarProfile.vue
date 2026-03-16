@@ -162,16 +162,6 @@ function selectItem(item) {
 }
 </script>
 <style scoped>
-@reference "../assets/main.css";
-
-.slot-container {
-  @apply absolute w-18 h-18 flex items-center justify-center pointer-events-none;
-}
-
-.equipped-img {
-  @apply w-full h-full object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)];
-}
-
 .equip-enter-active,
 .equip-leave-active { transition: all 0.3s ease; }
 .equip-enter-from   { opacity: 0; transform: translateY(-10px) scale(0.8); }

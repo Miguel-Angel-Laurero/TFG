@@ -5,7 +5,7 @@
     </header>
 
     <main class="flex-grow flex items-center justify-center p-4">
-      <div class="w-full max-w-md bg-brand-surface shadow-xl rounded-2xl border border-brand-primary/30 overflow-hidden">
+      <div class="w-full max-w-md bg-indigo-900 shadow-xl rounded-2xl border border-brand-primary/30 overflow-hidden">
         
         <div class="p-8">
           <div class="text-center mb-8">
@@ -75,8 +75,8 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
+import Header from '@/components/shared/Header.vue'
+import Footer from '@/components/shared/Footer.vue'
 import { useAuthStore } from '@/stores/auth.store'
 
 const auth = useAuthStore()
