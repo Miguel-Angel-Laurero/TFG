@@ -1,16 +1,27 @@
 
 <template>
-    <div class="card p-2 flex justify-left">
-        <MultiSelect v-model="selectedCategories" :options="categories" optionLabel="name" filter placeholder="Select Categories"
-            :maxSelectedLabels="3" class="w-full md:w-80" />
-        <button class="bg-teal-100 mx-2 p-2 rounded-xl">Filtrar</button>
+    <div class="flex">
+      <div class="card p-2 ">
+          <MultiSelect v-model="selectedCategories" :options="categories" optionLabel="name" filter placeholder="Select Categories"
+              :maxSelectedLabels="3" class="w-full md:w-80" />
+          <button class="bg-teal-100 mx-2npm  p-2 rounded-xl">Filtrar</button>
+      </div>
+      <div class="card p-2">
+        <InputText type="text" v-model="value" placeholder="Busca un producto..."/>
+      </div>
+      <div class="card p-2 ">
+          <p class="flex justify-right align-center">monedas usuario</p>
+      </div>
     </div>
 </template>
 
 <script setup>
   import { ref } from "vue";
-  import MultiSelect from 'primevue/multiselect';
+import MultiSelect from 'primevue/multiselect';
+  
+import InputText from 'primevue/inputtext';
 
+  const value = ref(null);
   const selectedCategories = ref();
   const categories = [
     { id: "1", name: "icons" },

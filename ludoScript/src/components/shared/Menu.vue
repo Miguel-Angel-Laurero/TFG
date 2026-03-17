@@ -1,19 +1,59 @@
 <template> 
-    <div class="flex">
-        <RouterLink to="/" class="border-b border-gray-100 bg-indigo-700 text-gray-50 font-bold px-6 py-2 mx-2 rounded-xl">Inicio</RouterLink>
-        <!-- añadir exclamacion al principio del v-if cuando el login sea funcional con datos que comprobar -->
-        <RouterLink v-if="auth.isLogged" to="/login-view"  class="border-b border-gray-100 bg-indigo-700 text-gray-50 font-bold px-6 py-2 mx-2 rounded-xl">Iniciar sesión</RouterLink>
+    <div class="flex items-center">
+        <template v-if="auth.isLogged">
+            <RouterLink to="/login-view" class="border-b border-gray-100 bg-indigo-700 text-gray-50 font-bold px-6 py-2 mx-2 rounded-xl">
+                Iniciar sesión
+            </RouterLink>
+        </template>
+
         <template v-else>
-            <RouterLink to="/login-view"  class="border-b border-gray-100 bg-indigo-700 text-gray-50 font-bold px-6 py-2 mx-2 rounded-xl" @click="cerrarSesion">Cerrar sesión</RouterLink>
-            <RouterLink to="/profile-view/" class="border-b border-gray-100 bg-indigo-700 text-gray-50 font-bold px-6 py-2 rounded-xl">Perfil</RouterLink>
+            <Menu ref="menu" :model="items" :popup="true" />
+            
+            <Avatar 
+                image="https://www.gravatar.com/avatar/00000000000000000000000000000001?d=mp&f=y" 
+                class="ml-2 cursor-pointer hover:opacity-80 transition-opacity" 
+                size="large" 
+                shape="circle" 
+                @click="toggle"
+            />
         </template>
     </div>
 </template>
 <script setup>
-import { useAuthStore } from '@/stores/auth.store'
-const auth = useAuthStore()
+import { ref } from 'vue';
+import Avatar from 'primevue/avatar';
+import Menu from 'primevue/menu';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth.store';
 
-function cerrarSesion() {
-  auth.logout()
-}
+const auth = useAuthStore();
+const router = useRouter();
+const menu = ref(null);
+
+// Función para abrir/cerrar el menú
+const toggle = (event) => {
+    menu.value.toggle(event);
+};
+
+// Opciones del menú
+const items = ref([
+    {
+        label: 'Opciones',
+        items: [
+            {
+                label: 'Mi Perfil',
+                icon: 'pi pi-user',
+                command: () => router.push('/profile-view/')
+            },
+            {
+                label: 'Cerrar sesión',
+                icon: 'pi pi-sign-out',
+                command: () => {
+                    auth.logout();
+                    router.push('/login-view');
+                }
+            }
+        ]
+    }
+]);
 </script>

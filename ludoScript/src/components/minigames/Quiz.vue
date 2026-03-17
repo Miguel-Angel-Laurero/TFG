@@ -15,7 +15,6 @@
         <span class="text-gray-700 font-medium">{{ option.name }}</span>
       </div>
     </div>
-
   </div>
 </template>
 <script setup>
@@ -27,4 +26,13 @@ const options = [
     {id:"3", name:"Opcion"},
     {id:"4", name:"Opcion"},
 ]
+import { useGameProgress } from '@/composables/useGameProgress';
+
+const { updateProgress } = useGameProgress();
+
+// Ejemplo: al completar una tarea del juego
+const onTaskComplete = (tasksDone, totalTasks) => {
+    const percentage = (tasksDone / totalTasks) * 100;
+    updateProgress(percentage);
+};
 </script>

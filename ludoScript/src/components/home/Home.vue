@@ -4,15 +4,15 @@
         <div class="col-span-12 lg:col-span-8">
           <GameGrid />
         </div>
-        <div class="col-span-12 lg:col-span-4">
-          <UserStats />
+        <div class="col-span-12 lg:col-span-4 p-6">
+          <UserInfo />
         </div>
     </section>
   </main>
 </template>
 <script setup>
   import GameGrid from '@/components/home/GameGrid.vue';
-  import UserStats from '@/components/profile/UserStats.vue';
+  import UserInfo from '@/components/shared/UserInfo.vue';
 </script>
 <style scoped>
 .bg-light {
