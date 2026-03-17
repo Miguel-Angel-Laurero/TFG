@@ -12,7 +12,7 @@
             <Avatar 
                 image="https://www.gravatar.com/avatar/00000000000000000000000000000001?d=mp&f=y" 
                 class="ml-2 cursor-pointer hover:opacity-80 transition-opacity" 
-                size="large" 
+                size="medium" 
                 shape="circle" 
                 @click="toggle"
             />

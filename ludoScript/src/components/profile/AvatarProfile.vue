@@ -1,5 +1,5 @@
 <template>
-    <section class="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-6 h-full flex flex-col items-center justify-center gap-4">
+    <section class="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 h-full flex flex-col items-center justify-center gap-4">
 
         <div class="flex gap-4 items-center justify-center">
 

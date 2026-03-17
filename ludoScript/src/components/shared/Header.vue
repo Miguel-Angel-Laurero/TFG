@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full bg-indigo-900 top-0 h-20 flex items-center justify-between">
-        <div class="w-full bg-indigo-900 top-0 h-20 flex items-center justify-left">
+    <div class="w-full bg-indigo-900 top-0 h-12 flex items-center justify-between">
+        <div class="w-full bg-indigo-900 top-0 h-12 flex items-center justify-left">
             <Avatar 
                     :image="'/src/assets/images/logo.png'" 
                     class="mx-4" 

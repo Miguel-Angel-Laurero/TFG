@@ -24,6 +24,8 @@ import Quiz from './Quiz.vue'
 import FlashCard from './FlashCard.vue'
 import ProgressBar from 'primevue/progressbar'
 import { useGameProgress } from '@/composables/useGameProgress'
+import FixTheBug from './FixTheBug.vue'
+import CodeSorter from './CodeSorter.vue'
 
 const route = useRoute()
 const { progress, resetProgress } = useGameProgress()
@@ -31,7 +33,9 @@ const { progress, resetProgress } = useGameProgress()
 // Mapeo de los nombres que vienen en la URL a los componentes importados
 const games = {
   'Quiz': Quiz,
-  'Flashcards': FlashCard
+  'Flashcards': FlashCard,
+  'FixTheBug': FixTheBug,
+  'CodeSorter': CodeSorter
 }
 
 // Computada que reacciona a ?game=...

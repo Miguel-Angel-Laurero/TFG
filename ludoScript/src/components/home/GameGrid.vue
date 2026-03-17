@@ -26,8 +26,8 @@ const router = useRouter()
 const minigames = [
   { id: "1", name: "Quiz" },
   { id: "2", name: "Flashcards" },
-  { id: "3", name: "Fix The Bug" },
-  { id: "4", name: "Code Sorter" },
+  { id: "3", name: "FixTheBug" },
+  { id: "4", name: "CodeSorter" },
 ]
 function goToGame(name) {
   router.push({ path: '/in-game-view/', query: { game: name } })
