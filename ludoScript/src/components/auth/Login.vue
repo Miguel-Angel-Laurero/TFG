@@ -8,13 +8,13 @@
           <form @submit.prevent="submit" class="flex flex-col gap-5">
             
             <div class="flex flex-col gap-2">
-              <label for="username" class="text-sm font-medium text-gray-50">Nombre de usuario <i class="pi pi-user z-10"></i></label>
+              <label for="email" class="text-sm font-medium text-gray-50">Correo electrónico <i class="pi pi-envelope z-10"></i></label>
               <span class="p-input-icon-left w-full">
                 <InputText 
-                  id="username" 
-                  v-model="form.username" 
-                  type="text" 
-                  placeholder="Usuario"
+                  id="email" 
+                  v-model="form.email" 
+                  type="email" 
+                  placeholder="correo@ejemplo.com"
                   class="w-full"
                   :class="{ 'p-invalid': auth.error }"
                   required 
@@ -70,7 +70,7 @@
 
     const auth = useAuthStore()
     const form = reactive({ 
-    username: '', 
+    email: '', 
     password: '' 
     })
 </script>
