@@ -1,16 +1,15 @@
-
 <template>
-    <div class="flex">
-      <div class="card p-2 ">
+    <div class="flex p-2">
+      <div class="card">
           <MultiSelect v-model="selectedCategories" :options="categories" optionLabel="name" filter placeholder="Select Categories"
               :maxSelectedLabels="3" class="w-full md:w-80" />
           <button class="bg-teal-100 mx-2npm  p-2 rounded-xl">Filtrar</button>
       </div>
-      <div class="card p-2">
+      <div class="card">
         <InputText type="text" v-model="value" placeholder="Busca un producto..."/>
       </div>
-      <div class="card p-2 ">
-          <p class="flex justify-right align-center">monedas usuario</p>
+      <div class="card">
+          <p class="flex justify-right align-center">Monedas de Usuario</p>
       </div>
     </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
     <section class="w-full bg-gray-200">
-        <span class="flex justify-center text-4xl font-bold">Tienda</span>
+        <!-- <span class="flex justify-center text-4xl font-bold">Tienda</span> -->
         <ShopMenu/>
     </section>
     <section>
