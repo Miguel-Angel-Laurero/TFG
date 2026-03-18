@@ -1,6 +1,6 @@
 
 <template>
-    <div class="w-full">
+    <div class="w-full h-full">
         <Chart type="line" :data="chartData" :options="chartOptions" />
     </div>
 </template>

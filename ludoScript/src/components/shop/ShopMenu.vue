@@ -14,13 +14,13 @@
 
     <div class="flex-1 flex justify-center">
       <span class="p-input-icon-left w-full max-w-sm">
-        <i class="pi pi-search" />
         <InputText 
-          type="text" 
-          v-model="shopStore.searchQuery" 
-          placeholder="Busca un producto..." 
-          class="w-full rounded-xl"
+        type="text" 
+        v-model="shopStore.searchQuery" 
+        placeholder="Busca un producto... " 
+        class="w-full rounded-xl"
         />
+        
       </span>
     </div>
 

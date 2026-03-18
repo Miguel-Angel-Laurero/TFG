@@ -41,9 +41,19 @@ const items = ref([
         label: 'Opciones',
         items: [
             {
+                label: 'Inicio',
+                icon: 'pi pi-home',
+                command: () => router.push('/')
+            },
+            {
                 label: 'Mi Perfil',
                 icon: 'pi pi-user',
                 command: () => router.push('/profile-view/')
+            },
+            {
+                label: 'Tienda',
+                icon: 'pi pi-shop',
+                command: () => router.push('/shop-view/')
             },
             {
                 label: 'Cerrar sesión',

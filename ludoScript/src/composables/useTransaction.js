@@ -37,5 +37,5 @@ export function useTransaction() {
         }
     }
 
-    return { comprarItem, cargando, error }
+    return { buyItem, cargando, error }
 }

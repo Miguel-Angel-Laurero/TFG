@@ -3,7 +3,7 @@
     <header>
       <Header/>
     </header>
-    <main class="flex-grow">
+    <main class="flex-1 min-h-0 overflow-auto">
       <Profile />
     </main>
     <footer>

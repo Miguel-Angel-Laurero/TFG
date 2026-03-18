@@ -8,7 +8,7 @@
         <!-- Chart debajo -->
         <div class="flex-1 flex flex-col min-h-0">
             <h3 class="text-lg text-gray-50 font-semibold mb-3">Actividad semanal</h3>
-            <div class="flex-1">
+            <div class="flex-1 min-h-0">
                 <Chart/>
             </div>
         </div>

@@ -3,7 +3,7 @@
     <header>
       <Header/>
     </header>
-    <main class="h-screen flex-grow">
+    <main class="flex-grow">
       <Shop/>
     </main>
     <footer>

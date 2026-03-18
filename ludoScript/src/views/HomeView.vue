@@ -4,7 +4,7 @@
       <Header/>
     </header>
     <main class="flex-grow">
-      <Home v-if="auth.isLogged" />
+      <Home v-if="!auth.isLogged" />
       <HomeNoLogin v-else/>
     </main>
     <footer>

@@ -1,4 +1,10 @@
 <template>
+  <button
+    @click="handleExit"
+    class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors flex justify-left"
+  >
+    Salir del minijuego
+  </button>
   <div class="w-full p-4 flex flex-col items-center">
     <div class="w-full max-w-2xl">
       <ProgressBar :value="progress" class="h-4 mb-6" />
@@ -27,6 +33,10 @@ import { useGameProgress } from '@/composables/useGameProgress'
 import FixTheBug from './FixTheBug.vue'
 import CodeSorter from './CodeSorter.vue'
 
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 const route = useRoute()
 const { progress, resetProgress } = useGameProgress()
 
@@ -36,6 +46,13 @@ const games = {
   'Flashcards': FlashCard,
   'FixTheBug': FixTheBug,
   'CodeSorter': CodeSorter
+}
+const handleExit = () => {
+  //para personalizar estilos no se puede usar confirm hay que hacerlo a mano
+  //revisar el confirm de primevue
+  if (confirm("¿Seguro que quieres salir del minijuego? Se perderá el progreso actual")) {
+    router.push('/')
+  }
 }
 
 // Computada que reacciona a ?game=...

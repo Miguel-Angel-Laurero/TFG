@@ -1,40 +1,44 @@
 <template>
-    <section class="flex flex-col min-h-[300px] gap-4 p-4">
-    <ScrollPanel style="width: 100%; height: 300px">
+  <div class="flex flex-col h-full overflow-hidden">
+    
+    <section class="flex-1 overflow-hidden p-4">
+      <ScrollPanel style="height: calc(100vh - 10rem)">
         <div class="flex flex-wrap gap-4 justify-center">
-            <ProductCard 
-                v-for="product in displayedProducts" 
-                :key="product.id"
-                class="flex flex-col m-2 transition-all duration-300"
-                :class="{ 'opacity-50 grayscale pointer-events-none cursor-not-allowed': product.is_adquired }"
+          <ProductCard 
+            v-for="product in displayedProducts" 
+            :key="product.id"
+            class="flex flex-col m-2 transition-all duration-300"
+            :class="{ 'opacity-50 grayscale pointer-events-none cursor-not-allowed': product.is_adquired }"
+          >
+            <p class="font-bold">{{ product.name }}</p>
+            <div class="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center p-2">
+              <img :src="product.img" :alt="product.name" class="max-w-full max-h-full object-contain"/>
+            </div>
+            <p>{{ product.price }} GB de RAM</p>
+            <button 
+              class="p-2 rounded-xl transition-colors hover:cursor-pointer"
+              :class="!product.is_adquired ? 'bg-teal-200 hover:bg-teal-300' : 'bg-gray-300 text-gray-500'"
+              :disabled="product.is_adquired"
+              @click="buyItem(product)"
             >
-                <p class="font-bold">{{ product.name }}</p>
-                <div class="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center p-2">
-                    <img 
-                        :src="product.img" 
-                        :alt="product.name" 
-                        class="max-w-full max-h-full object-contain"
-                    />
-                </div>
-                <p>{{ product.price }} GB de RAM</p>
-                <button 
-                    class="p-2 rounded-xl transition-colors hover:cursor-pointer"
-                    :class="!product.is_adquired ? 'bg-teal-200 hover:bg-teal-300' : 'bg-gray-300 text-gray-500'"
-                    :disabled="product.is_adquired"
-                >
-                    {{ !product.is_adquired ? 'Comprar' : 'Adquirido' }}
-                </button>
-            </ProductCard>
+              {{ !product.is_adquired ? 'Comprar' : 'Adquirido' }}
+            </button>
+          </ProductCard>
         </div>
-    </ScrollPanel>
+      </ScrollPanel>
     </section>
-    <div>
-        <Paginator 
+
+    <!-- Paginator anclado abajo, fuera del scroll -->
+    <div class="shrink-0 border-t border-gray-200 bg-white">
+      <Paginator 
         v-model:first="first" 
         :rows="rows" 
+        :columns="columns"
         :totalRecords="filteredProducts.length"
-    ></Paginator>
+      />
     </div>
+
+  </div>
 </template>
 <script setup>
     import ProductCard from './ProductCard.vue'; 
@@ -42,10 +46,12 @@
     import ScrollPanel from 'primevue/scrollpanel';
     import { ref, computed, watch } from 'vue';
     import { useShopStore } from '@/stores/shop.store';
+    import { useTransaction } from '@/composables/useTransaction';
 
+const { buyItem } = useTransaction();
     const shopStore = useShopStore();
     const first = ref(0); 
-    const rows = ref(10);
+    const rows = ref(12);
     const products = [
         { id: "1", name: "Icono Laptop",img:"https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/icons/icon_portatil.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvaWNvbnMvaWNvbl9wb3J0YXRpbC5wbmciLCJpYXQiOjE3NzM4MjMzMTIsImV4cCI6MTgwNTM1OTMxMn0.i5SQ_TIqsh48uK4PIXKNrIUnlOIkOVnPWI5Vd9KHSdU", category:"icons",price:"500",is_adquired:false },
         { id: "2", name: "Banner Cielo",img:"https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/banners/banner_rainbow.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvYmFubmVycy9iYW5uZXJfcmFpbmJvdy5wbmciLCJpYXQiOjE3NzM4Mjg4NTYsImV4cCI6MTgwNTM2NDg1Nn0.emQWCZJn2ml5Pt7PPh8iol3xkPUy9atDEoGAFa7YIwg",category:"banners",price:"1050",is_adquired:true  },
@@ -60,6 +66,7 @@
         { id: "11", name: "Banner Playa",img:"https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/banners/banner_playa.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvYmFubmVycy9iYW5uZXJfcGxheWEucG5nIiwiaWF0IjoxNzczODMxMTk0LCJleHAiOjE4MDUzNjcxOTR9.HCuJlVTS8k6grrH05qZh1jqsHq47jzdXN_-0ivAogGQ", category:"banners",price:"1050",is_adquired:false  },
         { id: "12", name: "Banner Tecno",img:"https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/banners/banner_tecno.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvYmFubmVycy9iYW5uZXJfdGVjbm8ucG5nIiwiaWF0IjoxNzczODMxMjIzLCJleHAiOjE4MDUzNjcyMjN9.GnhUIqYbhI3hQ1MC9RkV-Ozo5o5JEEkJcyA2YBaAGaQ", category:"banners",price:"2000",is_adquired:false  },
         { id: "13", name: "Banner Nieve",img:"https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/banners/banner_nieve.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvYmFubmVycy9iYW5uZXJfbmlldmUucG5nIiwiaWF0IjoxNzczODMxNTk3LCJleHAiOjE4MDUzNjc1OTd9.MEb2p_iyQ3brGcrF0BDTyz4nUt3Ct1u5cjSNbEerUAo", category:"banners",price:"1050",is_adquired:false  },
+        { id: "13", name: "Banner Espacio",img:"https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/banners/banner_espacio.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvYmFubmVycy9iYW5uZXJfZXNwYWNpby5wbmciLCJpYXQiOjE3NzM4Mzc2MzUsImV4cCI6MTgwNTM3MzYzNX0.pmbKlBfrDrvEk5i-Ialq0e4_cz2yCKoKcBCAQafgveY", category:"banners",price:"1200",is_adquired:false  },
         { id: "14", name: "Camisa azul",img:"", category:"upperbody",price:"2000",is_adquired:false  },
         { id: "15", name: "Pantalon Corto",img:"", category:"lowerbody",price:"2000",is_adquired:false  },
         { id: "16", name: "Guantes de Boxeo",img:"", category:"hands",price:"1500",is_adquired:false  },
