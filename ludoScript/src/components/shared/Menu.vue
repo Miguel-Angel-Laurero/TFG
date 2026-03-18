@@ -1,7 +1,7 @@
 <template> 
     <div class="flex items-center">
-        <template v-if="!auth.isLogged">
-            <RouterLink to="/login-view" class="border-b border-gray-100 bg-indigo-700 text-gray-50 font-bold px-6 py-2 mx-2 rounded-xl">
+        <template v-if="auth.isLogged">
+            <RouterLink to="/login-view" class="rounded-xl bg-indigo-700 text-gray-50 font-bold px-6 py-2 rounded-xl">
                 Iniciar sesión
             </RouterLink>
         </template>

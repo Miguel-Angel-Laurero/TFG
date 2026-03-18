@@ -10,9 +10,6 @@
         placeholder="Select Categories" 
         class="w-full md:w-64" 
       />
-      <!-- <button class="bg-teal-100 hover:bg-teal-200 p-2 px-4 rounded-xl transition-colors">
-        Filtrar
-      </button> -->
     </div>
 
     <div class="flex-1 flex justify-center">

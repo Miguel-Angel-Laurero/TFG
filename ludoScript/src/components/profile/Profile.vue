@@ -3,7 +3,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <!-- Columna izquierda: Avatar -->
             <div class="lg:col-span-7">
-                <p class="bg-slate-800/90 p-4 rounded-xl font-bold text-gray-50 text-lg">Username</p>
+                <Banner/>
                 <AvatarProfile/>
             </div>
             
@@ -16,5 +16,6 @@
 </template>
 <script setup>
     import AvatarProfile from './AvatarProfile.vue';
+    import Banner from './Banner.vue';
     import UserStats from './UserStats.vue';
 </script>
