@@ -1,7 +1,7 @@
 <template>
   <button
     @click="handleExit"
-    class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors flex justify-left"
+    class="bg-red-500 text-white px-6 py-3 m-4 rounded-xl font-bold hover:bg-red-600 transition-colors flex justify-left"
   >
     Salir del minijuego
   </button>

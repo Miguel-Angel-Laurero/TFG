@@ -38,20 +38,24 @@
 </template>
 
 <script setup>
-import MultiSelect from 'primevue/multiselect';
-import InputText from 'primevue/inputtext';
-import { useShopStore } from '@/stores/shop.store';
+  import MultiSelect from 'primevue/multiselect';
+  import InputText from 'primevue/inputtext';
+  import { useShopStore } from '@/stores/shop.store';
+  import { ref, onMounted } from 'vue';
 
   const shopStore = useShopStore();
-  const categories = [
-    { id: "1", name: "icons" },
-    { id: "2", name: "banners" },
-    { id: "3", name: "headwear" },
-    { id: "4", name: "hands" },
-    { id: "5", name: "upperbody" },
-    { id: "6", name: "lowerbody" },
-    { id: "7", name: "feet" },
-    { id: "8", name: "trinkets" },
-  ]
+  const categories = ref([])
+  const loading = ref(true)
+
+   onMounted(async () => {
+        try {
+          const response = await fetch('/categoriesData.json')
+          categories.value = await response.json()
+        } catch {
+          console.error("Error al cargar los datos",error)
+        } finally {
+          loading.value = false;
+        }
+      })
 </script>
 

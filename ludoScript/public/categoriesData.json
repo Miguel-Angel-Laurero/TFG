@@ -1,0 +1,10 @@
+[
+    { "id": "1", "name": "icons" },
+    { "id": "2", "name": "banners" },
+    { "id": "3", "name": "headwear" },
+    { "id": "4", "name": "hands" },
+    { "id": "5", "name": "upperbody" },
+    { "id": "6", "name": "lowerbody" },
+    { "id": "7", "name": "feet" },
+    { "id": "8", "name": "trinkets" }
+]

@@ -1,5 +1,4 @@
 import { ref } from 'vue';
-
 // Definimos el estado fuera de la función para que todos los que lo usen compartan el mismo valor
 const globalProgress = ref(0);
 

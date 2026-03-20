@@ -4,9 +4,9 @@ import { authService } from '@/api/auth.service'
 import router from '@/router/router'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user  = ref(null)
-  const token = ref(localStorage.getItem('token'))
-  const error = ref(null)
+  const user    = ref(null)
+  const token   = ref(localStorage.getItem('token'))
+  const error   = ref(null)
   const loading = ref(false)
 
   const isLoggedIn = computed(() => !!token.value)
@@ -27,14 +27,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(data) {
+  async function register(credentials) {
     loading.value = true
     error.value   = null
     try {
-      const { data: res } = await authService.register(data)
-      token.value = res.token
-      user.value  = res.user
-      localStorage.setItem('token', res.token)
+      const { data } = await authService.register(credentials)
+      token.value = data.token
+      user.value  = data.user
+      localStorage.setItem('token', data.token)
       router.push('/')
     } catch (e) {
       error.value = e.response?.data?.message ?? 'Error al registrarse'
@@ -47,8 +47,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const { data } = await authService.me()
       user.value = data
-    } catch {
-      logout()
+    } catch (e) {
+      if (e.response?.status === 401) {
+        logout()
+      }
     }
   }
 
