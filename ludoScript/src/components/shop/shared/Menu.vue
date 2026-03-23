@@ -8,14 +8,15 @@
 
         <template v-else>
             <Menu ref="menu" :model="items" :popup="true" />
-            <RouterLink v-if="!isInShop" to="/shop-view/" class="flex items-center gap-3 bg-white/6 border border-yellow-400/30 
+                <RouterLink to="/shop-view/" class="flex items-center gap-3 bg-white/6 border border-yellow-400/30 
                         text-yellow-400 font-righteous text-xl px-6 py-3 rounded-xl 
                         hover:bg-yellow-400/10 transition-colors w-full justify-center">
                 🛒 Tienda
                 <span class="bg-yellow-400 text-black font-extrabold text-sm px-3 py-1 rounded-full">
                     2500 GB de RAM
                 </span>
-            </RouterLink>
+                </RouterLink>
+                
             <Avatar 
                 image="https://www.gravatar.com/avatar/00000000000000000000000000000001?d=mp&f=y" 
                 class="ml-2 cursor-pointer hover:opacity-80 transition-opacity" 
@@ -27,18 +28,15 @@
     </div>
 </template>
 <script setup>
-import { ref,computed } from 'vue';
+import { ref } from 'vue';
 import Avatar from 'primevue/avatar';
 import Menu from 'primevue/menu';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.store';
 
 const auth = useAuthStore();
 const router = useRouter();
 const menu = ref(null);
-
-const route = useRoute()
-const isInShop = computed(() => route.path.startsWith('/shop-view'))
 
 // Función para abrir/cerrar el menú
 const toggle = (event) => {

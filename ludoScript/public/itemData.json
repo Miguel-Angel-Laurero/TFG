@@ -18,7 +18,7 @@
   {
     "id": "3",
     "name": "Peluca afro",
-    "img": "",
+    "img": "https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/headwear/peluca_afro.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvaGVhZHdlYXIvcGVsdWNhX2Fmcm8ucG5nIiwiaWF0IjoxNzc0MjY3MzM2LCJleHAiOjE4MDU4MDMzMzZ9.e98K6XeY_IaFAY-X8oEE_pkyvOwDlwLgsw8obzqgamE",
     "category": "headwear",
     "price": "2000",
     "is_adquired": false
@@ -49,8 +49,8 @@
   },
   {
     "id": "7",
-    "name": "casco",
-    "img": "",
+    "name": "Sombrero de Mago",
+    "img": "https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/headwear/sombrero_mago.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvaGVhZHdlYXIvc29tYnJlcm9fbWFnby5wbmciLCJpYXQiOjE3NzQyNjczNTgsImV4cCI6MTgwNTgwMzM1OH0.R7KMFemT4bEi5aiOctWRdH_tvE4tBagRbipAD0Ivono",
     "category": "headwear",
     "price": "5000",
     "is_adquired": true
@@ -113,16 +113,16 @@
   },
   {
     "id": "14",
-    "name": "Camisa azul",
-    "img": "",
+    "name": "Camiseta azul",
+    "img": "https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/upperbody/camiseta_azul.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvdXBwZXJib2R5L2NhbWlzZXRhX2F6dWwucG5nIiwiaWF0IjoxNzc0MjY5NzYyLCJleHAiOjE4MDU4MDU3NjJ9.74KQ_jULD1kHF8ApV7QXSjOByBuzKp1YajynuTMeWKs",
     "category": "upperbody",
     "price": "2000",
     "is_adquired": false
   },
   {
     "id": "15",
-    "name": "Pantalon Corto",
-    "img": "",
+    "name": "Pantalon Corto Boxeo",
+    "img": "https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/lowerbody/pantalon_corto_boxeo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvbG93ZXJib2R5L3BhbnRhbG9uX2NvcnRvX2JveGVvLnBuZyIsImlhdCI6MTc3NDI2ODc3NCwiZXhwIjoxODA1ODA0Nzc0fQ.PUjtZhglowSRbvuFZRj7b0YwwOHfBPgAm31Ezf-GtDo",
     "category": "lowerbody",
     "price": "2000",
     "is_adquired": false
@@ -130,9 +130,17 @@
   {
     "id": "16",
     "name": "Guantes de Boxeo",
-    "img": "",
+    "img": "https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/hands/guantes_boxeo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvaGFuZHMvZ3VhbnRlc19ib3hlby5wbmciLCJpYXQiOjE3NzQyNjczOTcsImV4cCI6MTgwNTgwMzM5N30.bERzTns21InFyXW2m2WKPI0YP6QLRCWLGu3wBGJilOk",
     "category": "hands",
     "price": "1500",
+    "is_adquired": false
+  },
+  {
+    "id": "17",
+    "name": "Cinto de Entrenador",
+    "img": "https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/trinkets/cinto_del_entrenador.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvdHJpbmtldHMvY2ludG9fZGVsX2VudHJlbmFkb3IucG5nIiwiaWF0IjoxNzc0MjY5Nzk4LCJleHAiOjE4MDU4MDU3OTh9.9sj9RkKA2YcohUPZGHag7sFIhIlM811OHOSYyU5YHgc",
+    "category": "trinkets",
+    "price": "2500",
     "is_adquired": false
   }
 ]

@@ -9,14 +9,14 @@
       </div>
     </main>
     <footer>
-      <Footer />
+      <FooterNoLogin />
     </footer>
   </div>
 </template>
 
 <script setup>
   import Header from '@/components/shared/Header.vue'
-  import Footer from '@/components/shared/Footer.vue'
+  import FooterNoLogin from '@/components/shared/FooterNoLogin.vue'
   import Login from '@/components/auth/Login.vue'
 </script>
 

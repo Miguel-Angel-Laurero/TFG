@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue'
 
-export const LEFT_SLOTS  = [
+export const LEFT_SLOTS = [
     { id: 'head',  nombre: 'Cabeza' },
     { id: 'torso', nombre: 'Torso' },
     { id: 'hands', nombre: 'Manos' },
@@ -15,25 +15,46 @@ export const CENTRAL_SLOTS = [
     { id: 'hands' }, { id: 'legs' }, { id: 'feet' },
 ]
 export const SLOT_NAMES = {
-    head: 'cabeza', torso: 'torso', hands: 'manos',
-    trinkets: 'accesorio', legs: 'piernas', feet: 'pies'
+    headwear:  'Cabeza',
+    upperbody: 'Torso',
+    hands:     'Manos',
+    trinkets:  'Accesorio',
+    lowerbody: 'Piernas',
+    feet:      'Pies',
 }
-export const ITEM_POOL = {
-    head: [
-        { id: '2', nombre: 'Gafas',    img: 'https://cdn-icons-png.flaticon.com/512/655/655781.png' },
-        { id: '4', nombre: 'Afro',     img: 'https://cdn-icons-png.flaticon.com/512/3165/3165383.png' },
-        { id: '6', nombre: 'Sombrero', img: 'https://cdn-icons-png.flaticon.com/512/2418/2418731.png' },
-    ],
-    torso:    [{ id: '3', nombre: 'Camisa',    img: 'https://cdn-icons-png.flaticon.com/512/2503/2503380.png' }],
-    hands:    [{ id: '7', nombre: 'Guantes',   img: 'https://cdn-icons-png.flaticon.com/512/2418/2418731.png' }],
-    trinkets: [{ id: '8', nombre: 'Accesorio', img: 'https://cdn-icons-png.flaticon.com/512/2418/2418731.png' }],
-    legs:     [{ id: '1', nombre: 'Pantalón',  img: 'https://cdn-icons-png.flaticon.com/512/2122/2122607.png' }],
-    feet:     [{ id: '5', nombre: 'Zapatos',   img: 'https://cdn-icons-png.flaticon.com/512/2742/2742689.png' }],
+
+const CATEGORY_TO_SLOT = {
+    headwear:  'head',
+    upperbody: 'torso',
+    hands:     'hands',
+    trinkets:  'trinkets',
+    lowerbody: 'legs',
+    feet:      'feet',
 }
 
 export function useEquipment() {
     const equipped     = reactive({ head: null, torso: null, hands: null, trinkets: null, legs: null, feet: null })
     const selectedSlot = ref(null)
+    const itemPool     = reactive({ head: [], torso: [], hands: [], trinkets: [], legs: [], feet: [] })
+    const loading      = ref(true)
+
+    async function fetchItems() {
+        try {
+            const response = await fetch('/itemData.json')
+            const items = await response.json()
+
+            Object.keys(itemPool).forEach(slot => itemPool[slot] = [])
+
+            items.forEach(item => {
+                const slot = CATEGORY_TO_SLOT[item.category]
+                if (slot) itemPool[slot].push(item)
+            })
+        } catch (error) {
+            console.error('Error al cargar los items:', error)
+        } finally {
+            loading.value = false
+        }
+    }
 
     function openPicker(slotId) {
         selectedSlot.value = selectedSlot.value === slotId ? null : slotId
@@ -43,5 +64,5 @@ export function useEquipment() {
         selectedSlot.value = null
     }
 
-    return { equipped, selectedSlot, openPicker, selectItem }
+    return { equipped, selectedSlot, itemPool, loading, fetchItems, openPicker, selectItem }
 }

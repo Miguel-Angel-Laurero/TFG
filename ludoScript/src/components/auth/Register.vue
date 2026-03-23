@@ -1,7 +1,7 @@
 <template>
   <div class="p-8">
     <div class="text-center mb-8">
-      <h1 class="text-2xl font-bold text-gray-50">Crea tu cuenta</h1>
+      <h1 class="text-2xl font-bold text-gray-50 font-righteous">Crea tu cuenta</h1>
     </div>
 
     <form @submit.prevent="handleRegister" class="flex flex-col gap-5">
@@ -73,7 +73,7 @@
         icon="pi pi-user-plus" 
         :loading="auth.loading" 
         :disabled="passwordMismatch"
-        class="!bg-yellow-400 !text-black px-8 py-3 !border-yellow-600 !border-b-3 !border-l-3 !border-yellow-600 !font-bold hover:bg-yellow-300 transition-colors text-center"
+        class="w-full py-3 mt-2 font-bold !text-black hover:shadow-lg transition-all !bg-yellow-400 !border-yellow-600"  
       />
 
       <p class="text-center text-gray-50 text-sm mt-4">

@@ -9,20 +9,28 @@
             <SlotColumn :slots="RIGHT_SLOTS" :equipped="equipped" :selected="selectedSlot" :size="slotSize" @pick="openPicker"/>
         </div>
 
-        <ItemPicker :slot="selectedSlot" :equipped="equipped" :itemPool="ITEM_POOL" :slotNames="SLOT_NAMES"
-                    @close="selectedSlot = null" @select="selectItem"/>
+        <ItemPicker
+            :slot="selectedSlot"
+            :equipped="equipped"
+            :itemPool="itemPool"
+            :slotNames="SLOT_NAMES"
+            @close="selectedSlot = null"
+            @select="selectItem"
+        />
     </section>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAvatarSize }  from '@/composables/useAvatarSize'
-import { useEquipment, LEFT_SLOTS, RIGHT_SLOTS, CENTRAL_SLOTS, SLOT_NAMES, ITEM_POOL } from '@/composables/useEquipment'
-import SlotColumn  from './SlotColumn.vue'
-import AvatarCard  from './AvatarCard.vue'
-import ItemPicker  from './ItemPicker.vue'
+import { ref, onMounted } from 'vue'
+import { useAvatarSize } from '@/composables/useAvatarSize'
+import { useEquipment, LEFT_SLOTS, RIGHT_SLOTS, CENTRAL_SLOTS, SLOT_NAMES } from '@/composables/useEquipment'
+import SlotColumn from './SlotColumn.vue'
+import AvatarCard from './AvatarCard.vue'
+import ItemPicker from './ItemPicker.vue'
 
 const containerRef = ref(null)
 const { slotSize, cardWidth, cardHeight, centralSlotSize, centralSlotStyles } = useAvatarSize(containerRef)
-const { equipped, selectedSlot, openPicker, selectItem } = useEquipment()
+const { equipped, selectedSlot, itemPool, loading, fetchItems, openPicker, selectItem } = useEquipment()
+
+onMounted(() => fetchItems())
 </script>

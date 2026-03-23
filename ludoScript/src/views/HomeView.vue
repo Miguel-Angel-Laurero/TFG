@@ -4,8 +4,13 @@
       <Header/>
     </header>
     <main class="flex-grow">
-      <Home v-if="auth.isLogged" />
+        <!-- Overlay -->
+      <div v-if="!auth.isLogged">
+        <DailyReward/>
+        <Home  />
+      </div>
       <HomeNoLogin v-else/>
+
     </main>
     <footer>
       <Footer v-if="auth.isLogged" />
@@ -20,5 +25,8 @@
   import HomeNoLogin from '@/components/landing/HomeNoLogin.vue';
   import FooterNoLogin from '@/components/shared/FooterNoLogin.vue';
   import { useAuthStore } from '@/stores/auth.store'
+import DailyReward from '@/components/DailyReward.vue';
+ 
   const auth = useAuthStore()
+
 </script>

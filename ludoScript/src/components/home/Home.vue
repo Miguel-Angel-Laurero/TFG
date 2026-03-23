@@ -1,16 +1,16 @@
 <template>
-  <main class="h-full w-full home-container overflow-hidden" >
-    <section class="grid grid-cols-2 lg:grid-cols-12 gap-8 h-full">
-        <div class="col-span-12 lg:col-span-8 flex flex-col h-full ">
-          <Loader/>
-          <GameGrid />
+  <main class="h-full w-full home-container overflow-hidden">
+    <section class="grid grid-rows-2 lg:grid-rows-10 gap-6 h-full">
+        <div class="row-span-8 lg:row-span-6 flex flex-row h-full">
+          <div class="w-2/5">
+            <Loader/>
+          </div>
+          <div class="w-3/5">
+            <GameGrid />
+          </div>
         </div>
-        <div class="col-span-12 lg:col-span-4 p-6">
-          <RouterLink to="/shop-view/" class="col-span-full h-32 bg-emerald-400 rounded-xl p-4 font-bold text-3xl text-gray-50 flex justify-center items-center">
-            <span>Tienda</span>
-            <i class="pi pi-shopping-bag px-4" style="font-size: 1.5rem"></i>    
-          </RouterLink>
-          <UserInfo />
+        <div class="row-span-8 lg:row-span-4 p-6 ">
+          <UserInfo class="bg-gray-950/80 p-4 rounded-xl border-1 border-indigo-900"/>
         </div>
     </section>
   </main>
