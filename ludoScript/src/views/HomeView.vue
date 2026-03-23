@@ -8,7 +8,8 @@
       <HomeNoLogin v-else/>
     </main>
     <footer>
-      <Footer/>
+      <Footer v-if="auth.isLogged" />
+      <FooterNoLogin v-else/>
     </footer>
   </div>
 </template>
@@ -17,7 +18,7 @@
   import Header from '@/components/shared/Header.vue';
   import Footer from '@/components/shared/Footer.vue';
   import HomeNoLogin from '@/components/landing/HomeNoLogin.vue';
-
+  import FooterNoLogin from '@/components/shared/FooterNoLogin.vue';
   import { useAuthStore } from '@/stores/auth.store'
   const auth = useAuthStore()
 </script>

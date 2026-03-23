@@ -16,9 +16,9 @@
       <div class="flex flex-col md:flex-row items-center gap-12">
         <div class="flex-1">
           <img
-            src=""
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/landing/flashcards.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbGFuZGluZy9mbGFzaGNhcmRzLnBuZyIsImlhdCI6MTc3NDI1MzMyMCwiZXhwIjoxODA1Nzg5MzIwfQ.wk8LCd2LUaASFzUkIblb6PS2JBqX0HYbmEjFWG2tcyo"
             alt="Flashcards automáticas"
-            class="w-full rounded-2xl object-contain mask-r-from-80% mask-r-to-100%"
+            class="w-full rounded-2xl object-contain mask-r-from-60% mask-r-to-100% mask-l-from-95% mask-l-to-100% mask-y-from-95% mask-y-to-100%"
           >
         </div>
         <div class="flex-1 flex flex-col gap-4">
@@ -36,9 +36,9 @@
       <div class="flex flex-col md:flex-row-reverse items-center gap-12">
         <div class="flex-1">
           <img
-            src=""
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/landing/test.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbGFuZGluZy90ZXN0LnBuZyIsImlhdCI6MTc3NDI1MTExMiwiZXhwIjoxODA1Nzg3MTEyfQ.2Z5U1_NbIld-mTD0j7HOsZPHvnUssshTlu4j7gHs9qA"
             alt="Tests tipo examen"
-            class="w-full rounded-2xl object-contain mask-l-from-80% mask-l-to-100%"
+            class="w-full rounded-2xl object-contain mask-l-from-60% mask-l-to-100% mask-r-from-95% mask-r-to-100% mask-y-from-95% mask-y-to-100%"
           >
         </div>
         <div class="flex-1 flex flex-col gap-4">
@@ -58,7 +58,7 @@
           <img
             src=""
             alt="Seguimiento de progreso"
-            class="w-full rounded-2xl object-contain mask-r-from-80% mask-r-to-100%"
+            class="w-full rounded-2xl object-contain mask-r-from-60% mask-r-to-100% mask-l-from-95% mask-l-to-100% mask-y-from-95% mask-y-to-100%"
           >
         </div>
         <div class="flex-1 flex flex-col gap-4">
@@ -78,7 +78,7 @@
           <img
             src=""
             alt="Retos y ejercicios"
-            class="w-full rounded-2xl object-contain mask-l-from-80% mask-l-to-100%"
+            class="w-full rounded-2xl object-contain mask-l-from-60% mask-l-to-100% mask-r-from-95% mask-r-to-100% mask-y-from-95% mask-y-to-100%"
           >
         </div>
         <div class="flex-1 flex flex-col gap-4">

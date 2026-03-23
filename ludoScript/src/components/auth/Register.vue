@@ -73,7 +73,7 @@
         icon="pi pi-user-plus" 
         :loading="auth.loading" 
         :disabled="passwordMismatch"
-        class="w-full py-3 mt-2 font-bold shadow-md hover:shadow-lg transition-all"
+        class="!bg-yellow-400 !text-black px-8 py-3 !border-yellow-600 !border-b-3 !border-l-3 !border-yellow-600 !font-bold hover:bg-yellow-300 transition-colors text-center"
       />
 
       <p class="text-center text-gray-50 text-sm mt-4">

@@ -1,7 +1,7 @@
 <template>
  <div class="p-8">
           <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-50">Bienvenido de nuevo</h1>
+            <h1 class="text-2xl font-bold text-gray-50 font-righteous">Bienvenido de nuevo</h1>
             <p class="text-gray-50 text-sm">Ingresa tus credenciales para acceder</p>
           </div>
 
@@ -45,7 +45,7 @@
               label="Iniciar sesión" 
               icon="pi pi-sign-in" 
               :loading="auth.loading" 
-              class="w-full py-3 mt-2 font-bold shadow-md hover:shadow-lg transition-all"
+              class="!bg-yellow-400 !text-black px-8 py-3 !border-b-3 !border-l-3 !border-yellow-600 !font-bold hover:bg-yellow-300 transition-colors text-center"
             />
           </form>
           <p class="text-center text-gray-50 text-sm mt-4">

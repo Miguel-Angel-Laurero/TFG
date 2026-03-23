@@ -5,7 +5,7 @@
       <div class="flex-4 flex items-center justify-center">
         <img 
           class="rounded-xl w-full object-contain mask-l-from-95% mask-l-to-100% mask-r-from-50% mask-r-to-100% mask-y-from-95% mask-y-to-100%"
-          src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/knowledge.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMva25vd2xlZGdlLnBuZyIsImlhdCI6MTc3NDAxOTI0MCwiZXhwIjoxODA1NTU1MjQwfQ.F3rmZ-iGeQT_43cGDrdITyaph8aIlmwZZKXSqD8P4MA"
+          src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/landing/knowledge.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbGFuZGluZy9rbm93bGVkZ2UucG5nIiwiaWF0IjoxNzc0MjUwNjk3LCJleHAiOjE4MDU3ODY2OTd9.6MLaoBbQkiLL4E-FxpUHawGcLAli5zJsGivNAmpMTgg"
           alt="Maravillas del conocimiento"
         >
       </div>

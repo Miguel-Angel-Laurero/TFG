@@ -10,7 +10,7 @@
       <p class="text-gray-600 mb-6">Tu robot favorito ha tenido un mal día…</p>
       <RouterLink 
         to="/" 
-        class="bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-600 transition-colors"
+        class="bg-yellow-400 text-black px-8 py-3 rounded-br-xl rounded-tl-xl border-b-3 border-l-3 border-yellow-600 font-bold hover:bg-yellow-300 transition-colors text-center"
       >
         Volver al Inicio
       </RouterLink>
