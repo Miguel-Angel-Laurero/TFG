@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User,UserData } = require("../models");
 const { hashPassword, comparePassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/jwt");
 
@@ -13,6 +13,8 @@ const register = async (req, res, next) => {
 
     const hashed = await hashPassword(password);
     const user = await User.create({ username, email, password: hashed });
+
+    await UserData.create({ user_id: user.id });
 
     const token = generateToken({ id: user.id, role: user.role });
 
