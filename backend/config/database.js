@@ -10,9 +10,9 @@ const sequelize = new Sequelize(
     dialect: "postgres",
     dialectOptions: {
       ssl: { require: true, rejectUnauthorized: false },
+      prepared_statements: false  // ← añade esto
     },
     logging: process.env.NODE_ENV === "development" ? console.log : false,
   },
 );
-
 module.exports = sequelize;

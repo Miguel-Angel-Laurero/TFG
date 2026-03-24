@@ -5,7 +5,7 @@
     </header>
     <main class="flex-grow">
         <!-- Overlay -->
-      <div v-if="!auth.isLogged">
+      <div v-if="auth.isLoggedIn">
         <DailyReward/>
         <Home  />
       </div>
@@ -13,7 +13,7 @@
 
     </main>
     <footer>
-      <Footer v-if="auth.isLogged" />
+      <Footer v-if="auth.isLoggedIn" />
       <FooterNoLogin v-else/>
     </footer>
   </div>

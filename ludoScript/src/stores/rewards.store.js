@@ -9,7 +9,6 @@ export const useRewardsStore = defineStore('rewards', () => {
   const claimed = ref(false)
   const rewardsList = ref([])
 
-  // Cálculo exponencial del reward de hoy
   const todayReward = computed(() =>
     Math.min(Math.round(baseReward * streak.value), MAX_REWARD)
   )

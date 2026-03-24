@@ -65,7 +65,8 @@
   import { reactive } from 'vue'
 
     function submit() {
-        auth.login(form)
+      auth.login(form)
+      console.log("se ha iniciado sesion con exito")
     }
 
     const auth = useAuthStore()
