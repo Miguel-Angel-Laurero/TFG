@@ -14,7 +14,14 @@
             <div class="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center p-2">
               <img :src="product.img" :alt="product.name" class="max-w-full max-h-full object-contain"/>
             </div>
-            <p>{{ product.price }} GB de RAM</p>
+            <p class="flex items-center gap-2">
+              {{ product.price }}
+              <img 
+                src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+                alt="Moneda de RAM"
+                class="w-6 h-6 object-contain" 
+              >
+            </p>
             <button 
               class="p-2 rounded-xl transition-colors hover:cursor-pointer"
               :class="!product.is_adquired ? 'bg-teal-200 hover:bg-teal-300' : 'bg-gray-300 text-gray-500'"
