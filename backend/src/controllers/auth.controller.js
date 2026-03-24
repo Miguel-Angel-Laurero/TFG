@@ -46,6 +46,11 @@ const login = async (req, res, next) => {
       return res.status(401).json({ message: "Credenciales incorrectas" });
     }
 
+     const userData = await UserData.findOne({ where: { user_id: user.id } });
+    if (userData) {
+      await userData.update({ streak: userData.streak + 1 });
+    }
+
     const token = generateToken({ id: user.id, role: user.role });
 
     res.json({
@@ -66,6 +71,12 @@ const me = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.user.id, {
       attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: UserData,
+          as: "userData",
+        }
+      ]
     });
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });

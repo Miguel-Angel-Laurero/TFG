@@ -67,6 +67,7 @@
     function submit() {
       auth.login(form)
       console.log("se ha iniciado sesion con exito")
+      
     }
 
     const auth = useAuthStore()

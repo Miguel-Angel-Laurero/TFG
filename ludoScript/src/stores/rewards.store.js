@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth.store'
+import api from '@/api/axios'  // ← importar axios
 
 export const useRewardsStore = defineStore('rewards', () => {
   const baseReward = 10
   const MAX_REWARD = 100
 
-  const streak  = ref(7)
+  const streak  = ref(0)
   const claimed = ref(false)
   const rewardsList = ref([])
 
@@ -19,23 +21,22 @@ export const useRewardsStore = defineStore('rewards', () => {
   const nextReward     = computed(() => rewardsList.value[currentIndex.value + 1] ?? { day: '-', reward: '-' })
 
   async function fetchRewards() {
-    const res  = await fetch('/api/rewards')
-    const data = await res.json()
+    const { data } = await api.get('/rewards')
     rewardsList.value = data.rewards
-    streak.value      = data.streak
-    claimed.value     = data.claimedToday
+    streak.value = data.streak
+    claimed.value = data.claimedToday
   }
 
   async function claimReward() {
     if (!rewardClaim.value) return
 
-    await fetch('/api/rewards/claim', {
-      method: 'POST',
-      body: JSON.stringify({ day: rewardClaim.value.day, amount: todayReward.value })
-    })
+    await api.post('/rewards/claim', { amount: todayReward.value })
 
     rewardsList.value[currentIndex.value].claimed = true
     claimed.value = true
+
+    const authStore = useAuthStore()
+    await authStore.fetchMe()
   }
 
   return { streak, claimed, todayReward, rewardClaim, previousReward, nextReward, fetchRewards, claimReward }

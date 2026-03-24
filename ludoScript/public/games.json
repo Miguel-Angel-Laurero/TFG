@@ -1,0 +1,6 @@
+[
+  { "id": "1", "name": "Quiz", "description":"Pon a prueba tu conocimiento del tema." },
+  { "id": "2", "name": "Flashcards", "description":"Practica y repasa mediante tarjetas sobre el tema."},
+  { "id": "3", "name": "FixTheBug", "description":"Encuentra el error en el código."},
+  { "id": "4", "name": "CodeSorter", "description":"Ordena las líneas de código para que funcione."}
+]

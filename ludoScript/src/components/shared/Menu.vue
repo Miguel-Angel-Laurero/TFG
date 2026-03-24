@@ -13,7 +13,7 @@
                         hover:bg-yellow-400/10 transition-colors w-full justify-center">
                 🛒 Tienda
                 <span class="bg-yellow-400 text-black font-extrabold text-sm px-3 py-1 rounded-full">
-                    2500 GB de RAM
+                    {{ auth.userData?.coins ?? 0 }} GB de RAM
                 </span>
             </RouterLink>
             <Avatar 

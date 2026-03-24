@@ -6,7 +6,7 @@
     <main class="flex-grow">
         <!-- Overlay -->
       <div v-if="auth.isLoggedIn">
-        <DailyReward/>
+        <DailyReward v-if="!rewards.claimed"/>
         <Home  />
       </div>
       <HomeNoLogin v-else/>
@@ -24,9 +24,10 @@
   import Footer from '@/components/shared/Footer.vue';
   import HomeNoLogin from '@/components/landing/HomeNoLogin.vue';
   import FooterNoLogin from '@/components/shared/FooterNoLogin.vue';
-  import { useAuthStore } from '@/stores/auth.store'
-import DailyReward from '@/components/DailyReward.vue';
+import { useAuthStore } from '@/stores/auth.store'
+  import { useRewardsStore } from '@/stores/rewards.store';
+  import DailyReward from '@/components/DailyReward.vue';
  
   const auth = useAuthStore()
-
+  const rewards = useRewardsStore()
 </script>

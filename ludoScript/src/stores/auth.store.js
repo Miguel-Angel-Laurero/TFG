@@ -4,7 +4,8 @@ import { authService } from '@/api/auth.service'
 import router from '@/router/router'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user    = ref(null)
+  const user = ref(null)
+  const userData = ref(null)
   const token   = ref(localStorage.getItem('token'))
   const error   = ref(null)
   const loading = ref(false)
@@ -47,6 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const { data } = await authService.me()
       user.value = data
+      userData.value = data.userData
     } catch (e) {
       if (e.response?.status === 401) {
         logout()
@@ -61,5 +63,5 @@ export const useAuthStore = defineStore('auth', () => {
     router.push('/login-view/')
   }
 
-  return { user, token, isLoggedIn, error, loading, login, register, fetchMe, logout }
+  return { user,userData, token, isLoggedIn, error, loading, login, register, fetchMe, logout }
 })
