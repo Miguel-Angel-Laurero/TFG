@@ -68,17 +68,18 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
 import { useRewardsStore } from '@/stores/rewards.store'
 
 const emit  = defineEmits(['claimed', 'close'])
 const store = useRewardsStore()
 
-onMounted(() => store.fetchRewards())
 
 async function handleClaim() {
+  const day = store.rewardClaim?.day  
+  const reward = store.todayReward        
   await store.claimReward()
-  emit('claimed', { day: store.rewardClaim?.day, reward: store.todayReward })
+  localStorage.setItem('dailyRewardLastClaimed', Date.now().toString())
+  emit('claimed', { day, reward })
   emit('close')
 }
 </script>

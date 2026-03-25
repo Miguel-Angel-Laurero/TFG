@@ -1,42 +1,69 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
-import api from '@/api/axios'  // ← importar axios
+import api from '@/api/axios'
 
 export const useRewardsStore = defineStore('rewards', () => {
   const baseReward = 10
   const MAX_REWARD = 100
 
-  const streak  = ref(0)
+  const streak = ref(0)
   const claimed = ref(false)
-  const rewardsList = ref([])
 
-  const todayReward = computed(() =>
-    Math.min(Math.round(baseReward * streak.value), MAX_REWARD)
-  )
+  // --- Lógica de cálculo dinámico ---
+  
+  // Función auxiliar para no repetir la fórmula matemática
+  const calculateReward = (s) => Math.min(Math.round(baseReward * (s + 1)), MAX_REWARD)
 
-  const currentIndex   = computed(() => rewardsList.value.findIndex(r => !r.claimed))
-  const rewardClaim    = computed(() => rewardsList.value[currentIndex.value])
-  const previousReward = computed(() => rewardsList.value[currentIndex.value - 1] ?? { day: '-', reward: '-' })
-  const nextReward     = computed(() => rewardsList.value[currentIndex.value + 1] ?? { day: '-', reward: '-' })
+  const todayReward = computed(() => calculateReward(streak.value))
+
+  // Representa el estado actual para la UI
+  const rewardClaim = computed(() => ({
+    day: streak.value + 1,
+    reward: todayReward.value,
+    claimed: claimed.value
+  }))
+
+  const previousReward = computed(() => {
+    if (streak.value === 0) return { day: '-', reward: '-' }
+    return {
+      day: streak.value,
+      reward: calculateReward(streak.value - 1)
+    }
+  })
+
+  const nextReward = computed(() => ({
+    day: streak.value + 2,
+    reward: calculateReward(streak.value + 1)
+  }))
+
+  // --- Acciones ---
 
   async function fetchRewards() {
-    const { data } = await api.get('/rewards')
-    rewardsList.value = data.rewards
-    streak.value = data.streak
-    claimed.value = data.claimedToday
+    try {
+      const { data } = await api.get('/rewards')
+      streak.value = data.streak
+      claimed.value = data.claimedToday
+    } catch (error) {
+      console.error("Error fetching rewards:", error)
+    }
   }
 
   async function claimReward() {
-    if (!rewardClaim.value) return
+    // Si ya reclamó hoy, evitamos la ejecución
+    if (claimed.value) return
 
-    await api.post('/rewards/claim', { amount: todayReward.value })
+    try {
+      await api.post('/rewards/claim', { amount: todayReward.value })
 
-    rewardsList.value[currentIndex.value].claimed = true
-    claimed.value = true
+      claimed.value = true
+      streak.value += 1 // Incrementamos la racha localmente
 
-    const authStore = useAuthStore()
-    await authStore.fetchMe()
+      const authStore = useAuthStore()
+      await authStore.fetchMe()
+    } catch (error) {
+      console.error("Error claiming reward:", error)
+    }
   }
 
   return { streak, claimed, todayReward, rewardClaim, previousReward, nextReward, fetchRewards, claimReward }
