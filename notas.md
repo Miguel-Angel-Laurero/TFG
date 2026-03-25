@@ -1,0 +1,1 @@
+- Si se cambia la contraseña de algún usuario se debe de cerrar la sesión en el resto de dispositivos y que tenga que volver a iniciar sesión

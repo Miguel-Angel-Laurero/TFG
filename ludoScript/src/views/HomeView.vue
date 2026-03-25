@@ -5,7 +5,7 @@
     </header>
     <main class="flex-grow">
         <!-- Overlay -->
-      <div v-if="!auth.isLogged">
+      <div v-if="! auth.isLogged">
         <DailyReward/>
         <Home  />
       </div>
