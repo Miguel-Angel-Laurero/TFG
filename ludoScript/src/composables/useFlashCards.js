@@ -1,22 +1,21 @@
 import { ref, computed } from 'vue';
 
 export function useFlashcards(initialCards) {
-  const cards = ref(initialCards);
+  // ✅ Elimina el ref interno, usa el que viene de fuera directamente
   const currentIndex = ref(0);
   const isFlipped = ref(false);
 
-  const currentCard = computed(() => cards.value[currentIndex.value]);
+  // initialCards ya es un ref, accede a .value directamente
+  const currentCard = computed(() => initialCards.value[currentIndex.value]);
 
   const flip = () => (isFlipped.value = !isFlipped.value);
-  
-  const next = () => {
-    isFlipped.value = false;
-    setTimeout(() => {
-      if (currentIndex.value < cards.value.length - 1) {
-        currentIndex.value++;
-      }
-    }, 150);
-  };
+
+const next = () => {
+  isFlipped.value = false; 
+  setTimeout(() => {
+    currentIndex.value++;   
+  }, 300); 
+};
 
   const restart = () => {
     currentIndex.value = 0;
