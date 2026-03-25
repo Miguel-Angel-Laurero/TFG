@@ -69,6 +69,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import Toast from 'primevue/toast';
 
 const toast = useToast();
 const hiddenInput = ref();

@@ -5,13 +5,8 @@
     </header>
     <main class="flex-grow">
         <!-- Overlay -->
-<<<<<<< HEAD
-      <div v-if="! auth.isLogged">
-        <DailyReward/>
-=======
       <div v-if="auth.isLoggedIn">
         <DailyReward v-if="!rewards.claimed"/>
->>>>>>> 1e67daf3e1ee8f9521d66c27c5bbc9ee8ccf66ba
         <Home  />
       </div>
       <HomeNoLogin v-else/>

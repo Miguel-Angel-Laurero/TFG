@@ -11,7 +11,7 @@ const errorHandler = require("./src/middlewares/errorHandler.middleware");
 const app = express();
 
 // ── Middlewares globales ────────────────────────────────────────────────────
-// app.use(cors({ origin: config.clientUrl, credentials: true }));
+app.use(cors({ origin: config.clientUrl, credentials: true }));
 app.use(morgan(config.nodeEnv === "production" ? "combined" : "dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
