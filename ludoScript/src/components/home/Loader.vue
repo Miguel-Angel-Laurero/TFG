@@ -9,6 +9,17 @@
 
         <Toast />
 
+        <!-- Prompt opcional -->
+        <div>
+            <label class="text-slate-400 text-xs mb-1 block">Instrucción para Gemini <span class="text-slate-600">(opcional)</span></label>
+            <textarea
+                v-model="userPrompt"
+                rows="2"
+                placeholder="Ej: Extrae las preguntas y respuestas de este documento en formato JSON"
+                class="prompt-input w-full rounded-lg px-3 py-2 text-sm text-slate-200 resize-none"
+            />
+        </div>
+
         <!-- Drop Zone -->
         <div
             class="drop-zone flex-1 rounded-xl border-2 border-dashed border-slate-600 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-200"
@@ -76,6 +87,7 @@ const hiddenInput = ref();
 const selectedFile = ref(null);
 const isDragging = ref(false);
 const isUploading = ref(false);
+const userPrompt = ref('');
 
 const triggerFileInput = () => hiddenInput.value.click();
 
@@ -102,9 +114,12 @@ const upload = async () => {
 
     const formData = new FormData();
     formData.append('file', selectedFile.value);
+    if (userPrompt.value.trim()) {
+        formData.append('prompt', userPrompt.value.trim());
+    }
 
     try {
-        const response = await fetch('http://localhost:3001/upload', {
+        const response = await fetch('http://localhost:3000/api/upload', {
             method: 'POST',
             body: formData
         });
@@ -114,8 +129,10 @@ const upload = async () => {
         if (!response.ok) {
             toast.add({ severity: 'error', summary: 'Error', detail: result.error, life: 3000 });
         } else {
-            toast.add({ severity: 'success', summary: 'Éxito', detail: result.message, life: 3000 });
+            toast.add({ severity: 'success', summary: 'Éxito', detail: 'Archivo procesado correctamente', life: 3000 });
+            console.log('Respuesta de Gemini:', result.data);
             clearFile();
+            userPrompt.value = '';
         }
     } catch {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Error de conexión', life: 3000 });
@@ -159,5 +176,16 @@ const upload = async () => {
     background: #2a2a6a;
     color: #555588;
     cursor: not-allowed;
+}
+
+.prompt-input {
+    background: rgba(228, 228, 228, 0.04);
+    border: 1px solid #2a2a6a;
+    transition: border-color 0.2s;
+}
+
+.prompt-input:focus {
+    outline: none;
+    border-color: #5b4fcf;
 }
 </style>
