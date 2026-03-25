@@ -25,13 +25,14 @@
     </div>
 
     <div class="flex-1 flex justify-end">
-      <div class="flex items-center gap-2 bg-amber-200 p-2 px-4 rounded-2xl border border-amber-100 shadow-sm">
-        <i class="pi pi-database text-amber-600"></i> 
-        <p class="font-bold text-indigo-900">
-          3000
-          <span class="text-xs uppercase text-indigo-400"> GB RAM</span>
-        </p>
-      </div>
+      <span class="bg-yellow-400 text-black font-extrabold text-sm px-3 py-1 rounded-xl flex items-center gap-2">
+        <span>{{ auth.userData?.coins ?? 0 }}</span>
+        <img 
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+            alt="Moneda de RAM"
+            class="w-6 h-6 object-contain" 
+        >
+      </span>
     </div>
 
   </div>
@@ -41,21 +42,23 @@
   import MultiSelect from 'primevue/multiselect';
   import InputText from 'primevue/inputtext';
   import { useShopStore } from '@/stores/shop.store';
+  import { useAuthStore } from '@/stores/auth.store'; // ← añadir
   import { ref, onMounted } from 'vue';
 
   const shopStore = useShopStore();
+  const auth = useAuthStore(); // ← añadir
   const categories = ref([])
   const loading = ref(true)
 
-   onMounted(async () => {
-        try {
-          const response = await fetch('/categoriesData.json')
-          categories.value = await response.json()
-        } catch {
-          console.error("Error al cargar los datos",error)
-        } finally {
-          loading.value = false;
-        }
-      })
+  onMounted(async () => {
+    try {
+      const response = await fetch('/categoriesData.json')
+      categories.value = await response.json()
+    } catch {
+      console.error("Error al cargar los datos")
+    } finally {
+      loading.value = false;
+    }
+  })
 </script>
 

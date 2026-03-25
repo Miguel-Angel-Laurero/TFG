@@ -12,9 +12,16 @@ export function useFlashcards(initialCards) {
   const next = () => {
     isFlipped.value = false;
     setTimeout(() => {
-      currentIndex.value = (currentIndex.value + 1) % cards.value.length;
+      if (currentIndex.value < cards.value.length - 1) {
+        currentIndex.value++;
+      }
     }, 150);
   };
 
-  return { currentCard, isFlipped, flip, next, currentIndex };
+  const restart = () => {
+    currentIndex.value = 0;
+    isFlipped.value = false;
+  };
+
+  return { currentCard, isFlipped, flip, next, restart, currentIndex };
 }

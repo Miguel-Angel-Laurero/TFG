@@ -12,27 +12,41 @@
     <div class="flex items-center justify-center gap-3 w-full">
 
       <div class="flex flex-col items-center gap-1 opacity-35 flex-1">
-        <span class="text-[10px] uppercase tracking-widest text-white/60">Día {{ store.previousReward.day }}</span>
-        <span class="text-[22px] font-extrabold text-yellow-400 leading-none">{{ store.previousReward.reward }} GB</span>
-        <span class="text-[10px] text-white/40">de RAM</span>
+        <span class="text-[10px] uppercase tracking-widest text-white/60"> Día {{ store.previousReward.day }}</span>
+        <span class="text-[22px] font-extrabold text-yellow-400 leading-none">
+          {{ store.previousReward.reward }}
+          <img 
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+            alt="Moneda de RAM"
+            class="w-8 h-8 object-contain" 
+          >
+        </span>
         <span class="mt-1 text-[9px] bg-white/10 text-white/50 px-2 py-0.5 rounded-full">✓ Reclamada</span>
       </div>
-
-      <div class="w-px h-16 bg-white/8" />
-
-      <!-- Reward de hoy usa todayReward en lugar de rewardClaim.reward -->
       <div class="flex flex-col items-center gap-1 text-center" style="flex: 1.4">
         <span class="text-[11px] uppercase tracking-widest text-white/40">Día {{ store.rewardClaim?.day }} · hoy</span>
-        <span class="text-4xl font-extrabold text-yellow-400 leading-none">{{ store.todayReward }} GB</span>
-        <span class="text-xs text-white/40">de RAM</span>
+        <span class="text-4xl font-extrabold text-yellow-400 leading-none">
+          {{ store.todayReward }}
+          <img 
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+            alt="Moneda de RAM"
+            class="w-18 h-18 object-contain" 
+          >
+        </span>
       </div>
 
       <div class="w-px h-16 bg-white/8" />
 
       <div class="flex flex-col items-center gap-1 opacity-35 flex-1">
         <span class="text-[10px] uppercase tracking-widest text-white/60">Día {{ store.nextReward.day }}</span>
-        <span class="text-[22px] font-extrabold text-yellow-400 leading-none">{{ store.nextReward.reward }} GB</span>
-        <span class="text-[10px] text-white/40">de RAM</span>
+        <span class="text-[22px] font-extrabold text-yellow-400 leading-none">
+          {{ store.nextReward.reward }}
+          <img 
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+            alt="Moneda de RAM"
+            class="w-8 h-8 object-contain" 
+          >
+        </span>
         <span class="mt-1 text-[9px] bg-white/8 text-white/30 px-2 py-0.5 rounded-full">🔒 Mañana</span>
       </div>
 

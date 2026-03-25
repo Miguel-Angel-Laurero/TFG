@@ -1,6 +1,6 @@
 <template> 
     <div class="flex items-center">
-        <template v-if="auth.isLogged">
+        <template v-if="!auth.isLoggedIn">
             <RouterLink to="/login-view" class="border-2 border-yellow-400 text-yellow-400 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 hover:text-black transition-colors">
                 Iniciar sesión
             </RouterLink>
@@ -8,12 +8,16 @@
 
         <template v-else>
             <Menu ref="menu" :model="items" :popup="true" />
-            <RouterLink v-if="!isInShop" to="/shop-view/" class="flex items-center gap-3 bg-white/6 border border-yellow-400/30 
-                        text-yellow-400 font-righteous text-xl px-6 py-3 rounded-xl 
-                        hover:bg-yellow-400/10 transition-colors w-full justify-center">
+            <RouterLink v-if="!isInShop" to="/shop-view/" class="flex items-center gap-3 bg-white/5 border border-yellow-400/30 text-yellow-400 font-righteous text-xl px-6 py-3 rounded-xl hover:bg-yellow-400/10 transition-colors w-full justify-center">
                 🛒 Tienda
-                <span class="bg-yellow-400 text-black font-extrabold text-sm px-3 py-1 rounded-full">
-                    2500 GB de RAM
+                
+                <span class="bg-yellow-400 text-black font-extrabold text-sm px-3 py-1 rounded-full flex items-center gap-2">
+                    <span>{{ auth.userData?.coins ?? 0 }}</span>
+                    <img 
+                        src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+                        alt="Moneda de RAM"
+                        class="w-6 h-6 object-contain" 
+                    >
                 </span>
             </RouterLink>
             <Avatar 

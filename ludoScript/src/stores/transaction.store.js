@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
+import { useAuthStore } from "./auth.store";
+
+const auth = useAuthStore();
 
 export const useTransactionStore = defineStore('user', {
     state: () => ({
-        coins: 500.00,
+        coins: auth.userData.coins,
         items: []
     }),
     actions: {
