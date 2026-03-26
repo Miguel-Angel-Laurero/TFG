@@ -49,11 +49,11 @@
   import InputText from 'primevue/inputtext';
   import Select from 'primevue/select';
   import { useShopStore } from '@/stores/shop.store';
-  import { useAuthStore } from '@/stores/auth.store'; // ← añadir
+  import { useAuthStore } from '@/stores/auth.store';
   import { ref, onMounted } from 'vue';
 
   const shopStore = useShopStore();
-  const auth = useAuthStore(); // ← añadir
+  const auth = useAuthStore(); 
   const categories = ref([])
   const loading = ref(true)
 
