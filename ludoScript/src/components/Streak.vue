@@ -68,18 +68,26 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import { useRewardsStore } from '@/stores/rewards.store'
 
 const emit  = defineEmits(['claimed', 'close'])
 const store = useRewardsStore()
 
+onMounted(async () => {
+  await store.fetchRewards()  // ← sincroniza con el servidor al abrir
+})
 
 async function handleClaim() {
-  const day = store.rewardClaim?.day  
-  const reward = store.todayReward        
-  await store.claimReward()
-  localStorage.setItem('dailyRewardLastClaimed', Date.now().toString())
-  emit('claimed', { day, reward })
-  emit('close')
+  const day    = store.rewardClaim?.day
+  const reward = store.todayReward
+  try {
+    await store.claimReward()
+    localStorage.setItem('dailyRewardLastClaimed', Date.now().toString())
+    emit('claimed', { day, reward })
+    emit('close')
+  } catch {
+    // aquí puedes mostrar un toast de error si quieres
+  }
 }
 </script>

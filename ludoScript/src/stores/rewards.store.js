@@ -9,15 +9,12 @@ export const useRewardsStore = defineStore('rewards', () => {
 
   const streak = ref(0)
   const claimed = ref(false)
+  const ready = ref(false)  // ← nuevo
 
-  // --- Lógica de cálculo dinámico ---
-  
-  // Función auxiliar para no repetir la fórmula matemática
   const calculateReward = (s) => Math.min(Math.round(baseReward * (s + 1)), MAX_REWARD)
 
   const todayReward = computed(() => calculateReward(streak.value))
 
-  // Representa el estado actual para la UI
   const rewardClaim = computed(() => ({
     day: streak.value + 1,
     reward: todayReward.value,
@@ -37,8 +34,6 @@ export const useRewardsStore = defineStore('rewards', () => {
     reward: calculateReward(streak.value + 1)
   }))
 
-  // --- Acciones ---
-
   async function fetchRewards() {
     try {
       const { data } = await api.get('/rewards')
@@ -46,25 +41,24 @@ export const useRewardsStore = defineStore('rewards', () => {
       claimed.value = data.claimedToday
     } catch (error) {
       console.error("Error fetching rewards:", error)
+    } finally {
+      ready.value = true  // ← siempre se marca, falle o no
     }
   }
 
   async function claimReward() {
-    // Si ya reclamó hoy, evitamos la ejecución
     if (claimed.value) return
 
     try {
       await api.post('/rewards/claim', { amount: todayReward.value })
-
-      claimed.value = true
-      streak.value += 1 // Incrementamos la racha localmente
-
+      await fetchRewards()
       const authStore = useAuthStore()
       await authStore.fetchMe()
     } catch (error) {
-      console.error("Error claiming reward:", error)
+      console.error("Error claiming reward:", error.response?.data)
+      throw error
     }
   }
 
-  return { streak, claimed, todayReward, rewardClaim, previousReward, nextReward, fetchRewards, claimReward }
+  return { streak, claimed, ready, todayReward, rewardClaim, previousReward, nextReward, fetchRewards, claimReward }
 })

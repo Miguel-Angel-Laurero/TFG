@@ -45,12 +45,6 @@ const login = async (req, res, next) => {
     if (!valid) {
       return res.status(401).json({ message: "Credenciales incorrectas" });
     }
-
-     const userData = await UserData.findOne({ where: { user_id: user.id } });
-    if (userData) {
-      await userData.update({ streak: userData.streak + 1 });
-    }
-
     const token = generateToken({ id: user.id, role: user.role });
 
     res.json({
