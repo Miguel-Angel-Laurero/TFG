@@ -1,43 +1,64 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
-import api from '@/api/axios'  // ← importar axios
+import api from '@/api/axios'
 
 export const useRewardsStore = defineStore('rewards', () => {
   const baseReward = 10
   const MAX_REWARD = 100
 
-  const streak  = ref(0)
+  const streak = ref(0)
   const claimed = ref(false)
-  const rewardsList = ref([])
+  const ready = ref(false)  // ← nuevo
 
-  const todayReward = computed(() =>
-    Math.min(Math.round(baseReward * streak.value), MAX_REWARD)
-  )
+  const calculateReward = (s) => Math.min(Math.round(baseReward * (s + 1)), MAX_REWARD)
 
-  const currentIndex   = computed(() => rewardsList.value.findIndex(r => !r.claimed))
-  const rewardClaim    = computed(() => rewardsList.value[currentIndex.value])
-  const previousReward = computed(() => rewardsList.value[currentIndex.value - 1] ?? { day: '-', reward: '-' })
-  const nextReward     = computed(() => rewardsList.value[currentIndex.value + 1] ?? { day: '-', reward: '-' })
+  const todayReward = computed(() => calculateReward(streak.value))
+
+  const rewardClaim = computed(() => ({
+    day: streak.value + 1,
+    reward: todayReward.value,
+    claimed: claimed.value
+  }))
+
+  const previousReward = computed(() => {
+    if (streak.value === 0) return { day: '-', reward: '-' }
+    return {
+      day: streak.value,
+      reward: calculateReward(streak.value - 1)
+    }
+  })
+
+  const nextReward = computed(() => ({
+    day: streak.value + 2,
+    reward: calculateReward(streak.value + 1)
+  }))
 
   async function fetchRewards() {
-    const { data } = await api.get('/rewards')
-    rewardsList.value = data.rewards
-    streak.value = data.streak
-    claimed.value = data.claimedToday
+    try {
+      const { data } = await api.get('/rewards')
+      streak.value = data.streak
+      claimed.value = data.claimedToday
+    } catch (error) {
+      console.error("Error fetching rewards:", error)
+    } finally {
+      ready.value = true  // ← siempre se marca, falle o no
+    }
   }
 
   async function claimReward() {
-    if (!rewardClaim.value) return
+    if (claimed.value) return
 
-    await api.post('/rewards/claim', { amount: todayReward.value })
-
-    rewardsList.value[currentIndex.value].claimed = true
-    claimed.value = true
-
-    const authStore = useAuthStore()
-    await authStore.fetchMe()
+    try {
+      await api.post('/rewards/claim', { amount: todayReward.value })
+      await fetchRewards()
+      const authStore = useAuthStore()
+      await authStore.fetchMe()
+    } catch (error) {
+      console.error("Error claiming reward:", error.response?.data)
+      throw error
+    }
   }
 
-  return { streak, claimed, todayReward, rewardClaim, previousReward, nextReward, fetchRewards, claimReward }
+  return { streak, claimed, ready, todayReward, rewardClaim, previousReward, nextReward, fetchRewards, claimReward }
 })

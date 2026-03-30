@@ -74,11 +74,20 @@ import { useRewardsStore } from '@/stores/rewards.store'
 const emit  = defineEmits(['claimed', 'close'])
 const store = useRewardsStore()
 
-onMounted(() => store.fetchRewards())
+onMounted(async () => {
+  await store.fetchRewards()  // ← sincroniza con el servidor al abrir
+})
 
 async function handleClaim() {
-  await store.claimReward()
-  emit('claimed', { day: store.rewardClaim?.day, reward: store.todayReward })
-  emit('close')
+  const day    = store.rewardClaim?.day
+  const reward = store.todayReward
+  try {
+    await store.claimReward()
+    localStorage.setItem('dailyRewardLastClaimed', Date.now().toString())
+    emit('claimed', { day, reward })
+    emit('close')
+  } catch {
+    // aquí puedes mostrar un toast de error si quieres
+  }
 }
 </script>
