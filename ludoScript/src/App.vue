@@ -12,9 +12,11 @@ import { useAuthStore } from '@/stores/auth.store'
 
 const auth = useAuthStore()
 
-onMounted(() => {
+onMounted(async () => {
   if (auth.isLoggedIn) {
-    auth.fetchMe()
+    await auth.fetchMe()
+  } else {
+    auth.ready = true  // si no hay token, marcar como listo igualmente
   }
 })
 </script>

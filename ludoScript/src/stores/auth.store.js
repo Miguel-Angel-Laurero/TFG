@@ -44,15 +44,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const ready = ref(false)
+
   async function fetchMe() {
     try {
       const { data } = await authService.me()
       user.value = data
       userData.value = data.userData
     } catch (e) {
-      if (e.response?.status === 401) {
-        logout()
-      }
+      if (e.response?.status === 401) logout()
+    } finally {
+      ready.value = true  // ← siempre se marca como listo, falle o no
     }
   }
 
@@ -63,5 +65,5 @@ export const useAuthStore = defineStore('auth', () => {
     router.push('/login-view/')
   }
 
-  return { user,userData, token, isLoggedIn, error, loading, login, register, fetchMe, logout }
+  return { user,userData, token, isLoggedIn, error, loading, login, register, fetchMe, logout, ready }
 })

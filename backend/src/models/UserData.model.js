@@ -27,9 +27,18 @@ const UserData = sequelize.define("UserData", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  last_claimed_at:   {
+      type: DataTypes.DATE,
+      defaultValue: null,
+      allowNull: true,
+  },
+  first_login: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  }
 }, {
-    tableName: "user_data",
-    timestamps: false,
+  tableName: "user_data",   // ← apunta a la tabla correcta
+  timestamps: false         // ← evita que Sequelize busque createdAt/updatedAt
 });
 
 module.exports = UserData;

@@ -7,11 +7,17 @@
         :options="categories" 
         optionLabel="name" 
         filter 
-        placeholder="Select Categories" 
-        class="w-full md:w-64" 
+        placeholder="Selecciona las Categorias" 
+        class="w-full md:w-64"  
+      />
+      <Select
+        v-model="shopStore.acquisitionFilter"
+        :options="acquisitionOptions"
+        optionLabel="label"
+        optionValue="value"
+        class="w-48"
       />
     </div>
-
     <div class="flex-1 flex justify-center">
       <span class="p-input-icon-left w-full max-w-sm">
         <InputText 
@@ -41,14 +47,21 @@
 <script setup>
   import MultiSelect from 'primevue/multiselect';
   import InputText from 'primevue/inputtext';
+  import Select from 'primevue/select';
   import { useShopStore } from '@/stores/shop.store';
-  import { useAuthStore } from '@/stores/auth.store'; // ← añadir
+  import { useAuthStore } from '@/stores/auth.store';
   import { ref, onMounted } from 'vue';
 
   const shopStore = useShopStore();
-  const auth = useAuthStore(); // ← añadir
+  const auth = useAuthStore(); 
   const categories = ref([])
   const loading = ref(true)
+
+  const acquisitionOptions = [
+    { label: 'Todos', value: 'todos' },
+    { label: 'Adquirido', value: 'adquirido' },
+    { label: 'No adquirido', value: 'no_adquirido' }
+  ]
 
   onMounted(async () => {
     try {

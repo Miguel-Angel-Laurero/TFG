@@ -71,20 +71,26 @@
           loading.value = false;
         }
       })
-    const filteredProducts = computed(() => {
-        return products.value.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(shopStore.searchQuery?.toLowerCase() || '');
-            const matchesCategory = shopStore.selectedCategories.length === 0 || 
-                                    shopStore.selectedCategories.some(cat => cat.name === product.category);
-            return matchesSearch && matchesCategory;
-        });
+  const filteredProducts = computed(() => {
+    return products.value.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(shopStore.searchQuery?.toLowerCase() || '');
+      const matchesCategory = shopStore.selectedCategories.length === 0 || 
+                              shopStore.selectedCategories.some(cat => cat.name === product.category);
+      // ← nuevo filtro
+      const matchesAcquisition = 
+        shopStore.acquisitionFilter === 'todos' ||
+        (shopStore.acquisitionFilter === 'adquirido' && product.is_adquired) ||
+        (shopStore.acquisitionFilter === 'no_adquirido' && !product.is_adquired);
+
+      return matchesSearch && matchesCategory && matchesAcquisition;
     });
+  });
 
     // Luego aplicamos la paginación sobre los productos ya filtrados
     const displayedProducts = computed(() => {
         return filteredProducts.value.slice(first.value, first.value + rows.value);
     });
-    watch([() => shopStore.searchQuery, () => shopStore.selectedCategories], () => {
-        first.value = 0;
-    });
+    watch([() => shopStore.searchQuery, () => shopStore.selectedCategories, () => shopStore.acquisitionFilter], () => {
+  first.value = 0;
+});
 </script>
