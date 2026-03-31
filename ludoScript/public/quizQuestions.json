@@ -1,0 +1,147 @@
+[
+  {
+    "id": 1,
+    "question": "¿Qué diferencia hay entre `==` y `===` en JavaScript?",
+    "options": [
+      "No hay diferencia, son equivalentes",
+      "`===` compara valor y tipo, `==` solo compara valor con coerción",
+      "`==` es más estricto que `===`",
+      "`===` solo funciona con números"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 2,
+    "question": "¿Cuál es el resultado de `typeof null` en JavaScript?",
+    "options": ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""],
+    "correct": 2
+  },
+  {
+    "id": 3,
+    "question": "¿Qué hace el método `Array.prototype.map()`?",
+    "options": [
+      "Filtra los elementos de un array según una condición",
+      "Reduce el array a un único valor acumulado",
+      "Crea un nuevo array transformando cada elemento con una función",
+      "Busca el índice de un elemento en el array"
+    ],
+    "correct": 2
+  },
+  {
+    "id": 4,
+    "question": "¿Qué es el hoisting en JavaScript?",
+    "options": [
+      "Un método para ordenar arrays",
+      "El mecanismo por el que las declaraciones se mueven al inicio de su ámbito antes de ejecutarse",
+      "Una forma de heredar propiedades entre objetos",
+      "El proceso de convertir tipos de datos automáticamente"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 5,
+    "question": "¿Cuál de estas opciones declara correctamente una función flecha?",
+    "options": [
+      "function => (x) { return x * 2 }",
+      "const doble = function(x) => x * 2",
+      "const doble = (x) => x * 2",
+      "arrow doble(x) { return x * 2 }"
+    ],
+    "correct": 2
+  },
+  {
+    "id": 6,
+    "question": "¿Qué devuelve `[1, 2, 3].find(x => x > 1)`?",
+    "options": ["[2, 3]", "2", "true", "1"],
+    "correct": 1
+  },
+  {
+    "id": 7,
+    "question": "¿Cuál es la diferencia entre `let` y `var`?",
+    "options": [
+      "`let` tiene ámbito de bloque, `var` tiene ámbito de función",
+      "`var` tiene ámbito de bloque, `let` tiene ámbito de función",
+      "No hay diferencia funcional entre ambos",
+      "`let` no permite reasignación de valor"
+    ],
+    "correct": 0
+  },
+  {
+    "id": 8,
+    "question": "¿Qué es una Promesa (Promise) en JavaScript?",
+    "options": [
+      "Un tipo de bucle para operaciones asíncronas",
+      "Un objeto que representa el resultado eventual de una operación asíncrona",
+      "Una función que siempre devuelve un valor inmediatamente",
+      "Un método para sincronizar múltiples funciones"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 9,
+    "question": "¿Qué hace el operador spread (`...`) en este código: `const b = [...a, 4]`?",
+    "options": [
+      "Modifica el array `a` añadiendo el 4 al final",
+      "Crea un nuevo array con los elementos de `a` más el 4",
+      "Concatena `a` con el número 4 como string",
+      "Lanza un error si `a` no es iterable"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 10,
+    "question": "¿Cuál es el resultado de `Boolean('')`?",
+    "options": ["true", "undefined", "null", "false"],
+    "correct": 3
+  },
+  {
+    "id": 11,
+    "question": "¿Qué método se usa para añadir un elemento al final de un array?",
+    "options": [
+      "array.append()",
+      "array.push()",
+      "array.add()",
+      "array.insert()"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 12,
+    "question": "¿Qué es el closure en JavaScript?",
+    "options": [
+      "Un método para cerrar la conexión con el servidor",
+      "Una función que recuerda las variables de su ámbito externo aunque ese ámbito ya haya terminado",
+      "Un bloque try/catch para manejar errores",
+      "Una clase abstracta que no puede instanciarse"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 13,
+    "question": "¿Qué devuelve `Object.keys({ a: 1, b: 2, c: 3 })`?",
+    "options": [
+      "[1, 2, 3]",
+      "{ a: 1, b: 2, c: 3 }",
+      "[\"a\", \"b\", \"c\"]",
+      "3"
+    ],
+    "correct": 2
+  },
+  {
+    "id": 14,
+    "question": "¿Qué significa `async/await` en JavaScript?",
+    "options": [
+      "Son palabras clave para declarar variables asíncronas",
+      "Permiten escribir código asíncrono basado en Promesas de forma más legible y secuencial",
+      "Crean hilos de ejecución paralelos",
+      "Son una alternativa a los bucles for para iterar arrays"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 15,
+    "question": "¿Cuál es el resultado de `console.log(0.1 + 0.2 === 0.3)` en JavaScript?",
+    "options": ["true", "undefined", "false", "NaN"],
+    "correct": 2
+  }
+]

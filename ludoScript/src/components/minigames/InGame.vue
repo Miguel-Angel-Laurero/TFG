@@ -7,7 +7,7 @@
   </button>
   <div class="w-full p-4 flex flex-col items-center">
     <div class="w-full max-w-2xl">
-      <ProgressBar :value="progress" class="h-4 mb-6" />
+      <ProgressBar :value="progress" :show-value="false" class="h-4 mb-6" />
     </div>
 
     <div class="w-full flex justify-center">
