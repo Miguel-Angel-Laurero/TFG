@@ -1,13 +1,12 @@
 <template>
-  <div class="h-screen flex flex-col">
-    <header class="flex sticky top-0 z-10 ">
+  <div :class="auth.isLoggedIn ? 'min-h-screen flex flex-col' : 'min-h-screen flex flex-col'">
+    <header class="flex sticky top-0 z-10">
       <Header/>
     </header>
     <main class="flex-grow">
-        <!-- Overlay -->
-      <div v-if="auth.isLoggedIn">
-        <DailyReward v-if="!rewards.claimed"/>
-        <Home  />
+      <div v-if="auth.isLoggedIn" class="h-full">
+        <DailyReward v-if="rewards.ready && !rewards.claimed"/>
+        <Home/>
       </div>
       <HomeNoLogin v-else/>
 

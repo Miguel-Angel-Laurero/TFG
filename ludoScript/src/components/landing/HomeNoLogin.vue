@@ -1,18 +1,10 @@
 <template>
-  <main class="home-container ">
-    <div class="flex items-center justify-center h-screen px-8">
-      <LandingHero/>
-    </div>
-    <div>
-      <HowItWorks/>
-    </div>
-    <div>
-      <WhatYouLearn/>
-    </div>
-    <div>
-      <CtaFinal/>
-    </div>
-  </main>
+  <div class="landing-wrapper">
+    <LandingHero/>
+    <HowItWorks/>
+    <WhatYouLearn/>
+    <CtaFinal/>
+  </div>
 </template>
 <script setup>
   import CtaFinal from './CtaFinal.vue';

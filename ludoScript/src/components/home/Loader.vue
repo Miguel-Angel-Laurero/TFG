@@ -1,5 +1,5 @@
 <template>
-    <div class="loader-card h-full rounded-xl mx-6 mt-6 p-6 flex flex-col gap-5">
+    <div class="loader-card h-full rounded-xl p-6 flex flex-col gap-5">
         
         <!-- Header -->
         <div>
