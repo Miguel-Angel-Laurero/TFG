@@ -1,5 +1,5 @@
 <template>
-  <div v-if="progress === 100" class="flex flex-col items-center gap-10 p-16 bg-emerald-600/80 rounded-2xl border-emerald-600">
+  <div v-if="progress === 100" class="flex flex-col h-full items-center gap-10 p-16 bg-emerald-600/80 rounded-2xl border-emerald-600">
     <div class="text-white text-xl rounded-xl p-4 font-bold transition-all">
       <p>¡Repaso Completado!</p>
       <p class="text-sm">Has terminado todas las preguntas del temario. Sigue practicando para afianzar el contenido</p>

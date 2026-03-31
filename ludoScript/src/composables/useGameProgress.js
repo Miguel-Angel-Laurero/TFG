@@ -1,19 +1,22 @@
 import { ref } from 'vue';
-// Definimos el estado fuera de la función para que todos los que lo usen compartan el mismo valor
+
 const globalProgress = ref(0);
+const gameFinished = ref(false);
 
 export function useGameProgress() {
     const updateProgress = (value) => {
-        // Aseguramos que el valor esté entre 0 y 100
         globalProgress.value = Math.min(Math.max(value, 0), 100);
+        if (globalProgress.value >= 100) gameFinished.value = true;
     };
 
     const resetProgress = () => {
         globalProgress.value = 0;
+        gameFinished.value = false;
     };
 
     return {
         progress: globalProgress,
+        gameFinished,
         updateProgress,
         resetProgress
     };
