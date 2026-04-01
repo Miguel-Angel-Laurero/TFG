@@ -49,7 +49,7 @@ export function useAvatarSize(containerRef, slotOverrides = {}) {
         return {
             head:     { top: Math.floor(h * -0.15) + 'px', left: half('head'),     width: slotSizes.value.head.w     + 'px', height: slotSizes.value.head.h     + 'px' },
             torso:    { top: Math.floor(h * 0.40)  + 'px', left: half('torso'),    width: slotSizes.value.torso.w    + 'px', height: slotSizes.value.torso.h    + 'px' },
-            trinkets: { top: Math.floor(h * 0.35)  + 'px', left: half('trinkets'), width: slotSizes.value.trinkets.w + 'px', height: slotSizes.value.trinkets.h + 'px' },
+            trinkets: { top: Math.floor(h * 0.50)  + 'px', left: half('trinkets'), width: slotSizes.value.trinkets.w + 'px', height: slotSizes.value.trinkets.h + 'px' },
             hands:    { top: Math.floor(h * 0.35)  + 'px', right: half('hands'),   width: slotSizes.value.hands.w    + 'px', height: slotSizes.value.hands.h    + 'px' },
             legs:     { top: Math.floor(h * 0.55)  + 'px', left: half('legs'),     width: slotSizes.value.legs.w     + 'px', height: slotSizes.value.legs.h     + 'px' },
             feet:     { top: Math.floor(h * 0.70)  + 'px', left: half('feet'),     width: slotSizes.value.feet.w     + 'px', height: slotSizes.value.feet.h     + 'px' },

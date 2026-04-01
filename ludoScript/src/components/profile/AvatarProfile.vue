@@ -31,9 +31,9 @@ import ItemPicker from './ItemPicker.vue'
 const containerRef = ref(null)
 
 const { slotSize, cardWidth, cardHeight, centralSlotSize, centralSlotStyles } = useAvatarSize(containerRef, {
-    head:     { w: 400,  h: 220  },
-    torso:    { w: 240, h: 100 },
-    trinkets: { w: 60,  h: 60  },
+    head:     { w: 400,  h: 230  },
+    torso:    { w: 240, h: 90 },
+    trinkets: { w: 160,  h: 80  },
     hands:    { w: 60,  h: 60  },
     legs:     { w: 230,  h: 80  },
     feet:     { w: 70,  h: 60  },
