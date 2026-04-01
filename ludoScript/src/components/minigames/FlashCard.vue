@@ -23,16 +23,25 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRoute }            from 'vue-router'
 import { useActivitySession } from '@/composables/useActivitySession'
 import { useActivityReward }  from '@/composables/useActivityReward' 
 import ActivityLoading        from './ActivityLoading.vue'
 import ActivityFinished       from './ActivityFinished.vue'
 import FlashCardDeck          from './FlashCardDeck.vue'
 
+const route = useRoute()
+
+// Si el usuario viene desde un PDF propio (ruta con ?pdfId=:id), se cargan las
+// flashcards desde la API (autenticada). Si no, se usan las tarjetas estáticas.
+const flashCardsUrl = route.query.pdfId
+  ? `/api/pdfs/${route.query.pdfId}/flashcards`
+  : '/flashCards.json'
+
 const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,
   load, next, restart,
-} = useActivitySession('/flashCards.json')
+} = useActivitySession(flashCardsUrl)
 
 onMounted(load)
 

@@ -49,6 +49,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRoute }            from 'vue-router'
 import { useActivitySession } from '@/composables/useActivitySession'
 import { useQuizStats }       from '@/composables/useQuizStats'
 import { useQuizReward }      from '@/composables/useQuizReward'
@@ -56,11 +57,19 @@ import ActivityLoading        from './ActivityLoading.vue'
 import ActivityFinished       from './ActivityFinished.vue'
 import QuizQuestion           from './QuizQuestion.vue'
 
-// ─── Sesión genérica ──────────────────────────────────────────────────────────
+const route = useRoute()
+
+// Si el usuario viene desde un PDF propio (ruta con ?pdfId=:id), se cargan las
+// preguntas desde la API (autenticada). Si no, se usan las preguntas estáticas.
+const quizUrl = route.query.pdfId
+  ? `/api/pdfs/${route.query.pdfId}/quiz`
+  : '/quizQuestions.json'
+
+// ─── Sesión genérica ─────────────────────────────────────────────────────────────────────────
 const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,
   load, next, restart,
-} = useActivitySession('/quizQuestions.json')
+} = useActivitySession(quizUrl)
 
 // ─── Estado específico del Quiz ───────────────────────────────────────────────
 const selectedAnswer = ref(null)
