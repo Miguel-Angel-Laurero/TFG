@@ -4,11 +4,11 @@ import { authService } from '@/api/auth.service'
 import router from '@/router/router'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null)
+  const user     = ref(null)
   const userData = ref(null)
-  const token   = ref(localStorage.getItem('token'))
-  const error   = ref(null)
-  const loading = ref(false)
+  const token    = ref(localStorage.getItem('token'))
+  const error    = ref(null)
+  const loading  = ref(false)
 
   const isLoggedIn = computed(() => !!token.value)
 
@@ -20,6 +20,12 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = data.token
       user.value  = data.user
       localStorage.setItem('token', data.token)
+
+      // Cargamos el estado de la recompensa diaria ANTES de navegar
+      // para que HomeView ya tenga `claimed` correcto al montarse
+      const { useRewardsStore } = await import('@/stores/rewards.store')
+      await useRewardsStore().fetchRewards()
+
       router.push('/')
     } catch (e) {
       error.value = e.response?.data?.message ?? 'Error al iniciar sesión'
@@ -36,6 +42,10 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = data.token
       user.value  = data.user
       localStorage.setItem('token', data.token)
+
+      const { useRewardsStore } = await import('@/stores/rewards.store')
+      await useRewardsStore().fetchRewards()
+
       router.push('/')
     } catch (e) {
       error.value = e.response?.data?.message ?? 'Error al registrarse'
@@ -49,12 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
   async function fetchMe() {
     try {
       const { data } = await authService.me()
-      user.value = data
+      user.value     = data
       userData.value = data.userData
     } catch (e) {
       if (e.response?.status === 401) logout()
     } finally {
-      ready.value = true  // ← siempre se marca como listo, falle o no
+      ready.value = true
     }
   }
 
@@ -65,5 +75,5 @@ export const useAuthStore = defineStore('auth', () => {
     router.push('/login-view/')
   }
 
-  return { user,userData, token, isLoggedIn, error, loading, login, register, fetchMe, logout, ready }
+  return { user, userData, token, isLoggedIn, error, loading, ready, login, register, fetchMe, logout }
 })
