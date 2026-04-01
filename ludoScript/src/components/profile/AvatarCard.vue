@@ -5,14 +5,19 @@
     >
         <template #content>
             <div class="relative w-full h-full">
+                <img 
+                    src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/customizable_pj.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvY3VzdG9taXphYmxlX3BqLnBuZyIsImlhdCI6MTc3NTA0Mzg5NywiZXhwIjoxODA2NTc5ODk3fQ._r4u-lZWe5F5YWDsvOxBXYv7_gaqduK7Fwy1ApxIlKM" 
+                    alt="plantilla-pj"
+                    class="relative w-[calc(100%-4px)] h-[calc(100%-96px)] object-contain"
+                >
                 <div
                     v-for="slot in slots" :key="slot.id"
-                    class="border border-gray-50/20 rounded-xl absolute"
-                    :style="{ width: slotSize + 'px', height: slotSize + 'px', ...positions[slot.id] }"
+                    class="rounded-xl absolute border-2 border-white/40"
+                    :style="positions[slot.id]"
                 >
                     <transition name="equip">
                         <img v-if="equipped[slot.id]" :key="equipped[slot.id]?.id"
-                             :src="equipped[slot.id]?.img" class="w-full h-full object-contain">
+                             :src="equipped[slot.id]?.img" class="w-full h-full object-fill">
                     </transition>
                 </div>
             </div>
@@ -29,7 +34,6 @@ defineProps({
     positions: { type: Object, required: true },
     width:     { type: Number, default: 160 },
     height:    { type: Number, default: 256 },
-    slotSize:  { type: Number, default: 64 },
 })
 </script>
 
