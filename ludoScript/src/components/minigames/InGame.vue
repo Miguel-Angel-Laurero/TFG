@@ -1,19 +1,20 @@
 <template>
   <div class="relative w-full h-full">
-    
+
     <!-- Confeti ocupa todo el contenedor padre -->
-    <ConfettiBackground 
-      v-if="gameFinished" 
-      style="position: absolute; inset: 0; z-index: 0; pointer-events: none;" 
+    <ConfettiBackground
+      v-if="gameFinished"
+      style="position: absolute; inset: 0; z-index: 0; pointer-events: none;"
     />
 
     <!-- Contenido encima del confeti -->
     <div style="position: relative; z-index: 1;">
-      
+
       <div class="w-full flex items-center p-4">
         <div class="flex-1 flex justify-start">
           <button
-            @click="handleExit"
+            v-if="!gameFinished"
+            @click="confirmExit"
             class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors"
           >
             Salir del minijuego
@@ -27,10 +28,10 @@
 
       <div class="w-full p-4 flex flex-col items-center">
         <div class="w-full flex justify-center">
-          <component 
-            v-if="selectedGame" 
-            :is="selectedGame" 
-            :key="route.query.game" 
+          <component
+            v-if="selectedGame"
+            :is="selectedGame"
+            :key="route.query.game"
           />
           <div v-else class="text-gray-400 mt-10">
             No se ha encontrado el juego: {{ route.query.game }}
@@ -43,46 +44,29 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import Quiz from './Quiz.vue'
-import FlashCard from './FlashCard.vue'
-import ProgressBar from 'primevue/progressbar'
-import { useGameProgress } from '@/composables/useGameProgress'
-import FixTheBug from './FixTheBug.vue'
-import CodeSorter from './CodeSorter.vue'
-import ConfettiBackground from '../shared/ConfettiBackground.vue'
-
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
+import { computed, watch }      from 'vue'
+import { useRoute }             from 'vue-router'
+import ProgressBar              from 'primevue/progressbar'
+import ConfettiBackground       from '../shared/ConfettiBackground.vue'
+import Quiz                     from './Quiz.vue'
+import FlashCard                from './FlashCard.vue'
+import FixTheBug                from './FixTheBug.vue'
+import CodeSorter               from './CodeSorter.vue'
+import { useGameProgress }      from '@/composables/useGameProgress'
+import { useGameExit }          from '@/composables/useGameExit'
 
 const route = useRoute()
 const { progress, gameFinished, resetProgress } = useGameProgress()
+const { confirmExit } = useGameExit()
 
-// Mapeo de los nombres que vienen en la URL a los componentes importados
 const games = {
-  'Quiz': Quiz,
-  'Flashcards': FlashCard,
-  'FixTheBug': FixTheBug,
-  'CodeSorter': CodeSorter
-}
-const handleExit = () => {
-  //para personalizar estilos no se puede usar confirm hay que hacerlo a mano
-  //revisar el confirm de primevue
-  if (confirm("¿Seguro que quieres salir del minijuego? Se perderá el progreso actual")) {
-    router.push('/')
-  }
+  Quiz,
+  Flashcards: FlashCard,
+  FixTheBug,
+  CodeSorter,
 }
 
-// Computada que reacciona a ?game=...
-const selectedGame = computed(() => {
-  const gameName = route.query.game // Captura "Flashcards" de la URL
-  return games[gameName] || null
-})
+const selectedGame = computed(() => games[route.query.game] ?? null)
 
-// Resetear la barra cada vez que cambie el juego en la URL
-watch(() => route.query.game, () => {
-  resetProgress()
-})
+watch(() => route.query.game, resetProgress)
 </script>

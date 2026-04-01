@@ -1,11 +1,13 @@
 <template>
   <Toast/>
   <RouterView />
+  <ConfirmDialog />
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router'
 import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog'
 
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
