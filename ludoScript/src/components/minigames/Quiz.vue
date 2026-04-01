@@ -5,9 +5,11 @@
     v-else-if="finished"
     title="Resultado final"
     restart-label="Volver a intentarlo"
+    :earned-reward="earnedReward"
+    :rank-label="rankLabel"
+    :rank-color="rankColor"
     @restart="handleRestart"
   >
-    <!-- Slot con el bloque de puntuación, específico del Quiz -->
     <template #extra>
       <div class="grid grid-cols-3 gap-4 text-white">
         <div class="bg-emerald-500/30 rounded-2xl p-4">
@@ -49,29 +51,22 @@
 import { ref, computed, onMounted } from 'vue'
 import { useActivitySession } from '@/composables/useActivitySession'
 import { useQuizStats }       from '@/composables/useQuizStats'
+import { useQuizReward }      from '@/composables/useQuizReward'
 import ActivityLoading        from './ActivityLoading.vue'
 import ActivityFinished       from './ActivityFinished.vue'
 import QuizQuestion           from './QuizQuestion.vue'
 
-// ─── Sesión genérica ─────────────────────────────────────────────────────────
+// ─── Sesión genérica ──────────────────────────────────────────────────────────
 const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,
   load, next, restart,
 } = useActivitySession('/quizQuestions.json')
 
 // ─── Estado específico del Quiz ───────────────────────────────────────────────
-const selectedAnswer = ref(null)   // índice (0-3) elegido por el usuario
-const answered       = ref(false)  // bloquea opciones tras el primer click
-// null = sin responder | true = correcta | false = incorrecta
+const selectedAnswer = ref(null)
+const answered       = ref(false)
 const results        = ref([])
 
-// Inicializar results cuando se carguen las preguntas
-const stopWatch = computed(() => {
-  if (!loading.value && results.value.length === 0) {
-    results.value = new Array(totalItems.value).fill(null)
-  }
-})
-// Forzar evaluación de la computed tras la carga
 onMounted(async () => {
   await load()
   results.value = new Array(totalItems.value).fill(null)
@@ -81,6 +76,15 @@ onMounted(async () => {
 const { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor } =
   useQuizStats(results, totalItems)
 
+// Puntuación real (con penalización) para calcular el rango
+const score = computed(() => {
+  const raw = correctCount.value - wrongCount.value / 3
+  return Math.max(0, raw)
+})
+
+// ─── Recompensa ───────────────────────────────────────────────────────────────
+const { earnedReward, rankLabel, rankColor, grantQuizReward } = useQuizReward()
+
 // ─── Acciones ─────────────────────────────────────────────────────────────────
 function selectAnswer(idx) {
   if (answered.value) return
@@ -89,9 +93,12 @@ function selectAnswer(idx) {
   results.value[currentIndex.value] = idx === currentItem.value.correct
 }
 
-function handleNext() {
+async function handleNext() {
+  // Si es la última pregunta, otorgamos la recompensa antes de mostrar resultados
+  if (isLastItem.value) {
+    await grantQuizReward(score.value, totalItems.value)
+  }
   next(() => {
-    // onReset: limpiar estado local antes de avanzar al siguiente item
     selectedAnswer.value = null
     answered.value       = false
   })

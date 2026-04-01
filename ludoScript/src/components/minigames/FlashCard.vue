@@ -24,11 +24,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useActivitySession } from '@/composables/useActivitySession'
+import { useActivityReward }  from '@/composables/useActivityReward' 
 import ActivityLoading        from './ActivityLoading.vue'
 import ActivityFinished       from './ActivityFinished.vue'
 import FlashCardDeck          from './FlashCardDeck.vue'
 
-// ─── Sesión genérica ─────────────────────────────────────────────────────────
 const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,
   load, next, restart,
@@ -36,17 +36,19 @@ const {
 
 onMounted(load)
 
-// ─── Estado específico de FlashCard ──────────────────────────────────────────
+const { earnedReward, grantReward } = useActivityReward({ base: 25 })
+
 const isFlipped = ref(false)
 
-// ─── Acciones ─────────────────────────────────────────────────────────────────
 function toggleFlip() {
   isFlipped.value = !isFlipped.value
 }
 
-function handleNext() {
+async function handleNext() {        // 👈 async
+  if (isLastItem.value) {
+    await grantReward()              // 👈 otorga la recompensa en el último item
+  }
   next(() => {
-    // onReset: volver a mostrar el frente al cambiar de carta
     isFlipped.value = false
   })
 }
