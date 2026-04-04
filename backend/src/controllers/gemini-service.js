@@ -7,6 +7,103 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Selecciona el modelo a usar (gemini-2.5-flash: rápido y gratuito)
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+// Helper mínimo para comprobar que Gemini no ha devuelto strings vacíos o nulos.
+function isNonEmptyString(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+// Valida una pregunta de quiz individual antes de guardarla en la BD.
+// Si algún campo clave viene mal, lanzamos error para evitar persistir datos rotos.
+function validateQuizQuestion(question, index) {
+  if (typeof question !== "object" || question === null) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: quizQuestions[${index}] no es un objeto válido.`,
+    );
+  }
+
+  if (!isNonEmptyString(question.question)) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: quizQuestions[${index}].question es obligatorio.`,
+    );
+  }
+
+  if (!Array.isArray(question.options) || question.options.length !== 4) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: quizQuestions[${index}].options debe tener exactamente 4 opciones.`,
+    );
+  }
+
+  if (!question.options.every(isNonEmptyString)) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: quizQuestions[${index}].options contiene valores no válidos.`,
+    );
+  }
+
+  if (
+    !Number.isInteger(question.correct) ||
+    question.correct < 0 ||
+    question.correct > 3
+  ) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: quizQuestions[${index}].correct debe ser un entero entre 0 y 3.`,
+    );
+  }
+}
+
+// Valida una flashcard individual: ambas partes deben existir y tener texto.
+function validateFlashCard(card, index) {
+  if (typeof card !== "object" || card === null) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: flashCards[${index}] no es un objeto válido.`,
+    );
+  }
+
+  if (!isNonEmptyString(card.question)) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: flashCards[${index}].question es obligatorio.`,
+    );
+  }
+
+  if (!isNonEmptyString(card.answer)) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: flashCards[${index}].answer es obligatorio.`,
+    );
+  }
+}
+
+// Valida el bloque completo generado por Gemini.
+// Aquí comprobamos tanto la estructura general como el contenido de cada elemento.
+function validateGeneratedGameContent(parsed) {
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    !Array.isArray(parsed.quizQuestions) ||
+    !Array.isArray(parsed.flashCards)
+  ) {
+    throw new Error(
+      "Gemini no devolvió el formato esperado: faltan 'quizQuestions' o 'flashCards' como arrays.",
+    );
+  }
+
+  // El prompt exige exactamente 10 preguntas y 10 flashcards;
+  // lo validamos aquí para detectar respuestas parciales del modelo.
+  if (parsed.quizQuestions.length !== 10) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: se esperaban 10 quizQuestions y llegaron ${parsed.quizQuestions.length}.`,
+    );
+  }
+
+  if (parsed.flashCards.length !== 10) {
+    throw new Error(
+      `Gemini no devolvió el formato esperado: se esperaban 10 flashCards y llegaron ${parsed.flashCards.length}.`,
+    );
+  }
+
+  // Si la estructura general es correcta, validamos elemento por elemento.
+  parsed.quizQuestions.forEach(validateQuizQuestion);
+  parsed.flashCards.forEach(validateFlashCard);
+}
+
 /**
  * Envía un archivo (buffer) junto a un prompt a Gemini y devuelve JSON parseado.
  * @param {Buffer} fileBuffer  - Contenido del archivo
@@ -106,15 +203,8 @@ Reglas obligatorias:
   const parsed = JSON.parse(clean);
 
   // Validación extra: asegura que la respuesta tiene la forma esperada antes de
-  // guardarla en la BD, evitando datos corruptos en caso de respuesta parcial
-  if (
-    !Array.isArray(parsed.quizQuestions) ||
-    !Array.isArray(parsed.flashCards)
-  ) {
-    throw new Error(
-      "Gemini no devolvió el formato esperado: faltan 'quizQuestions' o 'flashCards' como arrays.",
-    );
-  }
+  // guardarla en la BD, evitando datos corruptos en caso de respuesta parcial.
+  validateGeneratedGameContent(parsed);
 
   return {
     quizQuestions: parsed.quizQuestions,
