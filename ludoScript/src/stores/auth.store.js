@@ -10,16 +10,23 @@ export const useAuthStore = defineStore('auth', () => {
   const error    = ref(null)
   const loading  = ref(false)
 
-  const isLoggedIn = computed(() => !!token.value)
+  const hasToken   = computed(() => !!token.value)
+  const isLoggedIn = computed(() => !!token.value && !!user.value)
 
   async function login(credentials) {
     loading.value = true
     error.value   = null
+    ready.value   = false
     try {
       const { data } = await authService.login(credentials)
       token.value = data.token
       user.value  = data.user
       localStorage.setItem('token', data.token)
+
+      // Tras un login en una app ya montada, App.vue no vuelve a ejecutarse.
+      // Forzamos aquí la carga completa del usuario para tener userData lista
+      // antes de navegar a vistas que dependen de progreso, monedas, etc.
+      await fetchMe()
 
       // Cargamos el estado de la recompensa diaria ANTES de navegar
       // para que HomeView ya tenga `claimed` correcto al montarse
@@ -37,11 +44,14 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(credentials) {
     loading.value = true
     error.value   = null
+    ready.value   = false
     try {
       const { data } = await authService.register(credentials)
       token.value = data.token
       user.value  = data.user
       localStorage.setItem('token', data.token)
+
+      await fetchMe()
 
       const { useRewardsStore } = await import('@/stores/rewards.store')
       await useRewardsStore().fetchRewards()
@@ -70,10 +80,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   function logout() {
     user.value  = null
+    userData.value = null
     token.value = null
+    ready.value = true
     localStorage.removeItem('token')
     router.push('/login-view/')
   }
 
-  return { user, userData, token, isLoggedIn, error, loading, ready, login, register, fetchMe, logout }
+  return { user, userData, token, hasToken, isLoggedIn, error, loading, ready, login, register, fetchMe, logout }
 })

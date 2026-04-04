@@ -15,7 +15,7 @@ import { useAuthStore } from '@/stores/auth.store'
 const auth = useAuthStore()
 
 onMounted(async () => {
-  if (auth.isLoggedIn) {
+  if (auth.hasToken) {
     await auth.fetchMe()
   } else {
     auth.ready = true  // si no hay token, marcar como listo igualmente

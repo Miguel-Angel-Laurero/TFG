@@ -1,12 +1,12 @@
 <template> 
     <div class="flex items-center">
-        <template v-if="!auth.isLoggedIn">
+        <template v-if="auth.ready && !auth.isLoggedIn">
             <RouterLink to="/login-view" class="border-2 border-yellow-400 text-yellow-400 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 hover:text-black transition-colors">
                 Iniciar sesión
             </RouterLink>
         </template>
 
-        <template v-else>
+        <template v-else-if="auth.ready && auth.isLoggedIn">
             <Menu ref="menu" :model="items" :popup="true" />
             <RouterLink v-if="!isInShop" to="/shop-view/" class="flex items-center gap-3 bg-white/5 border border-yellow-400/30 text-yellow-400 font-righteous text-xl px-6 py-3 rounded-xl hover:bg-yellow-400/10 transition-colors w-full justify-center">
                 🛒 Tienda
