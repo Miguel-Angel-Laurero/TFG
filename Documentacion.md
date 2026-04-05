@@ -86,3 +86,60 @@ No ha sido necesario cambiar el modelo ni crear una tabla nueva. La tabla actual
 no se guarda el PDF original
 solo se guarda el contenido útil generado por la IA
 ahora ese contenido se guarda con validación previa
+
+---
+
+Mapa de progreso por categoría (heatmap)
+
+Se ha añadido un sistema de seguimiento del conocimiento del usuario por área temática del Quiz, con visualización en forma de mapa de calor en el perfil.
+
+Objetivo
+
+Categorizar las preguntas del Quiz por asignatura técnica y registrar los aciertos/errores del usuario por categoría. El perfil muestra un mapa de calor (verde → rojo) para que el usuario identifique de un vistazo sus puntos fuertes y sus áreas de mejora.
+
+Categorías definidas
+
+Las preguntas de quizQuestions.json se han ampliado con un campo "category". Las categorías actuales son:
+
+tipos-coercion — Tipos y Coerción
+arrays-metodos — Arrays y Métodos
+scope-variables — Scope y Variables
+asincronia — Asincronía
+funciones — Funciones
+sintaxis-es6 — Sintaxis ES6+
+objetos — Objetos
+
+Archivos creados
+
+Backend:
+- backend/src/models/CategoryStat.model.js — Modelo Sequelize para la tabla category_stats. Almacena (userId, category) con índice único y acumula correct/total por fila.
+- backend/src/controllers/categoryStats.controller.js — GET devuelve los stats del usuario autenticado; POST /batch hace upsert incremental validando cada entrada individualmente.
+- backend/src/routes/categoryStats.routes.js — Monta las dos rutas bajo authMiddleware.
+
+Frontend:
+- ludoScript/src/api/categoryStats.service.js — Capa HTTP: getAll() y submitBatch(entries).
+- ludoScript/src/composables/useCategoryStats.js — Lógica de sesión: trackAnswer(category, isCorrect) acumula en memoria; submitSession() envía el batch al finalizar; resetSession() limpia al reiniciar.
+- ludoScript/src/components/profile/CategoryHeatMap.vue — Componente visual: cuadrícula de 7 tarjetas coloreadas según el porcentaje de acierto (≥90% verde esmeralda, 70–89% amarillo, 50–69% naranja, <50% rojo). Muestra estado vacío hasta que el usuario complete el Quiz por primera vez.
+
+Archivos modificados
+
+- ludoScript/public/quizQuestions.json — Campo "category" añadido a cada una de las 15 preguntas existentes.
+- backend/src/models/index.js — Importa CategoryStat, declara User hasMany CategoryStat con onDelete CASCADE y lo exporta.
+- backend/src/routes/index.js — Registra /api/category-stats.
+- ludoScript/src/components/minigames/Quiz.vue — Importa useCategoryStats; llama trackAnswer en cada respuesta, submitSession al terminar y resetSession al reiniciar.
+- ludoScript/src/components/profile/Profile.vue — Inserta <CategoryHeatMap /> entre UserStats y PdfManager.
+
+Cómo funciona el flujo
+
+1. El usuario responde una pregunta del Quiz.
+2. selectAnswer llama a trackAnswer(category, isCorrect), que acumula los contadores en memoria (sessionStats).
+3. Al responder la última pregunta, handleNext llama primero a submitSession(), que envía el batch al endpoint POST /api/category-stats/batch.
+4. El backend hace findOrCreate por (userId, category) e incrementa correct y total de forma acumulativa.
+5. Al abrir el perfil, CategoryHeatMap.vue llama a GET /api/category-stats y renderiza la cuadrícula con el color correspondiente a cada área.
+
+Notas de diseño
+
+- Las preguntas generadas desde PDF no tienen campo category, por lo que trackAnswer las ignora automáticamente (comprueba que category sea truthy).
+- submitSession no lanza excepción aunque el backend falle, para no interrumpir el flujo de recompensas.
+- La tabla se crea automáticamente al arrancar el servidor gracias a sync({ alter: true }) en desarrollo.
+- No se ha modificado ningún modelo existente ni ninguna tabla preexistente.

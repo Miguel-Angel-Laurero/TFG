@@ -11,6 +11,9 @@ router.use(authMiddleware);
 // GET /api/games/my  (partidas del usuario autenticado)
 router.get("/my", gameController.getMine);
 
+// GET /api/games/weekly  (actividad semanal del usuario autenticado)
+router.get("/weekly", gameController.getWeekly);
+
 // GET /api/games/:id
 router.get("/:id", gameController.getById);
 

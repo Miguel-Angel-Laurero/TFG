@@ -2,7 +2,13 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Inicializa el cliente con la API key guardada en las variables de entorno
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  throw new Error("Falta la variable de entorno GEMINI_API_KEY.");
+}
+
+const genAI = new GoogleGenerativeAI(apiKey);
 
 // Selecciona el modelo a usar (gemini-2.5-flash: rápido y gratuito)
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -126,15 +132,25 @@ async function processFileWithGemini(fileBuffer, mimeType, userPrompt = "") {
 
   // Manda a Gemini tanto el texto del prompt como el archivo en base64 (inlineData)
   // Gemini soporta PDFs, imágenes, texto plano, etc.
-  const result = await model.generateContent([
-    { text: finalPrompt },
-    {
-      inlineData: {
-        mimeType, // Le dice a Gemini qué tipo de archivo es
-        data: base64Data, // El contenido del archivo codificado en base64
-      },
+  const result = await model.generateContent({
+    generationConfig: {
+      responseMimeType: "application/json",
     },
-  ]);
+    contents: [
+      { role: "user", parts: [{ text: finalPrompt }] },
+      {
+        role: "user",
+        parts: [
+          {
+            inlineData: {
+              mimeType, // Le dice a Gemini qué tipo de archivo es
+              data: base64Data, // El contenido del archivo codificado en base64
+            },
+          },
+        ],
+      },
+    ],
+  });
 
   // Obtiene el texto crudo de la respuesta y elimina espacios sobrantes
   const raw = result.response.text().trim();
@@ -185,15 +201,25 @@ Reglas obligatorias:
 - Genera exactamente 10 elementos en cada array`;
 
   // Envía el prompt y el PDF a Gemini en una sola llamada
-  const result = await model.generateContent([
-    { text: prompt },
-    {
-      inlineData: {
-        mimeType, // Indica a Gemini que el archivo adjunto es un PDF
-        data: base64Data,
-      },
+  const result = await model.generateContent({
+    generationConfig: {
+      responseMimeType: "application/json",
     },
-  ]);
+    contents: [
+      { role: "user", parts: [{ text: prompt }] },
+      {
+        role: "user",
+        parts: [
+          {
+            inlineData: {
+              mimeType, // Indica a Gemini que el archivo adjunto es un PDF
+              data: base64Data,
+            },
+          },
+        ],
+      },
+    ],
+  });
 
   // Obtiene el texto crudo y elimina posibles bloques de código markdown
   const raw = result.response.text().trim();

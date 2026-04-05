@@ -7,5 +7,7 @@ router.use("/rewards", require("./rewards.routes"));
 router.use("/upload", require("./upload.routes"));
 // Rutas para la gestión de PDFs subidos por los usuarios
 router.use("/pdfs", require("./pdf.routes"));
+// Estadísticas por categoría temática del Quiz
+router.use("/category-stats", require("./categoryStats.routes"));
 
 module.exports = router;

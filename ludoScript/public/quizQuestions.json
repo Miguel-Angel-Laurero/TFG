@@ -1,6 +1,7 @@
 [
   {
     "id": 1,
+    "category": "tipos-coercion",
     "question": "¿Qué diferencia hay entre `==` y `===` en JavaScript?",
     "options": [
       "No hay diferencia, son equivalentes",
@@ -8,16 +9,20 @@
       "`==` es más estricto que `===`",
       "`===` solo funciona con números"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "`===` es la igualdad estricta: compara valor Y tipo sin ninguna conversión. `==` aplica coerción de tipos antes de comparar, por lo que `'1' == 1` devuelve `true` aunque uno es string y el otro número. Usa siempre `===` para evitar comportamientos inesperados."
   },
   {
     "id": 2,
+    "category": "tipos-coercion",
     "question": "¿Cuál es el resultado de `typeof null` en JavaScript?",
     "options": ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""],
-    "correct": 2
+    "correct": 2,
+    "explanation": "Es un bug histórico de JavaScript que nunca se corrigió por compatibilidad. `typeof null` devuelve `'object'`, aunque `null` no es un objeto. Para comprobar si algo es `null` usa `valor === null`."
   },
   {
     "id": 3,
+    "category": "arrays-metodos",
     "question": "¿Qué hace el método `Array.prototype.map()`?",
     "options": [
       "Filtra los elementos de un array según una condición",
@@ -25,10 +30,12 @@
       "Crea un nuevo array transformando cada elemento con una función",
       "Busca el índice de un elemento en el array"
     ],
-    "correct": 2
+    "correct": 2,
+    "explanation": "`map()` itera sobre cada elemento, aplica la función que le pasas y devuelve un **nuevo array** del mismo tamaño con los resultados transformados. No modifica el array original. Para filtrar usa `filter()`, para acumular usa `reduce()`."
   },
   {
     "id": 4,
+    "category": "scope-variables",
     "question": "¿Qué es el hoisting en JavaScript?",
     "options": [
       "Un método para ordenar arrays",
@@ -36,10 +43,12 @@
       "Una forma de heredar propiedades entre objetos",
       "El proceso de convertir tipos de datos automáticamente"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "El motor de JS procesa las declaraciones en dos fases: primero las registra (hoisting) y luego las ejecuta. Las declaraciones con `var` y `function` se elevan con su valor, pero `let` y `const` quedan en la 'temporal dead zone' hasta su línea de declaración."
   },
   {
     "id": 5,
+    "category": "funciones",
     "question": "¿Cuál de estas opciones declara correctamente una función flecha?",
     "options": [
       "function => (x) { return x * 2 }",
@@ -47,16 +56,20 @@
       "const doble = (x) => x * 2",
       "arrow doble(x) { return x * 2 }"
     ],
-    "correct": 2
+    "correct": 2,
+    "explanation": "La sintaxis de función flecha es `(parámetros) => expresión` o `(parámetros) => { cuerpo }`. Si solo hay un parámetro puedes omitir los paréntesis: `x => x * 2`. Si el cuerpo es una expresión directa, se omiten las llaves y el `return` es implícito."
   },
   {
     "id": 6,
+    "category": "arrays-metodos",
     "question": "¿Qué devuelve `[1, 2, 3].find(x => x > 1)`?",
     "options": ["[2, 3]", "2", "true", "1"],
-    "correct": 1
+    "correct": 1,
+    "explanation": "`find()` devuelve el **primer elemento** que cumple la condición, no todos. Para obtener todos los que cumplan la condición usa `filter()`. Si ningún elemento cumple la condición, `find()` devuelve `undefined`."
   },
   {
     "id": 7,
+    "category": "scope-variables",
     "question": "¿Cuál es la diferencia entre `let` y `var`?",
     "options": [
       "`let` tiene ámbito de bloque, `var` tiene ámbito de función",
@@ -64,10 +77,12 @@
       "No hay diferencia funcional entre ambos",
       "`let` no permite reasignación de valor"
     ],
-    "correct": 0
+    "correct": 0,
+    "explanation": "`let` tiene **ámbito de bloque** (entre llaves `{}`): no es accesible fuera del bloque donde se declaró. `var` tiene **ámbito de función**: es accesible en toda la función aunque se declare dentro de un `if` o `for`. Usa `let` y `const` en ES6+."
   },
   {
     "id": 8,
+    "category": "asincronia",
     "question": "¿Qué es una Promesa (Promise) en JavaScript?",
     "options": [
       "Un tipo de bucle para operaciones asíncronas",
@@ -75,10 +90,12 @@
       "Una función que siempre devuelve un valor inmediatamente",
       "Un método para sincronizar múltiples funciones"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "Una Promise es un objeto que representa una operación cuyo resultado todavía no está disponible. Puede estar pendiente (`pending`), resuelta con éxito (`fulfilled`) o rechazada (`rejected`). Se encadena con `.then()` / `.catch()` o se consume con `await`."
   },
   {
     "id": 9,
+    "category": "sintaxis-es6",
     "question": "¿Qué hace el operador spread (`...`) en este código: `const b = [...a, 4]`?",
     "options": [
       "Modifica el array `a` añadiendo el 4 al final",
@@ -86,16 +103,20 @@
       "Concatena `a` con el número 4 como string",
       "Lanza un error si `a` no es iterable"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "El operador spread `...` expande los elementos de un iterable en el lugar donde se usa. `[...a, 4]` crea un **nuevo array** (no modifica `a`) que contiene todos los elementos de `a` seguidos del valor `4`. También se puede usar en objetos: `{ ...obj, clave: valor }`."
   },
   {
     "id": 10,
+    "category": "tipos-coercion",
     "question": "¿Cuál es el resultado de `Boolean('')`?",
     "options": ["true", "undefined", "null", "false"],
-    "correct": 3
+    "correct": 3,
+    "explanation": "En JavaScript los valores **falsy** son: `false`, `0`, `''` (string vacío), `null`, `undefined` y `NaN`. Todos los demás son **truthy**. La cadena vacía `''` es falsy, por lo que `Boolean('')` devuelve `false`."
   },
   {
     "id": 11,
+    "category": "arrays-metodos",
     "question": "¿Qué método se usa para añadir un elemento al final de un array?",
     "options": [
       "array.append()",
@@ -103,10 +124,12 @@
       "array.add()",
       "array.insert()"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "`push()` añade uno o más elementos al **final** del array y devuelve el nuevo tamaño. Para añadir al principio usa `unshift()`. Para eliminar el último elemento usa `pop()`, y para eliminar el primero usa `shift()`. `append()`, `add()` e `insert()` no existen en arrays nativos de JS."
   },
   {
     "id": 12,
+    "category": "scope-variables",
     "question": "¿Qué es el closure en JavaScript?",
     "options": [
       "Un método para cerrar la conexión con el servidor",
@@ -114,10 +137,12 @@
       "Un bloque try/catch para manejar errores",
       "Una clase abstracta que no puede instanciarse"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "Un closure es una función que 'cierra sobre' las variables de su ámbito léxico exterior, manteniéndolas vivas incluso cuando la función externa ya ha retornado. Ejemplo: un contador con `let count = 0` dentro de una función que devuelve otra función que incrementa `count`."
   },
   {
     "id": 13,
+    "category": "objetos",
     "question": "¿Qué devuelve `Object.keys({ a: 1, b: 2, c: 3 })`?",
     "options": [
       "[1, 2, 3]",
@@ -125,10 +150,12 @@
       "[\"a\", \"b\", \"c\"]",
       "3"
     ],
-    "correct": 2
+    "correct": 2,
+    "explanation": "`Object.keys()` devuelve un **array con las claves** (nombres de propiedad) propias y enumerables del objeto. Para obtener los valores usa `Object.values()`, y para pares `[clave, valor]` usa `Object.entries()`."
   },
   {
     "id": 14,
+    "category": "asincronia",
     "question": "¿Qué significa `async/await` en JavaScript?",
     "options": [
       "Son palabras clave para declarar variables asíncronas",
@@ -136,12 +163,15 @@
       "Crean hilos de ejecución paralelos",
       "Son una alternativa a los bucles for para iterar arrays"
     ],
-    "correct": 1
+    "correct": 1,
+    "explanation": "`async` marca una función como asíncrona (siempre devuelve una Promise). Dentro de ella, `await` pausa la ejecución hasta que la Promise se resuelva, permitiendo escribir código asíncrono con apariencia síncrona. JavaScript es single-thread; `async/await` no crea hilos paralelos."
   },
   {
     "id": 15,
+    "category": "tipos-coercion",
     "question": "¿Cuál es el resultado de `console.log(0.1 + 0.2 === 0.3)` en JavaScript?",
     "options": ["true", "undefined", "false", "NaN"],
-    "correct": 2
+    "correct": 2,
+    "explanation": "`0.1 + 0.2` en JavaScript da `0.30000000000000004` por la representación en punto flotante IEEE 754. Para comparar números decimales, usa un margen de tolerancia: `Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON`."
   }
 ]

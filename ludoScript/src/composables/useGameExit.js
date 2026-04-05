@@ -8,24 +8,25 @@
 //
 // Requisito: <ConfirmDialog /> debe estar montado en un ancestro (App.vue).
 // ─────────────────────────────────────────────────────────────────────────────
-import { useConfirm } from 'primevue/useconfirm'
-import { useRouter }  from 'vue-router'
+import { useConfirm } from "primevue/useconfirm";
+import { useRouter } from "vue-router";
 
 export function useGameExit() {
-  const confirm = useConfirm()
-  const router  = useRouter()
+  const confirm = useConfirm();
+  const router = useRouter();
 
   function confirmExit() {
     confirm.require({
-      message:      '¿Seguro que quieres salir? Se perderá el progreso actual.',
-      header:       'Salir del minijuego',
-      icon:         'pi pi-exclamation-triangle',
-      rejectLabel:  'Cancelar',
-      acceptLabel:  'Salir',
-      acceptClass:  'p-button-danger',
-      accept: () => router.push('/'),
-    })
+      message: "¿Seguro que quieres salir? Se perderá el progreso actual.",
+      header: "Salir del minijuego",
+      icon: "pi pi-exclamation-triangle",
+      rejectLabel: "Cancelar",
+      acceptLabel: "Salir",
+      rejectClass: "p-button-secondary",
+      acceptClass: "p-button-text p-button-indigo",
+      accept: () => router.push("/"),
+    });
   }
 
-  return { confirmExit }
+  return { confirmExit };
 }

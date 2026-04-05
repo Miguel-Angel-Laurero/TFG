@@ -17,18 +17,14 @@
         </p>
       </div>
 
-      <button
-        @click="emit('restart')"
-        class="bg-white text-gray-800 font-bold py-3 px-8 rounded-xl hover:bg-gray-100 transition-all"
-      >
+      <button @click="emit('restart')"
+        class="bg-white text-gray-800 font-bold py-3 px-8 rounded-xl hover:bg-gray-100 transition-all">
         {{ restartLabel }}
       </button>
 
-      <button
-        @click="confirmExit"
-        class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors"
-      >
-        Salir del minijuego
+      <button @click="$router.push('/')"
+        class="font-bold py-3 px-8 rounded-xl transition-all text-blue-300 bg-blue-900/40 border border-blue-700/50 hover:bg-blue-800/50">
+        Volver al inicio
       </button>
 
     </div>
@@ -36,17 +32,17 @@
 </template>
 
 <script setup>
-import { useGameExit } from '@/composables/useGameExit'
+import { useRouter } from 'vue-router'
 
 defineProps({
-  title:        { type: String, default: '¡Actividad completada!' },
-  message:      { type: String, default: '' },
+  title: { type: String, default: '¡Actividad completada!' },
+  message: { type: String, default: '' },
   restartLabel: { type: String, default: 'Volver a intentarlo' },
-  earnedReward: { type: Number, default: 0   },
-  rankLabel:    { type: String, default: null },
-  rankColor:    { type: String, default: null },
+  earnedReward: { type: Number, default: 0 },
+  rankLabel: { type: String, default: null },
+  rankColor: { type: String, default: null },
 })
 
 const emit = defineEmits(['restart'])
-const { confirmExit } = useGameExit()
+const $router = useRouter()
 </script>

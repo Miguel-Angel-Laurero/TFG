@@ -1,15 +1,8 @@
 <template>
   <ActivityLoading v-if="loading" />
 
-  <ActivityFinished
-    v-else-if="finished"
-    title="Resultado final"
-    restart-label="Volver a intentarlo"
-    :earned-reward="earnedReward"
-    :rank-label="rankLabel"
-    :rank-color="rankColor"
-    @restart="handleRestart"
-  >
+  <ActivityFinished v-else-if="finished" title="Resultado final" restart-label="Volver a intentarlo"
+    :earned-reward="earnedReward" :rank-label="rankLabel" :rank-color="rankColor" @restart="handleRestart">
     <template #extra>
       <div class="grid grid-cols-3 gap-4 text-white">
         <div class="bg-emerald-500/30 rounded-2xl p-4">
@@ -34,28 +27,21 @@
     </template>
   </ActivityFinished>
 
-  <QuizQuestion
-    v-else
-    :question="currentItem"
-    :current-index="currentIndex"
-    :total-items="totalItems"
-    :selected-answer="selectedAnswer"
-    :answered="answered"
-    :is-last-item="isLastItem"
-    @select="selectAnswer"
-    @next="handleNext"
-  />
+  <QuizQuestion v-else :question="currentItem" :current-index="currentIndex" :total-items="totalItems"
+    :selected-answer="selectedAnswer" :answered="answered" :is-last-item="isLastItem" @select="selectAnswer"
+    @next="handleNext" />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute }            from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useActivitySession } from '@/composables/useActivitySession'
-import { useQuizStats }       from '@/composables/useQuizStats'
-import { useQuizReward }      from '@/composables/useQuizReward'
-import ActivityLoading        from './ActivityLoading.vue'
-import ActivityFinished       from './ActivityFinished.vue'
-import QuizQuestion           from './QuizQuestion.vue'
+import { useQuizStats } from '@/composables/useQuizStats'
+import { useQuizReward } from '@/composables/useQuizReward'
+import { useCategoryStats } from '@/composables/useCategoryStats'
+import ActivityLoading from './ActivityLoading.vue'
+import ActivityFinished from './ActivityFinished.vue'
+import QuizQuestion from './QuizQuestion.vue'
 
 const route = useRoute()
 
@@ -73,8 +59,8 @@ const {
 
 // ─── Estado específico del Quiz ───────────────────────────────────────────────
 const selectedAnswer = ref(null)
-const answered       = ref(false)
-const results        = ref([])
+const answered = ref(false)
+const results = ref([])
 
 onMounted(async () => {
   await load()
@@ -94,30 +80,38 @@ const score = computed(() => {
 // ─── Recompensa ───────────────────────────────────────────────────────────────
 const { earnedReward, rankLabel, rankColor, grantQuizReward } = useQuizReward()
 
+// ─── Estadísticas por categoría ───────────────────────────────────────────────
+const { trackAnswer, submitSession, resetSession } = useCategoryStats()
+
 // ─── Acciones ─────────────────────────────────────────────────────────────────
 function selectAnswer(idx) {
   if (answered.value) return
-  selectedAnswer.value              = idx
-  answered.value                    = true
-  results.value[currentIndex.value] = idx === currentItem.value.correct
+  selectedAnswer.value = idx
+  answered.value = true
+  const isCorrect = idx === currentItem.value.correct
+  results.value[currentIndex.value] = isCorrect
+  // Registra el resultado en la categoría de la pregunta actual
+  trackAnswer(currentItem.value.category, isCorrect, currentItem.value.id)
 }
 
 async function handleNext() {
-  // Si es la última pregunta, otorgamos la recompensa antes de mostrar resultados
+  // Si es la última pregunta, enviamos los stats por categoría y la recompensa
   if (isLastItem.value) {
+    await submitSession()
     await grantQuizReward(score.value, totalItems.value)
   }
   next(() => {
     selectedAnswer.value = null
-    answered.value       = false
+    answered.value = false
   })
 }
 
 function handleRestart() {
+  resetSession()
   restart(() => {
     selectedAnswer.value = null
-    answered.value       = false
-    results.value        = new Array(totalItems.value).fill(null)
+    answered.value = false
+    results.value = new Array(totalItems.value).fill(null)
   })
 }
 </script>

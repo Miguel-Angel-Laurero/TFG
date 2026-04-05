@@ -7,8 +7,32 @@
 }
 
 body {
-  background-color: #1e1b4b;
+  background-color: #0f172a;
+  /* slate-900 — azul oscuro */
   margin: 0;
+}
+
+/* ConfirmDialog custom button styles */
+.p-button-indigo {
+  color: #818cf8 !important;
+  /* indigo-400 — matches "Empezar →" */
+  background: rgba(99, 102, 241, 0.15) !important;
+  border: 1px solid rgba(99, 102, 241, 0.35) !important;
+}
+
+.p-button-indigo:hover {
+  background: rgba(99, 102, 241, 0.28) !important;
+}
+
+.p-button-secondary {
+  color: #9ca3af !important;
+  /* gray-400 */
+  background: rgba(156, 163, 175, 0.1) !important;
+  border: 1px solid rgba(156, 163, 175, 0.25) !important;
+}
+
+.p-button-secondary:hover {
+  background: rgba(156, 163, 175, 0.2) !important;
 }
 
 .slot-container {
@@ -25,6 +49,5 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
 }
-

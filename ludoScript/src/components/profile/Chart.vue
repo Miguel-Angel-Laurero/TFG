@@ -1,4 +1,3 @@
-
 <template>
     <div class="w-full h-full">
         <Chart type="line" :data="chartData" :options="chartOptions" />
@@ -8,16 +7,28 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import Chart from 'primevue/chart';
-
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
+import { gameService } from '@/api/game.service';
 
 const chartData = ref();
 const chartOptions = ref();
 
-const setChartData = () => {
+onMounted(async () => {
+    let counts = [0, 0, 0, 0, 0, 0, 0];
+    let scores = [0, 0, 0, 0, 0, 0, 0];
+
+    try {
+        const { data } = await gameService.getWeekly();
+        counts = data.counts;
+        scores = data.scores;
+    } catch (_) {
+        // Si falla la petición se muestra el gráfico vacío
+    }
+
+    chartData.value = setChartData(counts, scores);
+    chartOptions.value = setChartOptions();
+});
+
+const setChartData = (counts, scores) => {
     const documentStyle = getComputedStyle(document.documentElement);
 
     return {
@@ -27,13 +38,13 @@ const setChartData = () => {
                 label: 'Tests completados',
                 backgroundColor: documentStyle.getPropertyValue('--p-cyan-500') || '#06b6d4',
                 borderColor: documentStyle.getPropertyValue('--p-cyan-500') || '#06b6d4',
-                data: [5, 8, 6, 9, 7, 4, 6]
+                data: counts
             },
             {
                 label: 'Puntos XP ganados',
                 backgroundColor: documentStyle.getPropertyValue('--p-purple-500') || '#a855f7',
                 borderColor: documentStyle.getPropertyValue('--p-purple-500') || '#a855f7',
-                data: [150, 240, 180, 270, 210, 120, 180]
+                data: scores
             }
         ]
     };
@@ -60,14 +71,14 @@ const setChartOptions = () => {
             },
             tooltip: {
                 callbacks: {
-                    label: function(context) {
+                    label: function (context) {
                         let label = context.dataset.label || '';
                         if (label) {
                             label += ': ';
                         }
                         if (context.parsed.y !== null) {
-                            label += context.dataset.label.includes('XP') 
-                                ? context.parsed.y + ' puntos' 
+                            label += context.dataset.label.includes('XP')
+                                ? context.parsed.y + ' puntos'
                                 : context.parsed.y + ' tests';
                         }
                         return label;

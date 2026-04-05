@@ -11,9 +11,10 @@ const upload = multer({
 
 // POST /api/upload
 // Recibe un archivo (campo "file") y un prompt opcional (campo "prompt") como FormData
-router.post("/", upload.single("file"), async (req, res) => {
+router.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
     // Si no se adjuntó ningún archivo, devuelve error 400
+    console.log("Procediendo a la subida del archivo");
     if (!req.file) {
       return res
         .status(400)

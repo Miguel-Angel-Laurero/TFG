@@ -6,6 +6,8 @@ const ItemsUser = require("./ItemsUser.model");
 const Item = require("./Item.model");
 // Modelo para los PDFs subidos por usuarios y el contenido generado por Gemini
 const UserPdf = require("./UserPdf.model");
+// Modelo para el seguimiento de estadísticas por categoría temática del Quiz
+const CategoryStat = require("./CategoryStat.model");
 
 // ── Asociaciones ────────────────────────────────────────────────────────────
 User.hasMany(Game, { foreignKey: "userId", as: "games", onDelete: "CASCADE" });
@@ -28,4 +30,21 @@ User.hasMany(UserPdf, {
 });
 UserPdf.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-module.exports = { sequelize, User, Game, UserData, ItemsUser, Item, UserPdf };
+// Un usuario acumula estadísticas por categoría; al eliminarlo se borran sus stats
+User.hasMany(CategoryStat, {
+  foreignKey: "userId",
+  as: "categoryStats",
+  onDelete: "CASCADE",
+});
+CategoryStat.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+module.exports = {
+  sequelize,
+  User,
+  Game,
+  UserData,
+  ItemsUser,
+  Item,
+  UserPdf,
+  CategoryStat,
+};
