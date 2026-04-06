@@ -1,4 +1,8 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleAIFileManager } = require("@google/generative-ai/server");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) throw new Error("Falta la variable de entorno GEMINI_API_KEY.");
@@ -6,6 +10,8 @@ if (!apiKey) throw new Error("Falta la variable de entorno GEMINI_API_KEY.");
 const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
   model: "gemini-2.5-flash",
 });
+
+const fileManager = new GoogleAIFileManager(apiKey);
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -53,24 +59,55 @@ function validateGameContent(parsed) {
   });
 }
 
-// Llama a Gemini con un prompt de texto y, opcionalmente, un archivo en base64.
-// Devuelve el JSON parseado de la respuesta.
+// Sube un buffer a la Gemini Files API y devuelve el objeto file resultante.
+// Escribe el buffer en un fichero temporal, lo sube y elimina el temporal.
+async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
+  const tempPath = path.join(
+    os.tmpdir(),
+    `gemini-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
+  fs.writeFileSync(tempPath, fileBuffer);
+  try {
+    const { file } = await fileManager.uploadFile(tempPath, {
+      mimeType,
+      displayName: `upload-${Date.now()}`,
+    });
+    return file;
+  } finally {
+    fs.unlinkSync(tempPath);
+  }
+}
+
+// Llama a Gemini con un prompt de texto y, opcionalmente, un archivo subido
+// mediante la Files API. Devuelve el JSON parseado de la respuesta.
 async function callGemini(prompt, fileBuffer, mimeType) {
   const parts = [{ text: prompt }];
+  let uploadedFile = null;
+
   if (fileBuffer) {
+    // La Files API evita el límite de ~20 MB de inlineData y es el método
+    // recomendado por Google para PDFs y archivos de tamaño considerable.
+    uploadedFile = await uploadBufferToFilesAPI(fileBuffer, mimeType);
     parts.push({
-      inlineData: { mimeType, data: fileBuffer.toString("base64") },
+      fileData: { mimeType: uploadedFile.mimeType, fileUri: uploadedFile.uri },
     });
   }
 
-  const result = await model.generateContent({
-    generationConfig: { responseMimeType: "application/json" },
-    contents: [{ role: "user", parts }],
-  });
+  try {
+    const result = await model.generateContent({
+      generationConfig: { responseMimeType: "application/json" },
+      contents: [{ role: "user", parts }],
+    });
 
-  const raw = result.response.text().trim();
-  const clean = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-  return JSON.parse(clean);
+    const raw = result.response.text().trim();
+    const clean = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+    return JSON.parse(clean);
+  } finally {
+    // Elimina el archivo de los servidores de Gemini una vez procesado
+    if (uploadedFile) {
+      fileManager.deleteFile(uploadedFile.name).catch(() => {});
+    }
+  }
 }
 
 // ── exports ───────────────────────────────────────────────────────────────────
