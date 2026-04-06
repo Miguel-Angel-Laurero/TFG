@@ -4,8 +4,7 @@
     >
         <div class="flex gap-3 items-center justify-center shrink-0">
             <SlotColumn :slots="LEFT_SLOTS"  :equipped="equipped" :selected="selectedSlot" :size="slotSize" @pick="openPicker"/>
-            <AvatarCard :slots="CENTRAL_SLOTS" :equipped="equipped" :positions="centralSlotStyles"
-                        :width="cardWidth" :height="cardHeight" :slotSize="centralSlotSize"/>
+            <AvatarCard :width="cardWidth" :height="cardHeight"/>
             <SlotColumn :slots="RIGHT_SLOTS" :equipped="equipped" :selected="selectedSlot" :size="slotSize" @pick="openPicker"/>
         </div>
 
@@ -23,14 +22,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAvatarSize } from '@/composables/useAvatarSize'
-import { useEquipment, LEFT_SLOTS, RIGHT_SLOTS, CENTRAL_SLOTS, SLOT_NAMES } from '@/composables/useEquipment'
+import { useEquipment, LEFT_SLOTS, RIGHT_SLOTS, SLOT_NAMES } from '@/composables/useEquipment'
 import SlotColumn from './SlotColumn.vue'
 import AvatarCard from './AvatarCard.vue'
 import ItemPicker from './ItemPicker.vue'
 
 const containerRef = ref(null)
 
-const { slotSize, cardWidth, cardHeight, centralSlotSize, centralSlotStyles } = useAvatarSize(containerRef, {
+const { slotSize, cardWidth, cardHeight } = useAvatarSize(containerRef, {
     head:     { w: 400,  h: 230  },
     torso:    { w: 240, h: 90 },
     trinkets: { w: 160,  h: 80  },
