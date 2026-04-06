@@ -7,7 +7,8 @@
     "dev": "concurrently --names \"BACKEND,FRONTEND,LINKS\" --prefix-colors \"cyan,magenta,green\" \"npm run dev --prefix backend\" \"npm run dev --prefix ludoScript\" \"node print-urls.cjs\""
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1"
+    "@google/generative-ai": "^0.24.1",
+    "@lucide/vue": "^1.7.0"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

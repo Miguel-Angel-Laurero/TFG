@@ -76,4 +76,45 @@ const submitBatch = async (req, res, next) => {
   }
 };
 
-module.exports = { getMine, submitBatch };
+// Registra un fallo en una categoría concreta del usuario autenticado.
+// Busca el registro (userId, category) y solo incrementa `total`, dejando
+// `correct` intacto: así la diferencia (total − correct) refleja los fallos.
+// Si el registro no existe, lo crea con total=1 y correct=0.
+//
+// Recibe:  { tag: string }  en el body
+// Returns: { category, correct, total }
+const trackError = async (req, res, next) => {
+  try {
+    const { tag } = req.body;
+
+    if (!tag || typeof tag !== "string" || tag.trim().length === 0) {
+      return res
+        .status(400)
+        .json({ message: "tag es obligatorio y debe ser un string no vacío" });
+    }
+
+    const userId = req.user.id;
+    const category = tag.trim();
+
+    const [stat, created] = await CategoryStat.findOrCreate({
+      where: { userId, category },
+      defaults: { userId, category, correct: 0, total: 1 },
+    });
+
+    if (!created) {
+      // Solo incrementamos el total: el fallo queda reflejado en total − correct
+      await stat.increment({ total: 1 });
+      await stat.reload();
+    }
+
+    res.json({
+      category: stat.category,
+      correct: stat.correct,
+      total: stat.total,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getMine, submitBatch, trackError };

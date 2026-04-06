@@ -11,4 +11,7 @@ router.get("/", controller.getMine);
 // POST /api/category-stats/batch — envía los resultados de una sesión de quiz
 router.post("/batch", controller.submitBatch);
 
+// POST /api/category-stats/error — registra un fallo en una categoría (tag)
+router.post("/error", controller.trackError);
+
 module.exports = router;

@@ -39,6 +39,11 @@ const router = createRouter({
       component: () => import("../views/CategoryReviewView.vue"),
     },
     {
+      path: "/preview-home/",
+      name: "previewHome",
+      component: () => import("../views/PreviewHomeView.vue"),
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "NotFound",
       component: () => import("../views/NotFoundView.vue"),

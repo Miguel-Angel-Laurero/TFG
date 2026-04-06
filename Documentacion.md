@@ -112,11 +112,13 @@ objetos — Objetos
 Archivos creados
 
 Backend:
+
 - backend/src/models/CategoryStat.model.js — Modelo Sequelize para la tabla category_stats. Almacena (userId, category) con índice único y acumula correct/total por fila.
 - backend/src/controllers/categoryStats.controller.js — GET devuelve los stats del usuario autenticado; POST /batch hace upsert incremental validando cada entrada individualmente.
 - backend/src/routes/categoryStats.routes.js — Monta las dos rutas bajo authMiddleware.
 
 Frontend:
+
 - ludoScript/src/api/categoryStats.service.js — Capa HTTP: getAll() y submitBatch(entries).
 - ludoScript/src/composables/useCategoryStats.js — Lógica de sesión: trackAnswer(category, isCorrect) acumula en memoria; submitSession() envía el batch al finalizar; resetSession() limpia al reiniciar.
 - ludoScript/src/components/profile/CategoryHeatMap.vue — Componente visual: cuadrícula de 7 tarjetas coloreadas según el porcentaje de acierto (≥90% verde esmeralda, 70–89% amarillo, 50–69% naranja, <50% rojo). Muestra estado vacío hasta que el usuario complete el Quiz por primera vez.
@@ -143,3 +145,30 @@ Notas de diseño
 - submitSession no lanza excepción aunque el backend falle, para no interrumpir el flujo de recompensas.
 - La tabla se crea automáticamente al arrancar el servidor gracias a sync({ alter: true }) en desarrollo.
 - No se ha modificado ningún modelo existente ni ninguna tabla preexistente.
+
+Cambios de 05/04:
+Resumen de cambios
+Datos
+quizQuestions.json — Campo "category" añadido a las 15 preguntas existentes, asignando cada una a una de 7 categorías temáticas.
+Backend (3 ficheros nuevos + 2 modificados)
+Nuevos:
+
+CategoryStat.model.js — Modelo Sequelize para la tabla category_stats. Índice único sobre (userId, category) para acumular correct y total.
+categoryStats.controller.js — getMine (GET) y submitBatch (POST) con upsert incremental y validación de cada entrada.
+categoryStats.routes.js — Rutas protegidas con authMiddleware.
+Modificados:
+
+index.js — Importa CategoryStat, declara la asociación User hasMany CategoryStat con onDelete: CASCADE y lo exporta.
+index.js — Registra /api/category-stats.
+Frontend (3 ficheros nuevos + 3 modificados)
+Nuevos:
+
+categoryStats.service.js — Capa HTTP: getAll() y submitBatch(entries).
+useCategoryStats.js — trackAnswer, submitSession y resetSession. Ignora preguntas sin categoría (PDFs de Gemini).
+CategoryHeatMap.vue — Mapa de calor con 7 tarjetas coloreadas (verde ≥90%, amarillo 70–89%, naranja 50–69%, rojo <50%), estado vacío inicial y leyenda.
+Modificados:
+
+Quiz.vue — Integra useCategoryStats: trackAnswer en selectAnswer, submitSession antes de la recompensa en handleNext, resetSession en handleRestart.
+Profile.vue — Añade <CategoryHeatMap /> entre UserStats y PdfManager.
+Documentacion.md — Sección nueva al final documentando todo el sistema.
+La BD se auto-sincroniza al arrancar (no requiere migración manual en dev).

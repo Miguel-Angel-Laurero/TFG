@@ -1,4 +1,4 @@
-const { UserPdf } = require("../models");
+const { UserPdf, Game } = require("../models");
 const { generateGameContentFromPdf } = require("./gemini-service");
 
 // ── uploadPdf ─────────────────────────────────────────────────────────────────
@@ -160,10 +160,67 @@ const deletePdf = async (req, res, next) => {
   }
 };
 
+// ── createPdfGame ─────────────────────────────────────────────────────────────
+// Recibe un PDF (vía multer), genera el contenido con Gemini y registra una
+// partida en la tabla Games vinculada al usuario autenticado.
+//
+// El contenido generado (quizQuestions + flashCards) se devuelve directamente
+// en la respuesta para que el frontend pueda iniciar la partida al instante, sin
+// necesitar una segunda petición.
+// ─────────────────────────────────────────────────────────────────────────────
+const createPdfGame = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ error: "No se ha enviado ningún archivo." });
+    }
+
+    if (req.file.mimetype !== "application/pdf") {
+      return res.status(400).json({ error: "Solo se permiten archivos PDF." });
+    }
+
+    const { quizQuestions, flashCards } = await generateGameContentFromPdf(
+      req.file.buffer,
+      req.file.mimetype,
+    );
+
+    // Crea el registro de partida que vincula al usuario con este contenido generado
+    const game = await Game.create({
+      userId: req.user.id,
+      gameName: req.file.originalname,
+      score: 0,
+    });
+
+    res.status(201).json({
+      id: game.id,
+      gameName: game.gameName,
+      playedAt: game.playedAt,
+      quizQuestions,
+      flashCards,
+    });
+  } catch (error) {
+    console.error("[createPdfGame] Error procesando PDF con Gemini:", error);
+
+    if (error instanceof SyntaxError) {
+      return res
+        .status(502)
+        .json({ error: "Gemini no devolvió un JSON válido." });
+    }
+
+    if (error.message?.includes("formato esperado")) {
+      return res.status(502).json({ error: error.message });
+    }
+
+    next(error);
+  }
+};
+
 module.exports = {
   uploadPdf,
   listPdfs,
   getPdfQuiz,
   getPdfFlashCards,
   deletePdf,
+  createPdfGame,
 };
