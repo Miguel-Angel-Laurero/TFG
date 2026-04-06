@@ -1,31 +1,40 @@
 <template>
-  <main class="h-full w-full flex overflow-hidden">
+  <main class="h-full w-full flex overflow-hidden" @mousemove="onDrag" @mouseup="stopDrag" @mouseleave="stopDrag">
 
-    <!-- Center: centered in the non-heatmap space -->
-    <section class="flex-1 flex justify-center overflow-y-auto py-8">
+    <!-- Left panel: PDF manager (ancho dinámico) -->
+    <aside :style="{ width: panelWidth + 'px' }"
+      class="shrink-0 border-r border-blue-900/40 px-4 py-6 overflow-y-auto flex flex-col">
+      <HomePdfPanel v-model:selectedFiles="selectedFiles" v-model:pdfCount="pdfCount" />
+    </aside>
+
+    <!-- Resize handle -->
+    <div class="w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
+      @mousedown.prevent="startDrag" />
+
+    <!-- Center: minigames -->
+    <section class="flex-1 flex justify-center overflow-y-auto py-8 min-w-0">
       <div class="w-full max-w-2xl px-8">
-        <h2 class="text-2xl font-righteous text-white mb-6">Minijuegos</h2>
-        <GameGrid />
+        <h2 class="text-2xl font-righteous text-white mb-4">Minijuegos</h2>
 
-        <!-- Upload PDF -->
-        <div class="mt-8">
-          <h2 class="text-2xl font-righteous text-white mb-4">Subir PDF</h2>
-          <p class="text-sm text-gray-400 mb-4">
-            Sube un PDF y generaremos automáticamente preguntas de Quiz y Flashcards con IA.
-          </p>
-
-          <input ref="fileInput" type="file" accept=".pdf,application/pdf" class="hidden" @change="handleFileChange" />
-
-          <button :disabled="uploading"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-colors"
-            @click="fileInput.click()">
-            <span v-if="uploading">⏳ Procesando…</span>
-            <span v-else>📄 Subir PDF</span>
-          </button>
-
-          <p v-if="uploadError" class="mt-3 text-sm text-red-400">{{ uploadError }}</p>
-          <p v-if="uploadSuccess" class="mt-3 text-sm text-green-400">{{ uploadSuccess }}</p>
+        <!-- Estado de Fuente (Nielsen: Visibilidad del estado) -->
+        <div :class="[
+          'mb-6 px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 border transition-colors',
+          selectedFiles.length > 0
+            ? 'bg-indigo-900/40 border-indigo-500/50 text-indigo-300'
+            : 'bg-slate-800/60 border-slate-600/50 text-gray-400'
+        ]">
+          <span>{{ selectedFiles.length > 0 ? '📂' : '📚' }}</span>
+          <span>
+            {{
+              selectedFiles.length > 0
+                ? `Modo: Personalizado (${selectedFiles.length} archivo${selectedFiles.length > 1 ? 's' : ''}
+            seleccionado${selectedFiles.length > 1 ? 's' : ''})`
+                : 'Modo: General — biblioteca del sistema'
+            }}
+          </span>
         </div>
+
+        <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" />
       </div>
     </section>
 
@@ -39,30 +48,28 @@
 import { ref } from 'vue'
 import GameGrid from '@/components/home/GameGrid.vue'
 import CategoryHeatMap from '@/components/home/CategoryHeatMap.vue'
-import { pdfService } from '@/api/pdf.service'
+import HomePdfPanel from '@/components/home/HomePdfPanel.vue'
 
-const fileInput = ref(null)
-const uploading = ref(false)
-const uploadError = ref('')
-const uploadSuccess = ref('')
+const selectedFiles = ref([])
+const pdfCount = ref(0)
 
-async function handleFileChange(event) {
-  const file = event.target.files?.[0]
-  if (!file) return
+// ─── Panel redimensionable ───────────────────────────────────────────────────
+const MIN_WIDTH = 240
+const MAX_WIDTH = 600
+const panelWidth = ref(384)   // equivale a w-96 (96 × 4 = 384px)
+let dragging = false
 
-  uploadError.value = ''
-  uploadSuccess.value = ''
-  uploading.value = true
+function startDrag() {
+  dragging = true
+}
 
-  try {
-    const { data } = await pdfService.uploadPdf(file)
-    uploadSuccess.value = `"${data.originalName}" procesado correctamente.`
-  } catch (err) {
-    uploadError.value = err.response?.data?.error ?? 'Error al subir el PDF. Inténtalo de nuevo.'
-  } finally {
-    uploading.value = false
-    // Resetea el input para permitir subir el mismo archivo otra vez
-    event.target.value = ''
-  }
+function onDrag(e) {
+  if (!dragging) return
+  const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, e.clientX))
+  panelWidth.value = newWidth
+}
+
+function stopDrag() {
+  dragging = false
 }
 </script>

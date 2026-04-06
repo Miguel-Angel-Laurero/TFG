@@ -13,30 +13,56 @@ const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
 
 const fileManager = new GoogleAIFileManager(apiKey);
 
+// ── schemas de salida estructurada ───────────────────────────────────────────
+// Definen el contrato exacto de lo que Gemini debe devolver.
+// Al pasarlos como responseSchema en generationConfig, la API garantiza que el
+// JSON resultante cumple la estructura antes de devolverlo, eliminando la
+// necesidad de limpiar markdown o tratar errores de parseo.
+
+const QUIZ_QUESTION_SCHEMA = {
+  type: "object",
+  properties: {
+    id: { type: "integer" },
+    question: { type: "string" },
+    options: { type: "array", items: { type: "string" } },
+    correct: { type: "integer" },
+    tag: { type: "string" },
+  },
+  required: ["id", "question", "options", "correct", "tag"],
+};
+
+const GAME_CONTENT_SCHEMA = {
+  type: "object",
+  properties: {
+    quizQuestions: {
+      type: "array",
+      items: QUIZ_QUESTION_SCHEMA,
+    },
+    flashCards: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          question: { type: "string" },
+          answer: { type: "string" },
+        },
+        required: ["question", "answer"],
+      },
+    },
+  },
+  required: ["quizQuestions", "flashCards"],
+};
+
+const ADAPTIVE_REINFORCEMENT_SCHEMA = {
+  type: "object",
+  properties: {
+    explanation: { type: "string" },
+    question: QUIZ_QUESTION_SCHEMA,
+  },
+  required: ["explanation", "question"],
+};
+
 // ── helpers ──────────────────────────────────────────────────────────────────
-
-function isNonEmptyString(v) {
-  return typeof v === "string" && v.trim().length > 0;
-}
-
-function validateQuizQuestion(q, i) {
-  if (!isNonEmptyString(q?.question))
-    throw new Error(`quizQuestions[${i}].question es obligatorio.`);
-  if (
-    !Array.isArray(q.options) ||
-    q.options.length !== 4 ||
-    !q.options.every(isNonEmptyString)
-  )
-    throw new Error(
-      `quizQuestions[${i}].options debe tener exactamente 4 opciones no vacías.`,
-    );
-  if (!Number.isInteger(q.correct) || q.correct < 0 || q.correct > 3)
-    throw new Error(
-      `quizQuestions[${i}].correct debe ser un entero entre 0 y 3.`,
-    );
-  if (!isNonEmptyString(q.tag))
-    throw new Error(`quizQuestions[${i}].tag es obligatorio.`);
-}
 
 function validateGameContent(parsed) {
   if (
@@ -44,19 +70,6 @@ function validateGameContent(parsed) {
     !Array.isArray(parsed?.flashCards)
   )
     throw new Error("Faltan 'quizQuestions' o 'flashCards' como arrays.");
-  if (parsed.quizQuestions.length !== 10)
-    throw new Error(
-      `Se esperaban 10 quizQuestions, llegaron ${parsed.quizQuestions.length}.`,
-    );
-  if (parsed.flashCards.length !== 10)
-    throw new Error(
-      `Se esperaban 10 flashCards, llegaron ${parsed.flashCards.length}.`,
-    );
-  parsed.quizQuestions.forEach(validateQuizQuestion);
-  parsed.flashCards.forEach((c, i) => {
-    if (!isNonEmptyString(c?.question) || !isNonEmptyString(c?.answer))
-      throw new Error(`flashCards[${i}]: question y answer son obligatorios.`);
-  });
 }
 
 // Sube un buffer a la Gemini Files API y devuelve el objeto file resultante.
@@ -80,7 +93,10 @@ async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
 
 // Llama a Gemini con un prompt de texto y, opcionalmente, un archivo subido
 // mediante la Files API. Devuelve el JSON parseado de la respuesta.
-async function callGemini(prompt, fileBuffer, mimeType) {
+// @param {object} [responseSchema] - JSON Schema que Gemini debe respetar.
+//   Con schema, la API garantiza JSON válido y estructurado: no hace falta
+//   limpiar markdown ni capturar SyntaxError.
+async function callGemini(prompt, fileBuffer, mimeType, responseSchema = null) {
   const parts = [{ text: prompt }];
   let uploadedFile = null;
 
@@ -93,14 +109,21 @@ async function callGemini(prompt, fileBuffer, mimeType) {
     });
   }
 
+  const generationConfig = { responseMimeType: "application/json" };
+  if (responseSchema) generationConfig.responseSchema = responseSchema;
+
   try {
     const result = await model.generateContent({
-      generationConfig: { responseMimeType: "application/json" },
+      generationConfig,
       contents: [{ role: "user", parts }],
     });
 
+    // Con responseSchema Gemini garantiza JSON válido → JSON.parse directo.
+    // Sin schema se limpia por si acaso lleva envoltorio de markdown.
     const raw = result.response.text().trim();
-    const clean = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+    const clean = responseSchema
+      ? raw
+      : raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
     return JSON.parse(clean);
   } finally {
     // Elimina el archivo de los servidores de Gemini una vez procesado
@@ -121,26 +144,21 @@ async function processFileWithGemini(fileBuffer, mimeType, userPrompt = "") {
 }
 
 async function generateGameContentFromPdf(fileBuffer, mimeType) {
-  const prompt = `Analiza el documento adjunto y genera exactamente 10 preguntas de quiz tipo test y 10 flashcards sobre su contenido, en español.
-
-Responde ÚNICAMENTE con el siguiente JSON válido, sin markdown ni texto extra:
-{
-  "quizQuestions": [
-    { "id": 1, "question": "Texto de la pregunta", "options": ["Opción A", "Opción B", "Opción C", "Opción D"], "correct": 0, "tag": "nombre-del-tema" }
-  ],
-  "flashCards": [
-    { "question": "Concepto o pregunta corta", "answer": "Respuesta directa y concisa" }
-  ]
-}
+  const prompt = `Analiza el documento adjunto y genera exactamente 20 preguntas de quiz tipo test y 20 flashcards sobre su contenido, en español.
 
 Reglas:
 - "correct" es el índice (0-3) de la opción correcta
 - Las 4 opciones deben ser plausibles pero solo una correcta
 - Las respuestas de flashcards: máximo 2 frases
-- Exactamente 10 elementos en cada array
+- Exactamente 20 elementos en cada array
 - "tag" en kebab-case (ej: "tipos-coercion", "herencia-prototipos")`;
 
-  const parsed = await callGemini(prompt, fileBuffer, mimeType);
+  const parsed = await callGemini(
+    prompt,
+    fileBuffer,
+    mimeType,
+    GAME_CONTENT_SCHEMA,
+  );
   validateGameContent(parsed);
   return { quizQuestions: parsed.quizQuestions, flashCards: parsed.flashCards };
 }
@@ -164,15 +182,12 @@ Reglas:
 - "correct" es el índice (0-3) de la opción correcta
 - Las 4 opciones deben ser plausibles pero solo una correcta`;
 
-  const parsed = await callGemini(prompt);
-  if (
-    !isNonEmptyString(parsed.explanation) ||
-    typeof parsed.question !== "object"
-  )
-    throw new Error(
-      "Gemini no devolvió el formato esperado para el refuerzo adaptativo.",
-    );
-  validateQuizQuestion(parsed.question, 0);
+  const parsed = await callGemini(
+    prompt,
+    null,
+    null,
+    ADAPTIVE_REINFORCEMENT_SCHEMA,
+  );
   return { explanation: parsed.explanation, question: parsed.question };
 }
 

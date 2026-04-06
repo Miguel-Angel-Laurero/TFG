@@ -45,28 +45,32 @@ export function useActivitySession(jsonUrl) {
 
   // ─── Acciones ────────────────────────────────────────────────────────────
 
-  /** Carga el JSON, baraja los items e inicializa la barra de progreso. */
+  /** Carga una URL (string) y devuelve el array de items. */
+  async function fetchOne(url) {
+    if (url.startsWith("/api/")) {
+      // Ruta de la API del backend: usa axios para enviar el JWT automáticamente.
+      // Se elimina el prefijo "/api" porque el baseURL de axios ya lo incluye.
+      const res = await api.get(url.slice(4));
+      return res.data;
+    } else {
+      // Ruta estática de /public: fetch simple sin autenticación.
+      const res = await fetch(url);
+      return await res.json();
+    }
+  }
+
+  /** Carga el JSON (o combina varios JSONs), baraja los items e inicializa la barra de progreso. */
   async function load() {
     loading.value = true;
     try {
-      let data;
-
-      if (jsonUrl.startsWith("/api/")) {
-        // Ruta de la API del backend: usa axios para enviar el JWT automáticamente.
-        // Esto ocurre cuando el usuario juega con un PDF propio (ej. /api/pdfs/5/quiz).
-        const res = await api.get(jsonUrl);
-        data = res.data;
-      } else {
-        // Ruta estática de /public: fetch simple sin autenticación.
-        // Cubre los JSON por defecto (/quizQuestions.json, /flashCards.json).
-        const res = await fetch(jsonUrl);
-        data = await res.json();
-      }
-
-      items.value = shuffle(data);
+      // jsonUrl puede ser un string (una sola fuente) o un array (múltiples PDFs)
+      const urls = Array.isArray(jsonUrl) ? jsonUrl : [jsonUrl];
+      const results = await Promise.all(urls.map(fetchOne));
+      // Combina todos los arrays en uno y baraja
+      items.value = shuffle(results.flat());
       resetProgress();
     } catch (e) {
-      console.error(`[useActivitySession] Error cargando ${jsonUrl}`, e);
+      console.error(`[useActivitySession] Error cargando`, e);
     } finally {
       loading.value = false;
     }

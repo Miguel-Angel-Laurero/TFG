@@ -30,7 +30,8 @@
         <div class="w-full flex justify-center">
           <QuizIntro v-if="showIntro" @start="showIntro = false" />
           <template v-else>
-            <component v-if="selectedGame" :is="selectedGame" :key="route.query.game" />
+            <component v-if="selectedGame" :is="selectedGame"
+              :key="`${route.query.game}-${route.query.pdfIds ?? route.query.pdfId ?? ''}`" />
             <div v-else class="text-gray-400 mt-10">
               No se ha encontrado el juego: {{ route.query.game }}
             </div>

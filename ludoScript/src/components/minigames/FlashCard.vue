@@ -1,42 +1,32 @@
 <template>
   <ActivityLoading v-if="loading" />
 
-  <ActivityFinished
-    v-else-if="finished"
-    title="¡Repaso Completado!"
+  <ActivityFinished v-else-if="finished" title="¡Repaso Completado!"
     message="Has terminado todas las preguntas del temario. Sigue practicando para afianzar el contenido."
-    restart-label="Volver al principio"
-    @restart="handleRestart"
-  />
+    restart-label="Volver al principio" @restart="handleRestart" />
 
-  <FlashCardDeck
-    v-else
-    :card="currentItem"
-    :current-index="currentIndex"
-    :total-items="totalItems"
-    :is-flipped="isFlipped"
-    :is-last-item="isLastItem"
-    @flip="toggleFlip"
-    @next="handleNext"
-  />
+  <FlashCardDeck v-else :card="currentItem" :current-index="currentIndex" :total-items="totalItems"
+    :is-flipped="isFlipped" :is-last-item="isLastItem" @flip="toggleFlip" @next="handleNext" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute }            from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useActivitySession } from '@/composables/useActivitySession'
-import { useActivityReward }  from '@/composables/useActivityReward' 
-import ActivityLoading        from './ActivityLoading.vue'
-import ActivityFinished       from './ActivityFinished.vue'
-import FlashCardDeck          from './FlashCardDeck.vue'
+import { useActivityReward } from '@/composables/useActivityReward'
+import ActivityLoading from './ActivityLoading.vue'
+import ActivityFinished from './ActivityFinished.vue'
+import FlashCardDeck from './FlashCardDeck.vue'
 
 const route = useRoute()
 
-// Si el usuario viene desde un PDF propio (ruta con ?pdfId=:id), se cargan las
-// flashcards desde la API (autenticada). Si no, se usan las tarjetas estáticas.
-const flashCardsUrl = route.query.pdfId
-  ? `/api/pdfs/${route.query.pdfId}/flashcards`
-  : '/flashCards.json'
+// Si el usuario viene con ?pdfIds=1,2,3 (múltiples PDFs) o ?pdfId=1 (uno solo),
+// se cargan las flashcards desde la API (autenticada). Si no, se usan las estáticas.
+const flashCardsUrl = route.query.pdfIds
+  ? route.query.pdfIds.split(',').map(id => `/api/pdfs/${id}/flashcards`)
+  : route.query.pdfId
+    ? `/api/pdfs/${route.query.pdfId}/flashcards`
+    : '/flashCards.json'
 
 const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,

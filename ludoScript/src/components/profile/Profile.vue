@@ -12,6 +12,8 @@
                 <UserStats />
                 <!-- Mapa de calor: progreso del usuario por área temática del Quiz -->
                 <CategoryHeatMap />
+                <!-- Resumen semanal por categoría (últimas 7 sesiones) -->
+                <WeeklyResume />
                 <!-- Gestor de PDFs: permite subir documentos y jugar con el contenido generado -->
                 <PdfManager />
             </div>
@@ -24,4 +26,5 @@ import Banner from './Banner.vue';
 import UserStats from './UserStats.vue';
 import PdfManager from './PdfManager.vue';
 import CategoryHeatMap from './CategoryHeatMap.vue';
+import WeeklyResume from './WeeklyResume.vue';
 </script>

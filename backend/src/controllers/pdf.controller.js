@@ -1,6 +1,28 @@
 const { UserPdf, Game } = require("../models");
 const { generateGameContentFromPdf } = require("./gemini-service");
 
+// ── fixFilenameEncoding ───────────────────────────────────────────────────────
+// El parser HTTP de Node.js trata las cabeceras HTTP/1.1 como binary/Latin-1,
+// por lo que los bytes UTF-8 de un nombre de fichero (ej. "0xC3 0xAD" para 'í')
+// se devuelven como dos caracteres Latin-1 separados ("Ã" + soft-hyphen).
+//
+// Este helper intenta revertir esa interpretación:
+//  1. Re-codifica la cadena a bytes usando Latin-1 (cada char → su byte equivalente).
+//  2. Decodifica esos bytes como UTF-8.
+//  3. Si el resultado contiene U+FFFD (carácter de reemplazo), la cadena de entrada
+//     ya era UTF-8 válido (multer la decodificó correctamente) y se devuelve intacta.
+// ─────────────────────────────────────────────────────────────────────────────
+function fixFilenameEncoding(str) {
+  try {
+    const fixed = Buffer.from(str, "latin1").toString("utf8");
+    // U+FFFD aparece cuando los bytes no forman UTF-8 válido, lo que indica que
+    // la cadena original ya estaba correctamente decodificada — no tocarla.
+    return fixed.includes("\uFFFD") ? str : fixed;
+  } catch {
+    return str;
+  }
+}
+
 // ── uploadPdf ─────────────────────────────────────────────────────────────────
 // Recibe un PDF (ya en memoria gracias a multer), lo envía a Gemini con UNA sola
 // llamada para generar simultáneamente preguntas de Quiz y Flashcards, y guarda
@@ -35,10 +57,18 @@ const uploadPdf = async (req, res, next) => {
       req.file.mimetype,
     );
 
+    // Corrige la codificación del nombre si multer interpretó los bytes UTF-8
+    // del header multipart como Latin-1 (comportamiento habitual del parser HTTP
+    // de Node.js para cabeceras HTTP/1.1).
+    // La función primero intenta la conversión; si el resultado contiene el
+    // carácter de reemplazo U+FFFD significa que la cadena ya era UTF-8 válido
+    // y se devuelve el original sin modificar.
+    const originalName = fixFilenameEncoding(req.file.originalname);
+
     // Guarda el contenido generado en la BD asociado al usuario autenticado
     const pdf = await UserPdf.create({
       userId: req.user.id,
-      originalName: req.file.originalname,
+      originalName,
       quizQuestions,
       flashCards,
     });

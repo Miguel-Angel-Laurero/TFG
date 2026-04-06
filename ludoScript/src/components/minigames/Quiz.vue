@@ -45,11 +45,13 @@ import QuizQuestion from './QuizQuestion.vue'
 
 const route = useRoute()
 
-// Si el usuario viene desde un PDF propio (ruta con ?pdfId=:id), se cargan las
-// preguntas desde la API (autenticada). Si no, se usan las preguntas estáticas.
-const quizUrl = route.query.pdfId
-  ? `/api/pdfs/${route.query.pdfId}/quiz`
-  : '/quizQuestions.json'
+// Si el usuario viene con ?pdfIds=1,2,3 (múltiples PDFs) o ?pdfId=1 (uno solo),
+// se cargan las preguntas desde la API (autenticada). Si no, se usan las estáticas.
+const quizUrl = route.query.pdfIds
+  ? route.query.pdfIds.split(',').map(id => `/api/pdfs/${id}/quiz`)
+  : route.query.pdfId
+    ? `/api/pdfs/${route.query.pdfId}/quiz`
+    : '/quizQuestions.json'
 
 // ─── Sesión genérica ─────────────────────────────────────────────────────────────────────────
 const {
