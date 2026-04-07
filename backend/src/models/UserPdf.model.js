@@ -32,19 +32,19 @@ const UserPdf = sequelize.define("UserPdf", {
   },
 
   // Array de preguntas de Quiz generadas por Gemini.
-  // Cada elemento tiene la misma forma que los objetos de /public/quizQuestions.json:
-  //   { id, question, options: string[4], correct: number }
+  // null hasta que el usuario guarde en la nube desde localStorage.
   quizQuestions: {
     type: DataTypes.JSON,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: null,
   },
 
   // Array de tarjetas Flashcard generadas por Gemini.
-  // Cada elemento tiene la misma forma que los objetos de /public/flashCards.json:
-  //   { question, answer }
+  // null hasta que el usuario guarde en la nube desde localStorage.
   flashCards: {
     type: DataTypes.JSON,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: null,
   },
 });
 

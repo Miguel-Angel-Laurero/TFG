@@ -463,3 +463,5 @@ responde el array JSON
 │
 ▼
 items.value = shuffle(data) → empieza el juego
+
+---

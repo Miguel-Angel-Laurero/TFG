@@ -11,6 +11,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { ref } from "vue";
 import { categoryStatsService } from "@/api/categoryStats.service";
+import { recordAnswer } from "@/composables/useSessionTracker";
 
 const LS_LAST_SESSION = "ludoscript_lastSession";
 const LS_WEEKLY = "ludoscript_weeklySessions";
@@ -31,6 +32,7 @@ export function useCategoryStats() {
     } else if (questionId !== null) {
       sessionStats.value[category].failedIds.push(questionId);
     }
+    recordAnswer(isCorrect);
   }
 
   async function submitSession() {

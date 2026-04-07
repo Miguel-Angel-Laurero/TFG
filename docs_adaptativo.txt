@@ -1,0 +1,240 @@
+
+---
+
+## Sistema de Quiz Adaptativo con IA (07/04/2026)
+
+### Objetivo
+
+Implementar un sistema de aprendizaje adaptativo que analiza el rendimiento historico del usuario por categoria y genera, a peticion, un quiz de 50 preguntas personalizadas focalizadas en sus puntos debiles, usando Gemini. De forma independiente, el flujo de subida de PDF se actualiza para devolver las 50 preguntas al frontend en lugar de guardarlas directamente en BD, permitiendo que el usuario decida si guardarlas en la nube.
+
+---
+
+### Dos subsistemas independientes
+
+| Subsistema | Disparador | Fuente de preguntas |
+|---|---|---|
+| Quiz adaptativo | Boton "Generar nuevas preguntas" en Home | Gemini (generacion en tiempo real) |
+| PDF con localStorage | Subida de PDF + boton de guardar opcional | localStorage con 15 IDs activos aleatorios |
+
+---
+
+### Subsistema 1 - Quiz Adaptativo
+
+#### Algoritmo de pesos (calculo en background)
+
+Los pesos se calculan siempre al montar Home.vue, sin intervencion del usuario. Solo al pulsar el boton se llama a Gemini.
+
+  tasa_error = (total_respuestas - correctas) / total_respuestas
+
+- Solo se consideran categorias con total >= 5 respuestas (umbral minimo de representatividad).
+- Se toman las 3 categorias con mayor tasa de error.
+- Las 50 preguntas se distribuyen proporcionalmente: count_i = round((errorRate_i / sumRates) * 50).
+
+Ejemplo con tres categorias:
+
+  scope-variables  errorRate=0.80  -> 28 preguntas
+  asincronia       errorRate=0.50  -> 18 preguntas
+  funciones        errorRate=0.11  ->  4 preguntas
+                                      50 preguntas totales
+
+#### Endpoint backend: GET /api/games/adaptive-quiz
+
+  Autenticado (JWT requerido)
+
+  1. Lee CategoryStat del usuario (todos los registros)
+  2. Filtra: solo categorias con total >= 5
+  3. Calcula errorRate por categoria
+  4. Ordena descendente y toma top 3
+  5. Distribuye 50 preguntas proporcionalmente
+  6. Llama a generateAdaptiveQuizQuestions(categories)
+  7. Devuelve { questions: [...50], weakCategories: [...] }
+
+  Si no hay categorias elegibles: responde 204 No Content
+
+#### Funcion Gemini: generateAdaptiveQuizQuestions(categories)
+
+Nueva funcion en gemini-service.js. Recibe el desglose de categorias con sus conteos y realiza una sola llamada a Gemini que genera las 50 preguntas distribuidas. Usa el nuevo ADAPTIVE_QUIZ_SCHEMA con campo category (antes tag).
+
+  // Ejemplo de input
+  [
+    { category: "scope-variables", count: 28 },
+    { category: "asincronia",      count: 18 },
+    { category: "funciones",       count:  4 },
+  ]
+  // Output: array de 50 preguntas, cada una con { id, question, options, correct, category }
+
+El prompt incluye el desglose explicito y describe el contexto pedagogico (el estudiante falla en esas areas), orientando a Gemini a generar preguntas sobre los conceptos tipicamente erroneos.
+
+#### Seleccion de 15 preguntas para el quiz
+
+De las 50 generadas, el frontend selecciona 15 aleatoriamente sin repeticion usando el algoritmo Fisher-Yates implementado en useAdaptiveSelection.js:
+
+  50 preguntas recibidas del endpoint
+         |
+         v  fisherYates(questions)
+  Array barajado uniformemente
+         |
+         v  .slice(0, 15)  ->  15 IDs activos
+         |
+         v  filterByIds(questions, ids)
+  15 preguntas para el quiz (sin repeticion)
+
+#### Badge visual durante el quiz
+
+Mientras el usuario juega en modo adaptativo, se muestran chips de color encima de cada pregunta indicando las categorias practicadas y su nivel de dificultad:
+
+- Rojo:   tasa de error >= 60%
+- Ambar:  tasa de error 35%-59%
+- Indigo: tasa de error < 35%
+
+Ejemplo: Practicando: [Scope Variables 80% errores] [Asincronia 50% errores]
+
+Los chips desaparecen al terminar el quiz y no se guardan.
+
+#### Flujo completo en Home.vue
+
+  Al montar Home.vue:
+    -> categoryStatsService.getAll() en background (no bloquea la UI)
+    -> calculateWeakCategories(stats, minTotal=5)
+    -> Se renderizan los badges de categorias debiles en la seccion adaptativa
+
+  Usuario pulsa "Generar nuevas preguntas":
+    -> goToAdaptiveQuiz()
+    -> router.push('/in-game-view/?game=Quiz&adaptive=true')
+
+  En Quiz.vue (modo adaptive=true):
+    -> loadAdaptiveMode()
+    -> api.get('/games/adaptive-quiz')
+    -> Si 204 (sin datos): fallback a load() con quiz estatico
+    -> Si hay preguntas: pickRandomIds(questions, 15)
+    -> loadDirect(filterByIds(questions, ids))
+    -> El quiz arranca con 15 preguntas, badge visible
+
+Si no hay datos suficientes (ninguna categoria con total >= 5), el boton "Generar nuevas preguntas" queda deshabilitado con texto explicativo.
+
+---
+
+### Subsistema 2 - PDF con localStorage
+
+#### Nuevo flujo de subida
+
+Antes, POST /api/pdfs generaba las preguntas y las guardaba inmediatamente en BD. Ahora el endpoint devuelve las preguntas en el body y el usuario decide si guardarlas en la nube:
+
+  Antes:
+    PDF -> Gemini -> BD (automatico) -> { id, originalName, createdAt }
+
+  Ahora:
+    PDF -> Gemini -> { id, originalName, createdAt, quizQuestions[50], flashCards[20] }
+                                                   |
+                                                   v
+                                           HomePdfPanel.vue
+                                           savePdfQuestionsToStorage(id, q, fc)
+                                                   |
+                                localStorage["ludoscript_pdf_questions_5"] = 50Q+20FC
+                                localStorage["ludoscript_pdf_active_ids_5"] = [3,17,42,...]  (15 IDs)
+
+Los campos quizQuestions y flashCards en UserPdf son ahora allowNull: true (null hasta que el usuario guarde).
+
+#### Gestion del localStorage (useAdaptiveSelection.js)
+
+| Clave | Contenido |
+|---|---|
+| ludoscript_pdf_questions_{id} | JSON con { questions: [...50], flashCards: [...20] } |
+| ludoscript_pdf_active_ids_{id} | Array de 15 IDs activos seleccionados con Fisher-Yates |
+| ludoscript_pdf_cloud_saved_{id} | "true" si el usuario ya guardo en la nube |
+
+Al subir un PDF, HomePdfPanel.vue llama a savePdfQuestionsToStorage(id, questions, flashCards) que guarda las 50 preguntas y calcula los 15 IDs activos con Fisher-Yates en el mismo acto.
+
+#### Boton Guardar en la nube
+
+Aparece junto a cada PDF que tiene datos en localStorage pero no ha sido guardado en la nube:
+
+  Usuario pulsa el icono de nube junto al PDF:
+    -> handleSaveToCloud(pdf)
+    -> loadPdfQuestionsFromStorage(pdf.id)   (lee las 50Q del localStorage)
+    -> pdfService.saveToCloud(id, { quizQuestions, flashCards })  (PUT /api/pdfs/:id/questions)
+    -> markPdfAsSavedToCloud(id)             (escribe flag en localStorage)
+    -> Estado visual: icono nube -> marca de verificacion
+
+Una vez guardado, la marca de verificacion aparece permanentemente. El usuario puede repetir el quiz desde otro dispositivo via GET /api/pdfs/:id/quiz.
+
+#### Nuevo endpoint: PUT /api/pdfs/:id/questions
+
+  Autenticado (JWT requerido)
+  Ownership check incluido: WHERE id = :id AND userId = req.user.id
+
+  Body: { quizQuestions: [...50], flashCards: [...20] }
+    -> Valida que sean arrays
+    -> UserPdf.update({ quizQuestions, flashCards })
+    -> Responde { success: true }
+
+  Seguridad: si userId no coincide -> 404 (no revela si el recurso existe para otro usuario)
+
+#### Carga del quiz con PDF (logica en Quiz.vue)
+
+Quiz.vue detecta automaticamente el origen de las preguntas segun el estado:
+
+  ?pdfId=X + localStorage[ludoscript_pdf_questions_X] existe
+    -> loadPdfLocalMode(pdfId)
+    -> loadPdfQuestionsFromStorage(pdfId)  (lee questions, flashCards, activeIds)
+    -> filterByIds(questions, activeIds)   (usa los 15 IDs ya calculados)
+    -> loadDirect(activeItems)
+    -> Quiz arranca con 15 preguntas locales (instantaneo, sin red)
+
+  ?pdfId=X + NO hay datos en localStorage
+    -> load()  (comportamiento anterior: GET /api/pdfs/:id/quiz)
+
+---
+
+### Archivos modificados y creados (07/04/2026)
+
+#### Backend (5 archivos)
+
+| Archivo | Cambio |
+|---|---|
+| gemini-service.js | Prompt PDF: 20 preguntas -> 50 preguntas. Campo tag renombrado a category. Nueva funcion generateAdaptiveQuizQuestions con ADAPTIVE_QUIZ_SCHEMA |
+| UserPdf.model.js | quizQuestions y flashCards: allowNull false -> allowNull true, defaultValue null |
+| pdf.controller.js | uploadPdf: ya no guarda preguntas en BD, las devuelve en body. Nuevo handler savePdfQuestions para PUT /:id/questions |
+| pdf.routes.js | Nueva ruta: PUT /:id/questions -> handler savePdfQuestions |
+| game.routes.js | Nuevo endpoint GET /adaptive-quiz con algoritmo de pesos y llamada a Gemini |
+
+#### Frontend (6 archivos + 1 nuevo)
+
+| Archivo | Cambio |
+|---|---|
+| useAdaptiveSelection.js | NUEVO. Fisher-Yates, algoritmo de pesos calculateWeakCategories, gestion completa de localStorage para PDFs (save/load/remove/check) |
+| useActivitySession.js | Nuevo metodo loadDirect(items): carga items pre-procesados sin hacer fetch |
+| pdf.service.js | Nuevo metodo saveToCloud(id, data) que llama a PUT /pdfs/:id/questions |
+| Quiz.vue | Tres modos de carga: estatico / PDF local / adaptativo. Badge visual de categorias debiles en modo adaptativo |
+| HomePdfPanel.vue | Guarda en localStorage al subir. Estado por PDF (hasLocal, savedToCloud, saving). Boton de guardado en nube por PDF |
+| Home.vue | Seccion "Practica adaptativa": calculo de pesos en background, badges de categorias, boton "Generar nuevas preguntas" |
+
+---
+
+### Cuatro modos del Quiz
+
+| Modo | Condicion de activacion | Fuente de datos | Preguntas mostradas |
+|---|---|---|---|
+| Estatico | Sin query params | /quizQuestions.json | Todas, barajadas |
+| PDF local | ?pdfId=X + localStorage existe | localStorage | 15 IDs activos guardados |
+| PDF cloud | ?pdfId=X + sin localStorage | GET /api/pdfs/:id/quiz | Todas, barajadas |
+| Adaptativo | ?adaptive=true | GET /api/games/adaptive-quiz | 15 aleatorias de las 50 generadas |
+
+---
+
+### Separacion de responsabilidades
+
+  useAdaptiveSelection.js  ->  Logica pura: pesos, Fisher-Yates, localStorage
+       |
+       |-> usado por Quiz.vue          (seleccion de 15 preguntas para el quiz)
+       |-> usado por HomePdfPanel.vue  (guardar/leer/limpiar PDF en localStorage)
+       +-> usado por Home.vue          (calcular categorias debiles para el badge)
+
+  game.routes.js           ->  Decide la distribucion de preguntas por categoria
+       |
+       +-> llama a generateAdaptiveQuizQuestions() (solo generacion con Gemini)
+
+  categoryStatsService     ->  Solo transporte HTTP, sin logica de negocio
+       |
+       +-> usado por Home.vue (getAll para calcular pesos)
+       +-> usado por useCategoryStats (submitBatch al terminar el quiz)

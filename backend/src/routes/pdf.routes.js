@@ -7,6 +7,7 @@ const {
   getPdfQuiz,
   getPdfFlashCards,
   deletePdf,
+  savePdfQuestions,
 } = require("../controllers/pdf.controller");
 
 // ── Configuración de multer ───────────────────────────────────────────────────
@@ -57,7 +58,11 @@ router.get("/:id/quiz", authMiddleware, getPdfQuiz);
 router.get("/:id/flashcards", authMiddleware, getPdfFlashCards);
 
 // DELETE /api/pdfs/:id
-// Elimina el registro del PDF de la BD (el archivo original no existe en el sistema).
 router.delete("/:id", authMiddleware, deletePdf);
+
+// PUT /api/pdfs/:id/questions
+// Guarda en la BD las preguntas y flashcards que el usuario tiene en localStorage.
+// Solo el dueño del PDF puede llamar a este endpoint (verificado en el controller).
+router.put("/:id/questions", authMiddleware, savePdfQuestions);
 
 module.exports = router;

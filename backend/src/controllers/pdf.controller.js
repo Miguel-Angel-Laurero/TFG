@@ -65,20 +65,22 @@ const uploadPdf = async (req, res, next) => {
     // y se devuelve el original sin modificar.
     const originalName = fixFilenameEncoding(req.file.originalname);
 
-    // Guarda el contenido generado en la BD asociado al usuario autenticado
+    // Guarda solo la metadata en la BD — las preguntas van al frontend vía localStorage.
+    // El usuario puede guardarlas en la nube más adelante mediante PUT /:id/questions.
     const pdf = await UserPdf.create({
       userId: req.user.id,
       originalName,
-      quizQuestions,
-      flashCards,
+      quizQuestions: null,
+      flashCards: null,
     });
 
-    // Devuelve solo la metadata: el frontend la añade a la lista sin necesitar
-    // las preguntas (que se pedirán individualmente al iniciar el juego)
+    // Devuelve metadata + contenido generado para que el frontend lo almacene en localStorage
     res.status(201).json({
       id: pdf.id,
       originalName: pdf.originalName,
       createdAt: pdf.createdAt,
+      quizQuestions,
+      flashCards,
     });
   } catch (error) {
     console.error("[uploadPdf] Error procesando PDF con Gemini:", error);
@@ -190,6 +192,35 @@ const deletePdf = async (req, res, next) => {
   }
 };
 
+// ── savePdfQuestions ──────────────────────────────────────────────────────────
+// Persiste en la nube las preguntas y flashcards de un PDF que el usuario tiene
+// guardadas en localStorage. Solo el dueño del PDF puede llamar a este endpoint.
+// ─────────────────────────────────────────────────────────────────────────────
+const savePdfQuestions = async (req, res, next) => {
+  try {
+    const pdf = await UserPdf.findOne({
+      where: { id: req.params.id, userId: req.user.id },
+    });
+
+    if (!pdf) {
+      return res.status(404).json({ error: "PDF no encontrado." });
+    }
+
+    const { quizQuestions, flashCards } = req.body;
+
+    if (!Array.isArray(quizQuestions) || !Array.isArray(flashCards)) {
+      return res
+        .status(400)
+        .json({ error: "quizQuestions y flashCards deben ser arrays." });
+    }
+
+    await pdf.update({ quizQuestions, flashCards });
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ── createPdfGame ─────────────────────────────────────────────────────────────
 // Recibe un PDF (vía multer), genera el contenido con Gemini y registra una
 // partida en la tabla Games vinculada al usuario autenticado.
@@ -253,4 +284,5 @@ module.exports = {
   getPdfFlashCards,
   deletePdf,
   createPdfGame,
+  savePdfQuestions,
 };

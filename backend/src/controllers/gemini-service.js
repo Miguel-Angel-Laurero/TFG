@@ -26,9 +26,18 @@ const QUIZ_QUESTION_SCHEMA = {
     question: { type: "string" },
     options: { type: "array", items: { type: "string" } },
     correct: { type: "integer" },
-    tag: { type: "string" },
+    category: { type: "string" },
   },
-  required: ["id", "question", "options", "correct", "tag"],
+  required: ["id", "question", "options", "correct", "category"],
+};
+
+// Schema para el quiz adaptativo: array plano de 50 preguntas
+const ADAPTIVE_QUIZ_SCHEMA = {
+  type: "object",
+  properties: {
+    questions: { type: "array", items: QUIZ_QUESTION_SCHEMA },
+  },
+  required: ["questions"],
 };
 
 const GAME_CONTENT_SCHEMA = {
@@ -144,14 +153,14 @@ async function processFileWithGemini(fileBuffer, mimeType, userPrompt = "") {
 }
 
 async function generateGameContentFromPdf(fileBuffer, mimeType) {
-  const prompt = `Analiza el documento adjunto y genera exactamente 20 preguntas de quiz tipo test y 20 flashcards sobre su contenido, en español.
+  const prompt = `Analiza el documento adjunto y genera exactamente 50 preguntas de quiz tipo test y 20 flashcards sobre su contenido, en español.
 
 Reglas:
 - "correct" es el índice (0-3) de la opción correcta
 - Las 4 opciones deben ser plausibles pero solo una correcta
 - Las respuestas de flashcards: máximo 2 frases
-- Exactamente 20 elementos en cada array
-- "tag" en kebab-case (ej: "tipos-coercion", "herencia-prototipos")`;
+- Exactamente 50 preguntas de quiz y 20 flashcards
+- "category" en kebab-case (ej: "tipos-coercion", "herencia-prototipos")`;
 
   const parsed = await callGemini(
     prompt,
@@ -173,7 +182,7 @@ Responde ÚNICAMENTE con el siguiente JSON válido, sin markdown ni texto extra:
     "question": "Pregunta de refuerzo",
     "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
     "correct": 0,
-    "tag": "${failedTopic}"
+    "category": "${failedTopic}"
   }
 }
 
@@ -191,8 +200,40 @@ Reglas:
   return { explanation: parsed.explanation, question: parsed.question };
 }
 
+// ── generateAdaptiveQuizQuestions ────────────────────────────────────────────
+// Recibe la distribución de categorías débiles y genera exactamente N preguntas
+// en una sola llamada a Gemini, priorizando los conceptos donde el usuario falla.
+// @param {Array<{ category: string, count: number }>} categories
+// @returns {Promise<Array<QuizQuestion>>}
+async function generateAdaptiveQuizQuestions(categories) {
+  const total = categories.reduce((sum, c) => sum + c.count, 0);
+  const breakdown = categories
+    .map((c) => `- ${c.count} preguntas sobre "${c.category}"`)
+    .join("\n");
+
+  const prompt = `El estudiante necesita refuerzo en las siguientes áreas. Genera exactamente ${total} preguntas de quiz tipo test en español, distribuidas así:
+${breakdown}
+
+Cada pregunta debe centrarse en los conceptos que suelen ser difíciles para los estudiantes en ese tema.
+
+Reglas:
+- "correct" es el índice (0-3) de la opción correcta
+- Las 4 opciones deben ser plausibles pero solo una correcta
+- "category" debe ser exactamente el slug indicado arriba (ej: "scope-variables")
+- Numera los "id" consecutivamente desde 1 hasta ${total}`;
+
+  const parsed = await callGemini(prompt, null, null, ADAPTIVE_QUIZ_SCHEMA);
+  if (!Array.isArray(parsed?.questions)) {
+    throw new Error(
+      "[generateAdaptiveQuizQuestions] Gemini no devolvió el formato esperado.",
+    );
+  }
+  return parsed.questions;
+}
+
 module.exports = {
   processFileWithGemini,
   generateGameContentFromPdf,
   generateAdaptiveReinforcement,
+  generateAdaptiveQuizQuestions,
 };

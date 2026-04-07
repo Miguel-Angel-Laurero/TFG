@@ -106,6 +106,21 @@ export function useActivitySession(jsonUrl) {
     resetProgress();
   }
 
+  /**
+   * Carga items ya procesados (sin fetch) — usado por Quiz en modo adaptativo
+   * y en modo PDF desde localStorage. Los items se barajan igualmente.
+   * @param {Array} inputItems - Array de preguntas/items pre-filtrados
+   */
+  async function loadDirect(inputItems) {
+    loading.value = true;
+    try {
+      items.value = shuffle(inputItems);
+      resetProgress();
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     items,
     loading,
@@ -115,6 +130,7 @@ export function useActivitySession(jsonUrl) {
     totalItems,
     isLastItem,
     load,
+    loadDirect,
     next,
     restart,
   };

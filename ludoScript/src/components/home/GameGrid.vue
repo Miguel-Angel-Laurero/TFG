@@ -36,13 +36,6 @@
             {{ minigame.name }}
           </p>
           <p class="text-sm text-slate-400 mt-0.5">{{ minigame.description }}</p>
-
-          <!-- Tooltip sutil: PDFs disponibles pero ninguno seleccionado -->
-          <p v-if="isPdfGame(minigame.name) && pdfCount > 0 && selectedFiles.length === 0"
-            class="text-xs text-amber-400/80 mt-2 flex items-center gap-1.5">
-            <span>💡</span>
-            ¿Quieres usar tus PDFs? Selecciónalos a la izquierda.
-          </p>
         </div>
 
         <!-- Botón CTA -->
@@ -51,6 +44,15 @@
                  transition-colors duration-200 pointer-events-none">
           {{ gameButtonText(minigame.name) }}
         </button>
+      </div>
+
+      <!-- Aviso: ningún contenido seleccionado -->
+      <div v-if="noSelectionWarning"
+        class="flex items-start gap-2 bg-amber-900/30 border border-amber-500/40 rounded-lg px-3 py-2">
+        <span class="text-amber-400 mt-0.5">⚠️</span>
+        <p class="text-xs text-amber-300">
+          Selecciona al menos un contenido (predefinido o un PDF subido) antes de empezar.
+        </p>
       </div>
     </template>
 
@@ -69,12 +71,17 @@ const props = defineProps({
   pdfCount: {
     type: Number,
     default: 0
+  },
+  selectedPredefined: {
+    type: Boolean,
+    default: true
   }
 })
 
 const router = useRouter()
 const minigames = ref([])
 const isLoading = ref(true)
+const noSelectionWarning = ref(false)
 
 const GAME_ICONS = { Quiz: '🧠', Flashcards: '🃏' }
 const PDF_GAMES = ['Quiz', 'Flashcards']
@@ -84,7 +91,12 @@ function isPdfGame(name) { return PDF_GAMES.includes(name) }
 
 function gameButtonText(name) {
   if (!isPdfGame(name)) return 'Empezar →'
-  return props.selectedFiles.length > 0 ? 'Estudiar mis PDFs →' : 'Estudiar General →'
+  const hasPdfs = props.selectedFiles.length > 0
+  const hasPredefined = props.selectedPredefined
+  if (hasPdfs && hasPredefined) return 'Estudiar Mixto →'
+  if (hasPdfs) return 'Estudiar mis PDFs →'
+  if (hasPredefined) return 'Estudiar General →'
+  return 'Selecciona contenido →'
 }
 
 onMounted(async () => {
@@ -99,11 +111,24 @@ onMounted(async () => {
 })
 
 function goToGame(name) {
-  isLoading.value = true
-  const query = { game: name }
-  if (isPdfGame(name) && props.selectedFiles.length > 0) {
-    query.pdfIds = props.selectedFiles.join(',')
+  if (isPdfGame(name)) {
+    const hasPdfs = props.selectedFiles.length > 0
+    const hasPredefined = props.selectedPredefined
+    if (!hasPdfs && !hasPredefined) {
+      noSelectionWarning.value = true
+      return
+    }
+    noSelectionWarning.value = false
+    isLoading.value = true
+    const query = { game: name }
+    if (hasPdfs) {
+      query.pdfIds = props.selectedFiles.join(',')
+      if (hasPredefined) query.includePredefined = 'true'
+    }
+    router.push({ path: '/in-game-view/', query })
+  } else {
+    isLoading.value = true
+    router.push({ path: '/in-game-view/', query: { game: name } })
   }
-  router.push({ path: '/in-game-view/', query })
 }
 </script>

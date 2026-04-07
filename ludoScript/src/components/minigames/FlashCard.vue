@@ -20,13 +20,20 @@ import FlashCardDeck from './FlashCardDeck.vue'
 
 const route = useRoute()
 
-// Si el usuario viene con ?pdfIds=1,2,3 (múltiples PDFs) o ?pdfId=1 (uno solo),
-// se cargan las flashcards desde la API (autenticada). Si no, se usan las estáticas.
-const flashCardsUrl = route.query.pdfIds
+// Construir la lista de URLs de flashcards según los query params.
+// - ?pdfIds=1,2,3  → una URL por PDF (autenticada)
+// - ?pdfId=1       → un único PDF
+// - ?includePredefined=true → añadir el JSON estático del sistema
+// Si no hay ningún PDF, usar directamente el JSON estático.
+const _fcUrls = route.query.pdfIds
   ? route.query.pdfIds.split(',').map(id => `/api/pdfs/${id}/flashcards`)
   : route.query.pdfId
-    ? `/api/pdfs/${route.query.pdfId}/flashcards`
-    : '/flashCards.json'
+    ? [`/api/pdfs/${route.query.pdfId}/flashcards`]
+    : []
+if (route.query.includePredefined === 'true') {
+  _fcUrls.push('/flashCards.json')
+}
+const flashCardsUrl = _fcUrls.length > 0 ? _fcUrls : '/flashCards.json'
 
 const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,

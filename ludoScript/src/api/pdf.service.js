@@ -46,4 +46,15 @@ export const pdfService = {
   deletePdf(id) {
     return api.delete(`/pdfs/${id}`);
   },
+
+  /**
+   * Guarda en la nube las preguntas y flashcards de un PDF que el usuario
+   * tiene almacenadas en localStorage. Solo el dueño puede llamar a esto.
+   * @param {number} id - ID del PDF
+   * @param {{ quizQuestions: Array, flashCards: Array }} data
+   * @returns {Promise<{ success: boolean }>}
+   */
+  saveToCloud(id, data) {
+    return api.put(`/pdfs/${id}/questions`, data);
+  },
 };
