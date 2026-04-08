@@ -113,14 +113,14 @@ Archivos creados
 
 Backend:
 
-- backend/src/models/CategoryStat.model.js — Modelo Sequelize para la tabla category_stats. Almacena (userId, category) con índice único y acumula correct/total por fila.
-- backend/src/controllers/categoryStats.controller.js — GET devuelve los stats del usuario autenticado; POST /batch hace upsert incremental validando cada entrada individualmente.
+- backend/src/models/CategoryStat.model.js — Modelo Sequelize para la tabla category_stats. Almacena (userId, category) con índice único y acumula correct/total por fila. Ampliado posteriormente con campos de dificultad (ver sección "Sistema de dificultad adaptativa").
+- backend/src/controllers/categoryStats.controller.js — GET devuelve los stats del usuario autenticado; POST /batch hace upsert incremental validando cada entrada individualmente. Ampliado posteriormente con lógica de desbloqueo de nivel (ver sección "Sistema de dificultad adaptativa").
 - backend/src/routes/categoryStats.routes.js — Monta las dos rutas bajo authMiddleware.
 
 Frontend:
 
 - ludoScript/src/api/categoryStats.service.js — Capa HTTP: getAll() y submitBatch(entries).
-- ludoScript/src/composables/useCategoryStats.js — Lógica de sesión: trackAnswer(category, isCorrect) acumula en memoria; submitSession() envía el batch al finalizar; resetSession() limpia al reiniciar.
+- ludoScript/src/composables/useCategoryStats.js — Lógica de sesión: trackAnswer(category, isCorrect) acumula en memoria; submitSession() envía el batch al finalizar; resetSession() limpia al reiniciar. Ampliado posteriormente con soporte de dificultad por pregunta (ver sección "Sistema de dificultad adaptativa").
 - ludoScript/src/components/profile/CategoryHeatMap.vue — Componente visual: cuadrícula de 7 tarjetas coloreadas según el porcentaje de acierto (≥90% verde esmeralda, 70–89% amarillo, 50–69% naranja, <50% rojo). Muestra estado vacío hasta que el usuario complete el Quiz por primera vez.
 
 Archivos modificados
@@ -465,3 +465,217 @@ responde el array JSON
 items.value = shuffle(data) → empieza el juego
 
 ---
+
+## Sistema de dificultad adaptativa
+
+### Objetivo
+
+Clasificar las preguntas del Quiz en tres niveles de dificultad (Básico, Intermedio, Avanzado) y garantizar que el usuario no reciba preguntas de un nivel superior al que ha demostrado dominar. Se acompaña de una pantalla pre-test donde el usuario puede elegir el nivel manualmente o delegar la selección en el motor adaptativo.
+
+---
+
+### Niveles definidos
+
+| Valor | Etiqueta | Criterio                                                            |
+| ----- | -------- | ------------------------------------------------------------------- |
+| `1`   | Fácil    | Conceptos fundamentales y sintaxis base                             |
+| `2`   | Medio    | Mecanismos internos del lenguaje, APIs menos evidentes              |
+| `3`   | Difícil  | Casos edge, patrones avanzados, comportamientos sutiles del runtime |
+
+---
+
+### Archivos creados
+
+- `backend/scripts/assignDifficulty.js` — Script de utilidad que lee `quizQuestions.json`, envía cada pregunta a Gemini con un prompt de clasificación y escribe el campo `difficulty` de vuelta al fichero. Uso: `node backend/scripts/assignDifficulty.js`. El flag `--force` reclasifica preguntas que ya tienen nivel asignado.
+
+---
+
+### Archivos modificados
+
+**Backend:**
+
+- `backend/src/models/CategoryStat.model.js` — Se han añadido 7 columnas nuevas a la tabla `category_stats`:
+  - `unlockedDifficulty` (INTEGER, default 1) — nivel máximo desbloqueado por el usuario en esa categoría.
+  - `d1Correct / d1Total` — aciertos e intentos acumulados en preguntas de dificultad 1.
+  - `d2Correct / d2Total` — ídem dificultad 2.
+  - `d3Correct / d3Total` — ídem dificultad 3.
+    Gracias a `sync({ alter: true })` las columnas se añaden automáticamente a la BD en desarrollo sin migración manual.
+
+- `backend/src/controllers/categoryStats.controller.js` — Se han extendido dos funciones:
+  - `getMine`: ahora devuelve también `unlockedDifficulty`, `d1Correct`, `d1Total`, `d2Correct`, `d2Total`, `d3Correct`, `d3Total`.
+  - `submitBatch`: acepta un campo opcional `difficultyBreakdown` por entrada con la forma `{ "1": { correct, total }, "2": {...}, "3": {...} }`. Tras acumular los contadores, evalúa si el usuario cumple el umbral de desbloqueo en el nivel actual de cada categoría: si `correct / total >= 0.70` con `total >= 5` intentos acumulados en ese nivel, `unlockedDifficulty` se incrementa (máximo 3). La progresión es "sticky upward": una vez desbloqueado un nivel no se revierte automáticamente.
+
+- `backend/src/controllers/gemini-service.js` — Se han añadido y exportado:
+  - `DIFFICULTY_CLASSIFICATION_SCHEMA` — JSON Schema que define el contrato de respuesta para la clasificación de dificultad (`{ classifications: [{ id, difficulty }] }`).
+  - `callGemini` — función de bajo nivel exportada para ser usada desde scripts externos como `assignDifficulty.js`.
+
+**Frontend:**
+
+- `ludoScript/public/quizQuestions.json` — Campo `difficulty` (1, 2 o 3) añadido a las 15 preguntas existentes.
+
+- `ludoScript/src/composables/useCategoryStats.js` — `trackAnswer` ahora acepta un cuarto parámetro `difficulty` (número o null). Cuando se proporciona, acumula estadísticas en `sessionStats[category].byDifficulty[difficulty] = { correct, total }`. `submitSession` incluye ese desglose como `difficultyBreakdown` en el payload enviado al endpoint `/batch`.
+
+- `ludoScript/src/components/minigames/QuizIntro.vue` — Rediseñado como pantalla pre-test. Al montarse llama a `categoryStatsService.getAll()` para conocer el `unlockedDifficulty` actual por categoría. Muestra un selector de cuatro opciones:
+  - **Personalizado** — selección adaptativa basada en el mapa de niveles desbloqueados por categoría.
+  - **Fácil** — solo preguntas de nivel 1.
+  - **Medio** — solo preguntas de nivel 2. Bloqueado hasta desbloquear.
+  - **Difícil** — solo preguntas de nivel 3. Bloqueado hasta desbloquear.
+    Para los niveles bloqueados se muestra una barra de progreso que indica cuánto le falta al usuario para desbloquearlo. La opción "Recomendado" se califica dinámicamente sobre el nivel que más sentido tiene según las categorías con mayor tasa de error. La preferencia se persiste en `localStorage` bajo la clave `ludoscript_difficulty_pref`. Al pulsar "Comenzar Quiz" emite el evento `start({ difficulty, unlockedMap })`.
+
+- `ludoScript/src/components/minigames/InGame.vue` — Escucha el evento `start({ difficulty, unlockedMap })` de `QuizIntro` y los almacena en refs. Solo cuando el juego es `Quiz` se pasan como props al componente `Quiz` mediante `v-bind="quizProps"`.
+
+- `ludoScript/src/components/minigames/Quiz.vue` — Acepta dos props nuevas: `difficulty` y `unlockedMap`. Al cargar las preguntas invoca `applyDifficultyFilter(questions)`:
+  - Si `difficulty` es 1, 2 o 3: filtra las preguntas con `question.difficulty === difficulty`. Si quedan menos de 5 preguntas se expande incluyendo niveles inferiores hasta alcanzar el mínimo.
+  - Si `difficulty` es `'personalizado'` o `null`: filtra con `question.difficulty <= unlockedMap[question.category]` (usando 1 como valor por defecto si la categoría no tiene datos). Si quedan menos de 5 se retrocede a mostrar solo nivel 1.
+    El filtro se aplica en los tres modos de carga: estático (`quizQuestions.json`), adaptativo (endpoint `/games/adaptive-quiz`) y PDF local (desde `localStorage`).
+    `selectAnswer` pasa `currentItem.value.difficulty` como cuarto argumento a `trackAnswer` para registrar el desglose por nivel.
+
+- `ludoScript/src/components/home/Home.vue` — Se han añadido las variables y lógica que estaban referenciadas en el template pero no definidas en el `<script setup>`: `statsLoading`, `weakCategories`, `hasEnoughData`, `goToAdaptiveQuiz`, `errorRateBadgeClass` y `formatCategoryLabel`. Al montarse carga los stats del usuario y calcula las categorías débiles con `calculateWeakCategories`.
+
+---
+
+### Lógica de desbloqueo de nivel
+
+```
+Al finalizar cada sesión de Quiz, submitBatch recibe por categoría:
+  { category, correct, total, difficultyBreakdown: { "1": { correct, total }, ... } }
+
+Por cada categoría, el backend evalúa:
+  nivelActual = unlockedDifficulty            (el nivel que el usuario está practicando)
+  accCorrect  = d{nivelActual}Correct         (aciertos acumulados en ese nivel)
+  accTotal    = d{nivelActual}Total           (intentos acumulados en ese nivel)
+
+  Si accTotal >= 5 Y accCorrect / accTotal >= 0.70:
+    unlockedDifficulty++  (máximo 3)
+    → se evalúa el nuevo nivel (puede avanzar más de uno en una sola sesión)
+
+La progresión solo sube, nunca baja automáticamente.
+```
+
+---
+
+### Flujo completo (modo estático con dificultad manual)
+
+```
+[Usuario]  Navega a /in-game-view/?game=Quiz
+    │
+    ▼ InGame.vue muestra QuizIntro
+[QuizIntro]
+    ├─ GET /api/category-stats → carga unlockedDifficulty por categoría
+    ├─ Muestra selector: Personalizado / Fácil / Medio (🔒?) / Difícil (🔒?)
+    └─ emit('start', { difficulty: 2, unlockedMap: null })
+    │
+    ▼ InGame.vue recibe difficulty=2, pasa props a Quiz.vue
+[Quiz.vue]
+    ├─ fetch /quizQuestions.json → 15 preguntas
+    ├─ applyDifficultyFilter([...]) → filtra difficulty === 2
+    ├─ pickRandomIds(filtered, 15) → selecciona hasta 15
+    └─ loadDirect(filteredQuestions)
+    │
+    ▼ Usuario responde
+    selectAnswer → trackAnswer(category, isCorrect, id, difficulty=2)
+    │
+    ▼ Última pregunta → handleNext
+    submitSession → POST /api/category-stats/batch
+      { category: "asincronia", correct: 3, total: 4,
+        difficultyBreakdown: { "2": { correct: 3, total: 4 } } }
+    │
+    ▼ Backend evalúa umbral
+    d2Total acumulado >= 5 Y d2Correct/d2Total >= 0.70
+    → unlockedDifficulty pasa de 2 a 3
+```
+
+---
+
+## Mejoras de UX en el panel de inicio — 08/04
+
+### Objetivo
+
+Limpiar la pantalla de inicio de elementos que saturaban al usuario, mejorar la legibilidad del panel de sesión y hacer que los anillos de categoría sean interactivos para acceder directamente a la revisión de errores.
+
+---
+
+### Archivos modificados
+
+| Archivo                                              | Cambio                                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `ludoScript/src/components/home/Home.vue`            | Eliminado el bloque "Práctica adaptativa" de la pantalla de inicio            |
+| `ludoScript/src/components/home/CategoryHeatMap.vue` | Fuente más grande en etiquetas, paleta de colores granular, anillos clicables |
+
+---
+
+### Cambios realizados
+
+#### Eliminación de "Práctica adaptativa" de la home
+
+El bloque que mostraba los chips de categorías débiles y el botón "Generar nuevas preguntas" se ha retirado de la pantalla de inicio. El sistema adaptativo sigue funcionando: el botón aparece en la pantalla de resultados del Quiz cuando el usuario tiene categorías con alta tasa de error.
+
+Se eliminaron también los imports y la lógica asociada en `Home.vue` (`categoryStatsService`, `calculateWeakCategories`, `errorRateBadgeClass`, `weakCategories`, `hasEnoughData`, `goToAdaptiveQuiz`, `onMounted`), reduciendo el peso del componente.
+
+**Beneficio para el usuario:** la home es más limpia y directa; el acceso a la práctica adaptativa aparece en el momento más relevante (justo después de ver los resultados), no como elemento permanente de la pantalla principal.
+
+#### Etiquetas de categoría más grandes
+
+El tamaño de la fuente de las etiquetas bajo los anillos de categoría pasó de `9 px` a `10 px`.
+
+**Beneficio para el usuario:** los nombres de categoría como "Arrays Métodos" o "Scope Variables" son más fáciles de leer sin necesidad de acercar la pantalla.
+
+#### Paleta de colores granular en anillos de categoría
+
+La función `categoryRingColor` pasó de tener 2 umbrales a 5:
+
+| Precisión | Color anterior | Color nuevo        |
+| --------- | -------------- | ------------------ |
+| ≥ 80 %    | Verde          | Verde `#22c55e`    |
+| 65–79 %   | Verde          | Lima `#84cc16`     |
+| 50–64 %   | Naranja        | Amarillo `#eab308` |
+| 30–49 %   | Rojo           | Naranja `#f97316`  |
+| < 30 %    | Rojo           | Rojo `#ef4444`     |
+
+**Beneficio para el usuario:** dos categorías con precisiones distintas (p. ej. 50 % y 67 %) ya no comparten el mismo color, lo que permite distinguir de un vistazo qué áreas necesitan más atención.
+
+#### Anillos de categoría clicables
+
+Cada anillo del panel "Última sesión" ahora es un enlace interactivo. Al hacer clic navega a `/category-review/?category=<slug>` (vista `CategoryReviewView`), donde se muestran las preguntas que el usuario respondió mal en la última sesión junto con la explicación de por qué su respuesta era incorrecta y por qué la correcta lo es.
+
+Para ello se añadió a cada ítem de `categoryRings` el campo `slug` (la clave original del objeto de estadísticas, p. ej. `"scope-variables"`), se importó `useRouter` en el componente y se añadieron clases `cursor-pointer hover:opacity-80 transition-opacity` para dar feedback visual al pasar el ratón.
+
+**Beneficio para el usuario:** en lugar de tener que navegar manualmente a la sección de revisión, basta con pulsar el anillo de la categoría que quiere repasar para ir directamente a las preguntas falladas con sus explicaciones.
+
+---
+
+## Correcciones de errores — 08/04
+
+### Pantalla en blanco al entrar al Quiz con PDFs
+
+**Problema:** cuando la carga de preguntas desde la API fallaba (por ejemplo, un PDF con `quizQuestions: null` en BD), `items` quedaba vacío pero `loading` pasaba a `false`. El template entraba en el bloque `v-else` y pasaba `currentItem = undefined` a `QuizQuestion.vue`, que al intentar acceder a `props.question.question` lanzaba `TypeError: can't access property "question", $props.question is null`. Esto borraba toda la pantalla, incluido el spinner de carga.
+
+**Solución en `Quiz.vue`:**
+
+- Se añadió `v-if="currentItem"` en el componente `QuizQuestion` para que solo se renderice cuando la pregunta existe.
+- Se añadió un estado de error (`v-if="!currentItem"`) que muestra el mensaje "No se pudieron cargar las preguntas" con un botón "Usar preguntas generales" que carga `quizQuestions.json` sin recargar la página.
+- Se añadió la función `fallbackToStatic()` que realiza este proceso.
+
+**Beneficio para el usuario:** en lugar de una pantalla en negro, ve un mensaje de error accionable y puede continuar usando la aplicación sin perder el contexto.
+
+---
+
+### Preguntas generadas por Gemini no se cargaban en el Quiz
+
+**Problema:** `GameGrid.vue` siempre navega con el parámetro `?pdfIds=10` (plural, con `s`), pero la lógica de `Quiz.vue` en `onMounted` solo activaba el modo localStorage cuando existía `?pdfId=10` (singular, sin `s`). Al no reconocer el parámetro plural con un único PDF, el componente caía al flujo de carga por API (`GET /api/pdfs/10/quiz`), que devolvía `null` porque las preguntas generadas por Gemini nunca se guardan en BD, solo en `localStorage`.
+
+**Solución en `Quiz.vue`:** la detección de `singlePdfId` ahora cubre ambas formas del parámetro:
+
+```js
+const pdfIdsList = route.query.pdfIds?.split(",").filter(Boolean) ?? [];
+const singlePdfId =
+  route.query.pdfId && !route.query.pdfIds
+    ? route.query.pdfId
+    : pdfIdsList.length === 1 && route.query.includePredefined !== "true"
+      ? pdfIdsList[0]
+      : null;
+```
+
+Con esto, `?pdfIds=10` con un solo ID y sin `includePredefined=true` también resuelve al modo localStorage donde están las preguntas de Gemini.
+
+**Beneficio para el usuario:** al pulsar "Estudiar General" en un PDF que acaba de subir o que tiene guardado localmente, las preguntas generadas por la IA se cargan correctamente en lugar de mostrar la pantalla de error.

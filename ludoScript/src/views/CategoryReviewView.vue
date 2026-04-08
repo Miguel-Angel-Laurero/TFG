@@ -165,6 +165,17 @@ onMounted(async () => {
   try {
     const res = await fetch('/quizQuestions.json')
     allQuestions.value = await res.json()
+    // Bug 2 fix: si la sesión vino de un PDF, añadir sus preguntas al banco
+    const session = JSON.parse(localStorage.getItem(LS_LAST_SESSION) || 'null')
+    if (session?.pdfId) {
+      try {
+        const raw = localStorage.getItem(`ludoscript_pdf_questions_${session.pdfId}`)
+        const stored = JSON.parse(raw || 'null')
+        if (stored?.questions?.length) {
+          allQuestions.value = [...allQuestions.value, ...stored.questions]
+        }
+      } catch { /* ignorar si el storage falla */ }
+    }
   } catch (err) {
     console.error('[CategoryReview] Error cargando preguntas:', err)
   } finally {

@@ -22,26 +22,31 @@ const router = createRouter({
       path: "/profile-view/",
       name: "profile",
       component: () => import("../views/ProfileView.vue"),
+      meta: { requiresAuth: true },
     },
     {
       path: "/shop-view/",
       name: "shop",
       component: () => import("../views/ShopView.vue"),
+      meta: { requiresAuth: true },
     },
     {
       path: "/in-game-view/",
       name: "inGame",
       component: () => import("../views/InGameView.vue"),
+      meta: { requiresAuth: true },
     },
     {
       path: "/category-review/",
       name: "categoryReview",
       component: () => import("../views/CategoryReviewView.vue"),
+      meta: { requiresAuth: true },
     },
     {
       path: "/preview-home/",
       name: "previewHome",
       component: () => import("../views/PreviewHomeView.vue"),
+      meta: { requiresAuth: true },
     },
     {
       path: "/:pathMatch(.*)*",
@@ -49,6 +54,12 @@ const router = createRouter({
       component: () => import("../views/NotFoundView.vue"),
     },
   ],
+});
+
+router.beforeEach((to) => {
+  if (to.meta.requiresAuth && !localStorage.getItem("token")) {
+    return { name: "home" };
+  }
 });
 
 export default router;

@@ -49,7 +49,8 @@
             </li>
             <li class="flex items-start gap-2">
               <span class="text-gray-400 shrink-0 mt-0.5" aria-hidden="true">&#8226;</span>
-              La puntuacion minima es <strong class="text-white">0</strong> &mdash; los errores no pueden darte una puntuacion negativa.
+              La puntuacion minima es <strong class="text-white">0</strong> &mdash; los errores no pueden darte una
+              puntuacion negativa.
             </li>
           </ul>
         </div>
@@ -75,7 +76,8 @@
           <ul class="flex flex-col gap-2">
             <li class="flex items-start gap-2">
               <span class="text-indigo-400 shrink-0 mt-0.5" aria-hidden="true">&#128202;</span>
-              Tus aciertos por area tematica se guardan al terminar y se reflejan en el <strong class="text-white">mapa de dominio</strong> de la pantalla de inicio.
+              Tus aciertos por area tematica se guardan al terminar y se reflejan en el <strong class="text-white">mapa
+                de dominio</strong> de la pantalla de inicio.
             </li>
             <li class="flex items-start gap-2">
               <span class="text-indigo-400 shrink-0 mt-0.5" aria-hidden="true">&#128161;</span>
@@ -93,9 +95,7 @@
       <!-- CTA -->
       <button
         class="mt-2 w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-righteous text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        @click="$emit('start')"
-        autofocus
-      >
+        @click="handleStart" autofocus>
         Comenzar Quiz
       </button>
 
@@ -104,12 +104,19 @@
 </template>
 
 <script setup>
-defineEmits(['start'])
-
 const RANKS = [
-  { label: 'Bronce',   range: '0–4 pts',   icon: '🥉', color: 'text-orange-400' },
-  { label: 'Plata',    range: '5–9 pts',   icon: '🥈', color: 'text-gray-300' },
-  { label: 'Oro',      range: '10–12 pts', icon: '🥇', color: 'text-yellow-400' },
-  { label: 'Platino',  range: '13–15 pts', icon: '💎', color: 'text-cyan-300' },
+  { label: 'Bronce', range: '0–4 pts', icon: '🥉', color: 'text-orange-400' },
+  { label: 'Plata', range: '5–9 pts', icon: '🥈', color: 'text-gray-300' },
+  { label: 'Oro', range: '10–12 pts', icon: '🥇', color: 'text-yellow-400' },
+  { label: 'Platino', range: '13–15 pts', icon: '💎', color: 'text-cyan-300' },
 ]
+
+// ─── Emits ────────────────────────────────────────────────────────────────────
+// ─── Emits ────────────────────────────────────────────────────────────────────
+const emit = defineEmits(['start'])
+
+// ─── Acciones ─────────────────────────────────────────────────────────────────
+function handleStart() {
+  emit('start')
+}
 </script>

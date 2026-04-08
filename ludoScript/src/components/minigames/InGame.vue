@@ -28,9 +28,9 @@
 
       <div class="w-full p-4 flex flex-col items-center">
         <div class="w-full flex justify-center">
-          <QuizIntro v-if="showIntro" @start="showIntro = false" />
+          <QuizIntro v-if="showIntro" @start="handleQuizStart" />
           <template v-else>
-            <component v-if="selectedGame" :is="selectedGame"
+            <component v-if="selectedGame" :is="selectedGame" v-bind="quizProps"
               :key="`${route.query.game}-${route.query.pdfIds ?? route.query.pdfId ?? ''}`" />
             <div v-else class="text-gray-400 mt-10">
               No se ha encontrado el juego: {{ route.query.game }}
@@ -75,6 +75,12 @@ const games = {
 }
 
 const selectedGame = computed(() => games[route.query.game] ?? null)
+
+const quizProps = computed(() => ({}))
+
+function handleQuizStart() {
+  showIntro.value = false
+}
 
 watch(() => route.query.game, (game) => {
   resetProgress()

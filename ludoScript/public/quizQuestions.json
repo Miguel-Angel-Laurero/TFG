@@ -2,6 +2,7 @@
   {
     "id": 1,
     "category": "tipos-coercion",
+    "difficulty": 1,
     "question": "¿Qué diferencia hay entre `==` y `===` en JavaScript?",
     "options": [
       "No hay diferencia, son equivalentes",
@@ -15,6 +16,7 @@
   {
     "id": 2,
     "category": "tipos-coercion",
+    "difficulty": 2,
     "question": "¿Cuál es el resultado de `typeof null` en JavaScript?",
     "options": ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""],
     "correct": 2,
@@ -23,6 +25,7 @@
   {
     "id": 3,
     "category": "arrays-metodos",
+    "difficulty": 1,
     "question": "¿Qué hace el método `Array.prototype.map()`?",
     "options": [
       "Filtra los elementos de un array según una condición",
@@ -36,6 +39,7 @@
   {
     "id": 4,
     "category": "scope-variables",
+    "difficulty": 2,
     "question": "¿Qué es el hoisting en JavaScript?",
     "options": [
       "Un método para ordenar arrays",
@@ -49,6 +53,7 @@
   {
     "id": 5,
     "category": "funciones",
+    "difficulty": 1,
     "question": "¿Cuál de estas opciones declara correctamente una función flecha?",
     "options": [
       "function => (x) { return x * 2 }",
@@ -62,6 +67,7 @@
   {
     "id": 6,
     "category": "arrays-metodos",
+    "difficulty": 1,
     "question": "¿Qué devuelve `[1, 2, 3].find(x => x > 1)`?",
     "options": ["[2, 3]", "2", "true", "1"],
     "correct": 1,
@@ -70,6 +76,7 @@
   {
     "id": 7,
     "category": "scope-variables",
+    "difficulty": 1,
     "question": "¿Cuál es la diferencia entre `let` y `var`?",
     "options": [
       "`let` tiene ámbito de bloque, `var` tiene ámbito de función",
@@ -83,6 +90,7 @@
   {
     "id": 8,
     "category": "asincronia",
+    "difficulty": 2,
     "question": "¿Qué es una Promesa (Promise) en JavaScript?",
     "options": [
       "Un tipo de bucle para operaciones asíncronas",
@@ -96,6 +104,7 @@
   {
     "id": 9,
     "category": "sintaxis-es6",
+    "difficulty": 2,
     "question": "¿Qué hace el operador spread (`...`) en este código: `const b = [...a, 4]`?",
     "options": [
       "Modifica el array `a` añadiendo el 4 al final",
@@ -109,6 +118,7 @@
   {
     "id": 10,
     "category": "tipos-coercion",
+    "difficulty": 1,
     "question": "¿Cuál es el resultado de `Boolean('')`?",
     "options": ["true", "undefined", "null", "false"],
     "correct": 3,
@@ -117,6 +127,7 @@
   {
     "id": 11,
     "category": "arrays-metodos",
+    "difficulty": 1,
     "question": "¿Qué método se usa para añadir un elemento al final de un array?",
     "options": [
       "array.append()",
@@ -130,6 +141,7 @@
   {
     "id": 12,
     "category": "scope-variables",
+    "difficulty": 3,
     "question": "¿Qué es el closure en JavaScript?",
     "options": [
       "Un método para cerrar la conexión con el servidor",
@@ -143,6 +155,7 @@
   {
     "id": 13,
     "category": "objetos",
+    "difficulty": 1,
     "question": "¿Qué devuelve `Object.keys({ a: 1, b: 2, c: 3 })`?",
     "options": [
       "[1, 2, 3]",
@@ -156,6 +169,7 @@
   {
     "id": 14,
     "category": "asincronia",
+    "difficulty": 2,
     "question": "¿Qué significa `async/await` en JavaScript?",
     "options": [
       "Son palabras clave para declarar variables asíncronas",
@@ -169,6 +183,7 @@
   {
     "id": 15,
     "category": "tipos-coercion",
+    "difficulty": 3,
     "question": "¿Cuál es el resultado de `console.log(0.1 + 0.2 === 0.3)` en JavaScript?",
     "options": ["true", "undefined", "false", "NaN"],
     "correct": 2,

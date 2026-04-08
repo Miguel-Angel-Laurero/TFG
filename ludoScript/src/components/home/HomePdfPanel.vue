@@ -40,8 +40,8 @@
                     selectedPredefined ? 'bg-indigo-500 border-indigo-500' : 'border-slate-500'
                 ]">
                     <svg v-if="selectedPredefined" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
-                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                 </div>
                 <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Predefinidos</span>
@@ -60,15 +60,16 @@
                     selectedPredefined ? 'bg-indigo-500 border-indigo-500' : 'border-gray-500'
                 ]">
                     <svg v-if="selectedPredefined" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
-                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                 </div>
                 <div class="min-w-0 flex-1">
                     <p class="text-gray-100 font-medium text-sm">JavaScript — Contenido base</p>
                     <p class="text-gray-400 text-xs mt-0.5">Tipos, funciones, scope, asincronía, ES6+ y más</p>
                 </div>
-                <span class="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span
+                    class="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                     Base
                 </span>
             </div>
@@ -93,11 +94,12 @@
                 ]">
                     <!-- Todos seleccionados: check -->
                     <svg v-if="allUploadedSelected" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
-                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                     <!-- Algunos seleccionados: guión -->
-                    <svg v-else-if="someUploadedSelected" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
+                    <svg v-else-if="someUploadedSelected" class="w-2.5 h-2.5 text-white" fill="none"
+                        viewBox="0 0 10 10">
                         <path d="M2 5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </div>
@@ -112,7 +114,8 @@
             <!-- Estado: sin archivos subidos -->
             <template v-else-if="pdfs.length === 0">
                 <!-- Aviso tipo recordatorio -->
-                <div class="ml-6 flex items-start gap-2 bg-amber-950/60 border border-amber-500/30 rounded-lg px-3 py-2.5">
+                <div
+                    class="ml-6 flex items-start gap-2 bg-amber-950/60 border border-amber-500/30 rounded-lg px-3 py-2.5">
                     <span class="text-amber-400 text-sm flex-shrink-0 mt-0.5">💡</span>
                     <p class="text-xs italic text-amber-300/90 leading-relaxed">
                         Para repasar con tus propios apuntes, súbelos usando el botón de abajo.
@@ -176,19 +179,28 @@
                         🗑
                     </button>
                     <!-- Botón guardar en la nube / indicador de guardado -->
-                    <button
-                        v-if="pdfLocalStatus[pdf.id]?.hasLocal && !pdfLocalStatus[pdf.id]?.savedToCloud"
-                        @click.stop="handleSaveToCloud(pdf)"
-                        :disabled="pdfLocalStatus[pdf.id]?.saving"
+                    <button v-if="pdfLocalStatus[pdf.id]?.hasLocal && !pdfLocalStatus[pdf.id]?.savedToCloud"
+                        @click.stop="handleSaveToCloud(pdf)" :disabled="pdfLocalStatus[pdf.id]?.saving"
                         :title="pdfLocalStatus[pdf.id]?.saving ? 'Guardando...' : 'Guardar en la nube'"
-                        class="flex-shrink-0 p-1 leading-none text-lg transition-opacity"
-                        :class="pdfLocalStatus[pdf.id]?.saving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'">
-                        {{ pdfLocalStatus[pdf.id]?.saving ? '⏳' : '☁️' }}
+                        class="flex-shrink-0 p-1 transition-all"
+                        :class="pdfLocalStatus[pdf.id]?.saving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110 text-indigo-400 hover:text-indigo-300'">
+                        <!-- Spinner mientras guarda -->
+                        <svg v-if="pdfLocalStatus[pdf.id]?.saving" class="w-5 h-5 animate-spin" viewBox="0 0 24 24"
+                            fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" class="opacity-25" />
+                            <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                                class="opacity-75" />
+                        </svg>
+                        <!-- Nube con flecha hacia arriba -->
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 16 12 12 8 16" />
+                            <line x1="12" y1="12" x2="12" y2="21" />
+                            <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
+                        </svg>
                     </button>
-                    <span
-                        v-else-if="pdfLocalStatus[pdf.id]?.savedToCloud"
-                        class="flex-shrink-0 text-emerald-400 text-sm p-1 leading-none"
-                        title="Guardado en la nube">
+                    <span v-else-if="pdfLocalStatus[pdf.id]?.savedToCloud"
+                        class="flex-shrink-0 text-emerald-400 text-sm p-1 leading-none" title="Guardado en la nube">
                         ✓
                     </span>
                 </li>

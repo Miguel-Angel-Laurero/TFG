@@ -71,6 +71,29 @@ const ADAPTIVE_REINFORCEMENT_SCHEMA = {
   required: ["explanation", "question"],
 };
 
+// Schema para clasificar preguntas de quiz con un nivel de dificultad.
+// Cada elemento del array devuelve el id original de la pregunta y su dificultad asignada:
+//   1 = Básico   (conceptos fundamentales, sintaxis base)
+//   2 = Intermedio (mecanismos internos, APIs menos conocidas)
+//   3 = Avanzado   (comportamientos sutiles, patrones avanzados)
+const DIFFICULTY_CLASSIFICATION_SCHEMA = {
+  type: "object",
+  properties: {
+    classifications: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: { type: "integer" },
+          difficulty: { type: "integer" },
+        },
+        required: ["id", "difficulty"],
+      },
+    },
+  },
+  required: ["classifications"],
+};
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function validateGameContent(parsed) {
@@ -236,4 +259,6 @@ module.exports = {
   generateGameContentFromPdf,
   generateAdaptiveReinforcement,
   generateAdaptiveQuizQuestions,
+  DIFFICULTY_CLASSIFICATION_SCHEMA,
+  callGemini,
 };

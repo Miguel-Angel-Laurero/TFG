@@ -5,7 +5,7 @@
 //
 // Uso en Quiz.vue:
 //   const { trackAnswer, submitSession, resetSession } = useCategoryStats()
-//   trackAnswer(currentItem.value.category, isCorrect, currentItem.value.id)
+//   trackAnswer(currentItem.value.category, isCorrect, currentItem.value.id, currentItem.value.difficulty)
 //   await submitSession()
 //   resetSession()
 // ─────────────────────────────────────────────────────────────────────────────
@@ -18,32 +18,66 @@ const LS_WEEKLY = "ludoscript_weeklySessions";
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function useCategoryStats() {
-  // { [category]: { correct, total, failedIds: number[] } }
+  // { [category]: { correct, total, failedIds: number[], byDifficulty: { [1|2|3]: { correct, total } } } }
   const sessionStats = ref({});
+  const currentPdfId = ref(null);
 
-  function trackAnswer(category, isCorrect, questionId = null) {
+  function setPdfSource(id) {
+    currentPdfId.value = id ? String(id) : null;
+  }
+
+  function trackAnswer(
+    category,
+    isCorrect,
+    questionId = null,
+    difficulty = null,
+  ) {
     if (!category) return;
     if (!sessionStats.value[category]) {
-      sessionStats.value[category] = { correct: 0, total: 0, failedIds: [] };
+      sessionStats.value[category] = {
+        correct: 0,
+        total: 0,
+        failedIds: [],
+        byDifficulty: {},
+      };
     }
-    sessionStats.value[category].total++;
+    const catStat = sessionStats.value[category];
+    catStat.total++;
     if (isCorrect) {
-      sessionStats.value[category].correct++;
+      catStat.correct++;
     } else if (questionId !== null) {
-      sessionStats.value[category].failedIds.push(questionId);
+      catStat.failedIds.push(questionId);
     }
+
+    // Acumular por nivel de dificultad
+    if (difficulty !== null && [1, 2, 3].includes(difficulty)) {
+      if (!catStat.byDifficulty[difficulty]) {
+        catStat.byDifficulty[difficulty] = { correct: 0, total: 0 };
+      }
+      catStat.byDifficulty[difficulty].total++;
+      if (isCorrect) catStat.byDifficulty[difficulty].correct++;
+    }
+
     recordAnswer(isCorrect);
   }
 
   async function submitSession() {
     const entries = Object.entries(sessionStats.value).map(
-      ([category, { correct, total }]) => ({ category, correct, total }),
+      ([category, { correct, total, byDifficulty }]) => {
+        const entry = { category, correct, total };
+        // Incluir desglose por dificultad si hubo intentos
+        if (byDifficulty && Object.keys(byDifficulty).length > 0) {
+          entry.difficultyBreakdown = byDifficulty;
+        }
+        return entry;
+      },
     );
     if (entries.length === 0) return;
 
     // Persist last session for heatmap & review page
     const sessionData = {
       timestamp: Date.now(),
+      pdfId: currentPdfId.value,
       stats: Object.fromEntries(
         Object.entries(sessionStats.value).map(([cat, s]) => [
           cat,
@@ -74,7 +108,8 @@ export function useCategoryStats() {
 
   function resetSession() {
     sessionStats.value = {};
+    currentPdfId.value = null;
   }
 
-  return { sessionStats, trackAnswer, submitSession, resetSession };
+  return { sessionStats, trackAnswer, submitSession, resetSession, setPdfSource };
 }
