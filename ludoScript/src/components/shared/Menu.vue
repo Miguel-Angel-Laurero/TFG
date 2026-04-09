@@ -60,9 +60,14 @@ const items = ref([
                 command: () => router.push('/')
             },
             {
-                label: 'Mi Perfil',
-                icon: 'pi pi-user',
+                label: 'Progreso',
+                icon: 'pi pi-chart-line',
                 command: () => router.push('/profile-view/')
+            },
+            {
+                label: 'Editar Perfil',
+                icon: 'pi pi-pen-to-square',
+                command: () => router.push('/edit-profile-view/')
             },
             {
                 label: 'Tienda',

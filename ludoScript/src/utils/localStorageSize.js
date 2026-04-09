@@ -122,28 +122,6 @@ export function logLocalStorageSize(label = "localStorage", user = null) {
     console.info(
       `${nItems} keys${ownerInfo} - ${formatBytes(bytes)} (${bytes} bytes)`,
     );
-
-    const owners = getOwnersMapping();
-    // Listamos claves de ludoscript y su propietario si está disponible
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!key || !key.startsWith("ludoscript_")) continue;
-      const value = localStorage.getItem(key) || "";
-      const size =
-        typeof Blob !== "undefined"
-          ? new Blob([key]).size + new Blob([value]).size
-          : typeof TextEncoder !== "undefined"
-            ? new TextEncoder().encode(key).length +
-              new TextEncoder().encode(value).length
-            : (key.length + value.length) * 2;
-      const owner = owners[key];
-      const ownerLabel = owner
-        ? `${owner.username ?? owner.userId} (id:${owner.userId})`
-        : "unknown";
-      console.info(
-        `[ludoscript] key=${key} size=${formatBytes(size)} owner=${ownerLabel}`,
-      );
-    }
   } catch (e) {
     console.warn("[ludoscript] no se pudo medir localStorage", e);
   }

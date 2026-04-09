@@ -3,18 +3,6 @@
         class="relative p-2 rounded-2xl mb-2"
         :style="{ backgroundImage: `url('${bannerURL}')`,backgroundSize: 'cover', backgroundPosition: 'center',height: '100px'}"
         >
-        <div class="flex justify-end">
-            <i class=" pi pi-pen-to-square flex absolute rounded-full p-2 cursor-pointer z-10
-               text-gray-900 bg-gray-50
-               opacity-50 hover:opacity-100
-               transition-opacity duration-200"
-               @click="visible=true">
-            </i>
-            <!-- :style="{ backgroundImage: `url('${userStore.bannerUrl}')` ... }" cuando venga de la bbdd -->
-        </div>
-        <Dialog v-model:visible="visible" modal header="Editar Perfil" class="!bg-gray-900 !text-white !font-bold">
-            <EditProfile @close="visible = false" />
-        </Dialog>
         <Avatar
             :image= "iconURL"
             class="ml-2 mt-2"
@@ -28,14 +16,10 @@
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
 import { Avatar } from 'primevue';
-import Dialog from 'primevue/dialog';
 import { useAuthStore } from '@/stores/auth.store';
-import EditProfile from './EditProfile.vue';
 
 const auth = useAuthStore();
-const visible = ref(false);
     
 const iconURL = 'https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/icons/icon_portatil.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvaWNvbnMvaWNvbl9wb3J0YXRpbC5wbmciLCJpYXQiOjE3NzM4MzAwOTQsImV4cCI6MTgwNTM2NjA5NH0.hrXnk8XtCUhl-udVXZgwqx6Du13c-M7CykqHHhhV2Qg'
 const bannerURL = 'https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/banners/banner_cielo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvYmFubmVycy9iYW5uZXJfY2llbG8ucG5nIiwiaWF0IjoxNzc1NDkwNjIwLCJleHAiOjE4MDcwMjY2MjB9.gezPtXOpLITKdPNrg5imxoOLSjLR6gCTbVhbfcCE5fc'
