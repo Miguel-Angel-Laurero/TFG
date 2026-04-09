@@ -140,6 +140,25 @@ function markPdfAsSavedToCloud(pdfId) {
   }
 }
 
+// ── Sincronización desde servidor ────────────────────────────────────────────
+/**
+ * Hidrata el localStorage con los PDFs descargados del servidor al iniciar sesión.
+ * Solo escribe datos para los PDFs que NO tienen datos locales aún, preservando
+ * cualquier cambio local del usuario (regeneraciones no guardadas en la nube).
+ *
+ * @param {Array<{ id, quizQuestions, flashCards }>} pdfs - PDFs devueltos por /api/pdfs/sync
+ */
+function syncPdfsFromServer(pdfs) {
+  if (!Array.isArray(pdfs)) return;
+  for (const pdf of pdfs) {
+    if (!pdf.quizQuestions || !pdf.flashCards) continue;
+    // Si ya hay datos locales, el usuario puede tener cambios sin guardar: no sobrescribir
+    if (hasPdfInStorage(pdf.id)) continue;
+    savePdfQuestionsToStorage(pdf.id, pdf.quizQuestions, pdf.flashCards);
+    markPdfAsSavedToCloud(pdf.id);
+  }
+}
+
 export {
   fisherYates,
   pickRandomIds,
@@ -153,4 +172,5 @@ export {
   hasPdfInStorage,
   isPdfSavedToCloud,
   markPdfAsSavedToCloud,
+  syncPdfsFromServer,
 };

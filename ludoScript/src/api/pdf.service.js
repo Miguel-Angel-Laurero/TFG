@@ -57,4 +57,13 @@ export const pdfService = {
   saveToCloud(id, data) {
     return api.put(`/pdfs/${id}/questions`, data);
   },
+
+  /**
+   * Obtiene todos los PDFs del usuario que tienen contenido generado (quizQuestions
+   * y flashCards). Usado al iniciar sesión para hidratar el localStorage.
+   * @returns {Promise<Array<{ id, originalName, createdAt, quizQuestions, flashCards }>>}
+   */
+  syncAll() {
+    return api.get("/pdfs/sync");
+  },
 };
