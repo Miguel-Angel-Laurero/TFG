@@ -95,7 +95,7 @@ import api from '@/api/axios'
 import { categoryStatsService } from '@/api/categoryStats.service'
 import { gameService } from '@/api/game.service'
 import { getSessionSummary } from '@/composables/useSessionTracker'
-import ActivityLoading from './ActivityLoading.vue'
+import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import QuizQuestion from './QuizQuestion.vue'
 
