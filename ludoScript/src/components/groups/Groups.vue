@@ -144,11 +144,11 @@ function openGroup(group) {
 }
 
 function onGroupCreated() {
-  // already added to store by the store action
+  // The new group is already added to the store by groupStore.createGroup
 }
 
 function onGroupJoined() {
-  // already added to store by the store action
+  // The joined group is already added to the store by groupStore.joinGroup
 }
 
 function onLeft(id) {
