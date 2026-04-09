@@ -22,11 +22,9 @@ export const pdfService = {
     const formData = new FormData();
     // El campo "file" debe coincidir con el nombre que espera multer en el backend
     formData.append("file", file);
-    return api.post("/pdfs", formData, {
-      // Axios detecta FormData y pone el Content-Type correcto automáticamente
-      // (multipart/form-data con el boundary adecuado)
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    // No se fija Content-Type manualmente: axios detecta FormData y añade
+    // automáticamente multipart/form-data con el boundary correcto.
+    return api.post("/pdfs", formData);
   },
 
   /**
