@@ -98,6 +98,7 @@ import { getSessionSummary } from '@/composables/useSessionTracker'
 import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import QuizQuestion from './QuizQuestion.vue'
+import { useLoadingTimer } from '@/composables/useLoadingTimer'
 
 const route = useRoute()
 
@@ -106,6 +107,8 @@ const {
   loading, finished, currentIndex, currentItem, totalItems, isLastItem,
   loadDirect, next, restart,
 } = useActivitySession('/quizQuestions.json')
+const loadingManual = ref(true)
+const { withMinTime } = useLoadingTimer(loadingManual, 5000)
 
 // ─── Estado específico del Quiz ───────────────────────────────────────────────
 const selectedAnswer = ref(null)
@@ -125,28 +128,39 @@ const loadError = ref(false)
 
 // ─── Carga inicial según el modo detectado ────────────────────────────────────
 onMounted(async () => {
-  const isAdaptive = route.query.adaptive === 'true'
-  const pdfIdsList = route.query.pdfIds?.split(',').filter(Boolean) ?? []
-  const hasPdfQuery = pdfIdsList.length > 0 || !!route.query.pdfId
+  // 1. Usamos withMinTime para envolver TODA la lógica de carga
+  // Esto asegura que loadingManual cambie a false solo tras terminar todo
+  await withMinTime(async () => {
+    const isAdaptive = route.query.adaptive === 'true'
+    const pdfIdsList = route.query.pdfIds?.split(',').filter(Boolean) ?? []
+    const hasPdfQuery = pdfIdsList.length > 0 || !!route.query.pdfId
 
-  if (isAdaptive) {
-    await loadAdaptiveMode()
-  } else if (hasPdfQuery) {
-    const pdfId = pdfIdsList[0] ?? route.query.pdfId
-    const includePredefined = route.query.includePredefined === 'true'
-    if (!hasPdfInStorage(pdfId)) {
+    try {
+      if (isAdaptive) {
+        await loadAdaptiveMode()
+      } else if (hasPdfQuery) {
+        const pdfId = pdfIdsList[0] ?? route.query.pdfId
+        const includePredefined = route.query.includePredefined === 'true'
+        
+        if (!hasPdfInStorage(pdfId)) {
+          loadError.value = true
+          await loadDirect([])
+        } else if (includePredefined) {
+          await loadMixedMode(pdfId)
+        } else {
+          await loadPdfLocalMode(pdfId)
+        }
+      } else {
+        await loadStaticMode()
+      }
+      
+      // Inicializamos los resultados después de cargar las preguntas
+      results.value = new Array(totalItems.value).fill(null)
+    } catch (error) {
+      console.error("Error cargando datos:", error)
       loadError.value = true
-      await loadDirect([])
-    } else if (includePredefined) {
-      await loadMixedMode(pdfId)
-    } else {
-      await loadPdfLocalMode(pdfId)
     }
-  } else {
-    await loadStaticMode()
-  }
-
-  results.value = new Array(totalItems.value).fill(null)
+  })
 })
 
 // Modo estático puro: 15 preguntas aleatorias del banco JS

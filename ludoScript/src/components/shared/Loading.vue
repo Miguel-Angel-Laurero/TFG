@@ -1,21 +1,21 @@
 <template>
   <div class="loading-overlay">
-    <!-- El Personaje -->
-    <div class="loader-sprite"></div>
-    
-    <!-- Texto de carga -->
+    <div class="character-container">
+      <div class="loader-sprite"></div>
+    </div>
     <p class="loading-text">Cargando<span>...</span></p>
   </div>
 </template>
 
 <style scoped>
 .loading-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
+  bottom: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #1a1a1a; /* Color de fondo de tu app */
+  background-color: rgba(26, 26, 26, 0.9);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -23,33 +23,55 @@
   z-index: 9999;
 }
 
+.character-container {
+  /* Ajustamos a la medida real de UN frame */
+  width: 200px; 
+  height: 330px; 
+  overflow: hidden;
+  position: relative;
+  animation: float 2s ease-in-out infinite;
+}
+
 .loader-sprite {
-  width: 100px;  /* Ajusta al ancho de UN fotograma */
-  height: 100px; /* Ajusta al alto de tu personaje */
-  background-image: url('https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/loading_spriteSheet.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9hZGluZ19zcHJpdGVTaGVldC5wbmciLCJpYXQiOjE3NzU3MjA3NTEsImV4cCI6MTgwNzI1Njc1MX0.eiMql1EpPz4HBizEUJAYfAJiPHxRNPDQqAiFu4PwO1I');
+  width: 100%;
+  height: 100%;
+  background-image: url('https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/loading_spriteSheet.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9hZGluZ19zcHJpdGVTaGVldC5wbmciLCJpYXQiOjE3NzU3MjYwNDIsImV4cCI6MTgwNzI2MjA0Mn0.v2vS0MIQUgt-d-0g36nlkxHThUK3gghDTWYgC07B-rU');
   background-repeat: no-repeat;
-  background-size: 300px 100px; /* Ancho total de los 3 frames x alto */
   
-  /* Animación del personaje */
-  /* 0.4s es una buena velocidad para alguien corriendo */
-  animation: run-anim 0.4s steps(3) infinite;
+  /* 
+     IMPORTANTE: Forzamos el tamaño real de la imagen. 
+     Como el contenedor mide 200px, 1000px de fondo es perfecto.
+  */
+  background-size: 1000px 330px; 
+  
+  image-rendering: pixelated;
+  
+  /* 
+     Usamos steps(5) y píxeles exactos. 
+     El salto final debe ser el ancho total de la imagen.
+  */
+  animation: run-anim 0.8s steps(5) infinite;
 }
 
 @keyframes run-anim {
-  from { background-position: 0px; }
-  to { background-position: -300px; }
+  from { background-position: -15px 0px; }
+  to { background-position: -1000px 0px; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
 }
 
 .loading-text {
   color: white;
-  margin-top: 20px;
-  font-family: sans-serif;
-  letter-spacing: 2px;
+  margin-top: 30px;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 18px;
 }
 
-/* Opcional: animación de pulso para el texto */
 .loading-text span {
   animation: blink 1.5s infinite;
 }
