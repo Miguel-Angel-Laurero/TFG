@@ -33,6 +33,12 @@ export const useAuthStore = defineStore('auth', () => {
       const { useRewardsStore } = await import('@/stores/rewards.store')
       await useRewardsStore().fetchRewards()
 
+      // Hidrata el localStorage con los PDFs guardados en la nube para este usuario
+      const { pdfService } = await import('@/api/pdf.service')
+      const { syncPdfsFromServer } = await import('@/composables/useAdaptiveSelection')
+      const { data: pdfs } = await pdfService.syncAll()
+      syncPdfsFromServer(pdfs)
+
       router.push('/')
     } catch (e) {
       error.value = e.response?.data?.message ?? 'Error al iniciar sesión'
@@ -55,6 +61,12 @@ export const useAuthStore = defineStore('auth', () => {
 
       const { useRewardsStore } = await import('@/stores/rewards.store')
       await useRewardsStore().fetchRewards()
+
+      // Hidrata el localStorage con los PDFs guardados en la nube para este usuario
+      const { pdfService } = await import('@/api/pdf.service')
+      const { syncPdfsFromServer } = await import('@/composables/useAdaptiveSelection')
+      const { data: pdfs } = await pdfService.syncAll()
+      syncPdfsFromServer(pdfs)
 
       router.push('/')
     } catch (e) {

@@ -4,6 +4,7 @@ const authMiddleware = require("../middlewares/auth.middleware");
 const {
   uploadPdf,
   listPdfs,
+  listPdfsWithContent,
   getPdfQuiz,
   getPdfFlashCards,
   deletePdf,
@@ -42,6 +43,12 @@ const upload = multer({
 // Recibe un PDF (campo "file" en FormData), lo procesa con Gemini y guarda el
 // resultado en la BD. Responde con la metadata del PDF creado.
 router.post("/", authMiddleware, upload.single("file"), uploadPdf);
+
+// GET /api/pdfs/sync
+// Devuelve todos los PDFs del usuario que tienen contenido generado, incluyendo
+// quizQuestions y flashCards. Usado al iniciar sesión para hidratar el localStorage.
+// Debe declararse ANTES de /:id para que Express no lo interprete como un parámetro.
+router.get("/sync", authMiddleware, listPdfsWithContent);
 
 // GET /api/pdfs
 // Devuelve la lista de PDFs del usuario autenticado (solo metadata, sin contenido).

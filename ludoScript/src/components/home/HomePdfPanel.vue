@@ -328,14 +328,17 @@ async function handleFileChange(event) {
         // Guardar las 50 preguntas y 20 flashcards en localStorage
         // y calcular 15 IDs activos aleatorios
         savePdfQuestionsToStorage(id, quizQuestions, flashCards)
+        // La primera subida ya se guarda automáticamente en la nube (BD);
+        // marcar el flag local para que no aparezca el icono de sincronización.
+        markPdfAsSavedToCloud(id)
 
         pdfs.value.unshift({ id, originalName, createdAt })
         pdfCount.value = pdfs.value.length
 
-        // Registrar estado local del nuevo PDF
+        // Registrar estado local del nuevo PDF (ya guardado en nube desde el inicio)
         pdfLocalStatus.value[id] = {
             hasLocal: true,
-            savedToCloud: false,
+            savedToCloud: true,
             saving: false,
             saveError: null,
         }

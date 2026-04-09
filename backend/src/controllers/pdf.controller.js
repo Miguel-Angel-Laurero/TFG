@@ -65,13 +65,14 @@ const uploadPdf = async (req, res, next) => {
     // y se devuelve el original sin modificar.
     const originalName = fixFilenameEncoding(req.file.originalname);
 
-    // Guarda solo la metadata en la BD — las preguntas van al frontend vía localStorage.
-    // El usuario puede guardarlas en la nube más adelante mediante PUT /:id/questions.
+    // Guarda la metadata y el contenido generado en la BD en la primera subida.
+    // Las regeneraciones futuras (nuevas preguntas desde el mismo PDF) se guardan
+    // solo en localStorage y el usuario puede subirlas a la nube manualmente.
     const pdf = await UserPdf.create({
       userId: req.user.id,
       originalName,
-      quizQuestions: null,
-      flashCards: null,
+      quizQuestions,
+      flashCards,
     });
 
     // Devuelve metadata + contenido generado para que el frontend lo almacene en localStorage
@@ -97,6 +98,33 @@ const uploadPdf = async (req, res, next) => {
       return res.status(502).json({ error: error.message });
     }
 
+    next(error);
+  }
+};
+
+// ── listPdfsWithContent ──────────────────────────────────────────────────────
+// Devuelve todos los PDFs del usuario autenticado incluyendo quizQuestions y
+// flashCards. Solo devuelve los registros que ya tienen contenido generado
+// (quizQuestions IS NOT NULL), es decir, los listos para usar.
+//
+// Usado al iniciar sesión para hidratar el localStorage del cliente con los
+// datos guardados en la nube, sin requerir llamadas individuales por PDF.
+// ─────────────────────────────────────────────────────────────────────────────
+const { Op } = require("sequelize");
+
+const listPdfsWithContent = async (req, res, next) => {
+  try {
+    const pdfs = await UserPdf.findAll({
+      where: {
+        userId: req.user.id,
+        quizQuestions: { [Op.not]: null },
+      },
+      attributes: ["id", "originalName", "createdAt", "quizQuestions", "flashCards"],
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json(pdfs);
+  } catch (error) {
     next(error);
   }
 };
@@ -278,6 +306,7 @@ const createPdfGame = async (req, res, next) => {
 };
 
 module.exports = {
+  listPdfsWithContent,
   uploadPdf,
   listPdfs,
   getPdfQuiz,
