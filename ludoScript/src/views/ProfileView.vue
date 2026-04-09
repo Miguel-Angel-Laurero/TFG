@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen flex flex-col">
     <header>
-      <Header/>
+      <Header />
     </header>
     <main class="flex-1 min-h-0 overflow-y-auto">
       <div class="max-w-4xl mx-auto px-4 py-6 flex flex-col gap-6">
@@ -30,7 +30,7 @@
       </div>
     </main>
     <footer>
-      <Footer/>
+      <Footer />
     </footer>
   </div>
 </template>
