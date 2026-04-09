@@ -119,7 +119,13 @@ const listPdfsWithContent = async (req, res, next) => {
         userId: req.user.id,
         quizQuestions: { [Op.not]: null },
       },
-      attributes: ["id", "originalName", "createdAt", "quizQuestions", "flashCards"],
+      attributes: [
+        "id",
+        "originalName",
+        "createdAt",
+        "quizQuestions",
+        "flashCards",
+      ],
       order: [["createdAt", "DESC"]],
     });
 

@@ -64,6 +64,6 @@ export const pdfService = {
    * @returns {Promise<Array<{ id, originalName, createdAt, quizQuestions, flashCards }>>}
    */
   syncAll() {
-    return api.get('/pdfs/sync');
+    return api.get("/pdfs/sync");
   },
 };
