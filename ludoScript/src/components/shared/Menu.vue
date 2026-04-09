@@ -65,6 +65,11 @@ const items = ref([
                 command: () => router.push('/profile-view/')
             },
             {
+                label: 'Mis Grupos',
+                icon: 'pi pi-users',
+                command: () => router.push('/groups-view/')
+            },
+            {
                 label: 'Tienda',
                 icon: 'pi pi-shop',
                 command: () => router.push('/shop-view/')

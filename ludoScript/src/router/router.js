@@ -34,6 +34,11 @@ const router = createRouter({
       component: () => import("../views/InGameView.vue"),
     },
     {
+      path: '/groups-view/',
+      name: 'groups',
+      component: () => import("../views/GroupsView.vue"),
+    },
+    {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFoundView.vue')
