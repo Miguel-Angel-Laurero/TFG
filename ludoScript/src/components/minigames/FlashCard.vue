@@ -1,5 +1,5 @@
 <template>
-  <ActivityLoading v-if="loading" />
+  <Loading v-if="loading" />
 
   <ActivityFinished v-else-if="finished" title="¡Repaso Completado!"
     message="Has terminado todas las preguntas del temario. Sigue practicando para afianzar el contenido."
@@ -14,7 +14,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useActivitySession } from '@/composables/useActivitySession'
 import { useActivityReward } from '@/composables/useActivityReward'
-import ActivityLoading from './ActivityLoading.vue'
+import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import FlashCardDeck from './FlashCardDeck.vue'
 

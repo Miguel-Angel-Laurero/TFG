@@ -1,5 +1,5 @@
 <template>
-  <ActivityLoading v-if="loading" />
+  <Loading v-if="loading" />
 
   <ActivityFinished v-else-if="finished" title="Resultado final" restart-label="Volver a intentarlo"
     :earned-reward="earnedReward" :rank-label="rankLabel" :rank-color="rankColor" @restart="handleRestart">
@@ -95,7 +95,7 @@ import api from '@/api/axios'
 import { categoryStatsService } from '@/api/categoryStats.service'
 import { gameService } from '@/api/game.service'
 import { getSessionSummary } from '@/composables/useSessionTracker'
-import ActivityLoading from './ActivityLoading.vue'
+import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import QuizQuestion from './QuizQuestion.vue'
 
