@@ -8,16 +8,56 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import Chart from 'primevue/chart';
+import { gameService } from '@/api/game.service';
 
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
+const WEEKLY_CACHE_KEY = 'session_weekly';
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 const chartData = ref();
 const chartOptions = ref();
 
-const setChartData = () => {
+async function loadWeeklyData() {
+    let testsPerDay = [0, 0, 0, 0, 0, 0, 0];
+    let xpPerDay    = [0, 0, 0, 0, 0, 0, 0];
+
+    // Try localStorage cache first
+    try {
+        const cached = localStorage.getItem(WEEKLY_CACHE_KEY);
+        if (cached) {
+            const { data, cachedAt } = JSON.parse(cached);
+            if (Date.now() - cachedAt < CACHE_TTL_MS) {
+                testsPerDay = data.testsPerDay;
+                xpPerDay    = data.xpPerDay;
+                return { testsPerDay, xpPerDay };
+            }
+        }
+    } catch {
+        // ignore malformed cache
+    }
+
+    // Fetch from backend and update cache
+    try {
+        const { data } = await gameService.getWeekly();
+        testsPerDay = data.testsPerDay;
+        xpPerDay    = data.xpPerDay;
+        localStorage.setItem(WEEKLY_CACHE_KEY, JSON.stringify({
+            data: { testsPerDay, xpPerDay },
+            cachedAt: Date.now(),
+        }));
+    } catch {
+        // If fetch fails keep zeros (or cached stale data if available)
+    }
+
+    return { testsPerDay, xpPerDay };
+}
+
+onMounted(async () => {
+    const { testsPerDay, xpPerDay } = await loadWeeklyData();
+    chartData.value = setChartData(testsPerDay, xpPerDay);
+    chartOptions.value = setChartOptions();
+});
+
+const setChartData = (testsPerDay, xpPerDay) => {
     const documentStyle = getComputedStyle(document.documentElement);
 
     return {
@@ -27,13 +67,13 @@ const setChartData = () => {
                 label: 'Tests completados',
                 backgroundColor: documentStyle.getPropertyValue('--p-cyan-500') || '#06b6d4',
                 borderColor: documentStyle.getPropertyValue('--p-cyan-500') || '#06b6d4',
-                data: [5, 8, 6, 9, 7, 4, 6]
+                data: testsPerDay,
             },
             {
                 label: 'Puntos XP ganados',
                 backgroundColor: documentStyle.getPropertyValue('--p-purple-500') || '#a855f7',
                 borderColor: documentStyle.getPropertyValue('--p-purple-500') || '#a855f7',
-                data: [150, 240, 180, 270, 210, 120, 180]
+                data: xpPerDay,
             }
         ]
     };
