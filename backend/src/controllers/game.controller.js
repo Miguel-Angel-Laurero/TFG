@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { Game, User } = require("../models");
 
 const getAll = async (_req, res, next) => {
@@ -92,4 +93,39 @@ const remove = async (req, res, next) => {
   }
 };
 
-module.exports = { getAll, getMine, getById, create, update, remove };
+const getWeekly = async (req, res, next) => {
+  try {
+    const now = new Date();
+    const dayOfWeek = now.getUTCDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    // Calculate start of current week (Monday) in UTC
+    const startOfWeek = new Date(now);
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    startOfWeek.setUTCDate(now.getUTCDate() - diff);
+    startOfWeek.setUTCHours(0, 0, 0, 0);
+
+    const games = await Game.findAll({
+      where: {
+        userId: req.user.id,
+        playedAt: { [Op.gte]: startOfWeek },
+      },
+      order: [["playedAt", "ASC"]],
+    });
+
+    // Build arrays for Mon(0)..Sun(6)
+    const testsPerDay = Array(7).fill(0);
+    const xpPerDay = Array(7).fill(0);
+
+    games.forEach((game) => {
+      const d = new Date(game.playedAt).getUTCDay(); // 0=Sun..6=Sat (UTC)
+      const idx = d === 0 ? 6 : d - 1; // convert to Mon=0..Sun=6
+      testsPerDay[idx]++;
+      xpPerDay[idx] += game.score || 0;
+    });
+
+    res.json({ testsPerDay, xpPerDay });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getAll, getMine, getById, create, update, remove, getWeekly };
