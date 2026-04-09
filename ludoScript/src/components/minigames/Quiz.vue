@@ -124,23 +124,56 @@ const router = useRouter()
 const loadError = ref(false)
 
 // ─── Carga inicial según el modo detectado ────────────────────────────────────
+// ─── Debug: muestra por consola las preguntas de cada PDF seleccionado ───────
+function logPdfQuestionStats(ids) {
+  if (!ids.length) return
+  console.group(`[Quiz] PDFs seleccionados: ${ids.length}`)
+  for (const id of ids) {
+    const stored = loadPdfQuestionsFromStorage(id)
+    if (!stored) {
+      console.warn(`  PDF ${id}: sin datos en localStorage`)
+      continue
+    }
+    const activeItems = filterByIds(stored.questions, stored.activeIds)
+    console.group(`  PDF ${id} — total: ${stored.questions.length} preguntas | activas (disponibles): ${activeItems.length}`)
+    activeItems.forEach((q) => {
+      console.log(`    [${q.id}] ${q.question}`)
+      q.options?.forEach((opt, i) => {
+        const mark = i === q.correct ? '✓' : ' '
+        console.log(`         ${mark} ${i}) ${opt}`)
+      })
+    })
+    console.groupEnd()
+  }
+  console.groupEnd()
+}
+
 onMounted(async () => {
   const isAdaptive = route.query.adaptive === 'true'
   const pdfIdsList = route.query.pdfIds?.split(',').filter(Boolean) ?? []
   const hasPdfQuery = pdfIdsList.length > 0 || !!route.query.pdfId
 
+  if (!isAdaptive && hasPdfQuery) {
+    const allIds = pdfIdsList.length > 0 ? pdfIdsList : [route.query.pdfId]
+    logPdfQuestionStats(allIds)
+  }
+
   if (isAdaptive) {
     await loadAdaptiveMode()
   } else if (hasPdfQuery) {
-    const pdfId = pdfIdsList[0] ?? route.query.pdfId
     const includePredefined = route.query.includePredefined === 'true'
-    if (!hasPdfInStorage(pdfId)) {
-      loadError.value = true
-      await loadDirect([])
-    } else if (includePredefined) {
-      await loadMixedMode(pdfId)
+    if (pdfIdsList.length > 1) {
+      await loadMultiplePdfsMode(pdfIdsList)
     } else {
-      await loadPdfLocalMode(pdfId)
+      const pdfId = pdfIdsList[0] ?? route.query.pdfId
+      if (!hasPdfInStorage(pdfId)) {
+        loadError.value = true
+        await loadDirect([])
+      } else if (includePredefined) {
+        await loadMixedMode(pdfId)
+      } else {
+        await loadPdfLocalMode(pdfId)
+      }
     }
   } else {
     await loadStaticMode()
@@ -148,6 +181,24 @@ onMounted(async () => {
 
   results.value = new Array(totalItems.value).fill(null)
 })
+
+// Modo multi-PDF: combina las preguntas activas de todos los PDFs y selecciona 15
+async function loadMultiplePdfsMode(ids) {
+  const allActive = []
+  for (const id of ids) {
+    const stored = loadPdfQuestionsFromStorage(id)
+    if (!stored) continue
+    allActive.push(...filterByIds(stored.questions, stored.activeIds))
+  }
+  if (!allActive.length) {
+    loadError.value = true
+    await loadDirect([])
+    return
+  }
+  const selected = filterByIds(allActive, pickRandomIds(allActive, Math.min(15, allActive.length)))
+  console.log(`[Quiz] Multi-PDF: ${allActive.length} preguntas disponibles → ${selected.length} seleccionadas para el quiz`)
+  await loadDirect(selected)
+}
 
 // Modo estático puro: 15 preguntas aleatorias del banco JS
 async function loadStaticMode() {
