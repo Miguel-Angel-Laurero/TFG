@@ -1,6 +1,12 @@
-[  
-    { "question":" '¿Capital de Francia?'", "answer": "París" },
-    { "question": "'¿2 + 2?'", "answer": "4" },
-    { "question": "'¿2 + 2?'", "answer": "4" },
-    { "question": "'¿2 + 2?'", "answer": "4" }
+[
+  { "question": "¿Qué es la herencia en programación orientada a objetos?", "answer": "Mecanismo por el que una clase hija hereda atributos y métodos de una clase padre, reutilizando y extendiendo su funcionalidad." },
+  { "question": "¿Qué es el polimorfismo?", "answer": "Capacidad de distintas clases de responder al mismo mensaje o método de formas diferentes según su implementación." },
+  { "question": "¿Qué es la encapsulación?", "answer": "Principio que oculta los detalles internos de una clase, exponiendo solo una interfaz pública mediante métodos getter y setter." },
+  { "question": "¿Qué es una clase abstracta?", "answer": "Clase que no puede instanciarse directamente; define una plantilla con métodos abstractos que las subclases deben implementar." },
+  { "question": "¿Qué es una interfaz en programación?", "answer": "Contrato que define un conjunto de métodos que una clase debe implementar, sin proporcionar la implementación." },
+  { "question": "¿Qué es un bucle for?", "answer": "Estructura de control que repite un bloque de código un número determinado de veces, usando un contador de iteraciones." },
+  { "question": "¿Qué es un bucle while?", "answer": "Estructura de control que repite un bloque de código mientras una condición lógica sea verdadera." },
+  { "question": "¿Qué es un array?", "answer": "Estructura de datos que almacena una colección de elementos del mismo tipo en posiciones contiguas de memoria." },
+  { "question": "¿Qué es una función recursiva?", "answer": "Función que se llama a sí misma para resolver subproblemas más pequeños hasta alcanzar un caso base." },
+  { "question": "¿Qué es la complejidad algorítmica O(n)?", "answer": "Notación que describe cómo crece el tiempo de ejecución de un algoritmo de forma lineal respecto al tamaño de la entrada." }
 ]
