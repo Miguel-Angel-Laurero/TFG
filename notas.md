@@ -12,6 +12,16 @@ pdf predefinidos --> dejan tal y como están, no se implementa el algo
 
 JSON que devuelve la primera llamada --> JSON se guarda en localStorage y en nube --> todo lo que se modifique es sobre el localStorage
 
-Botón de guardar test para subir a la nube
+Botón de guardar test para subir a la nube que es la base de datos de supabase, con esto se guardarían tanto el test como el resto de preguntas, todo esto para tener distintos JSON independientes, el objetivo es que el base que se genera por primera vez esté intacto y luego si se ha generado otra llamada con gemini para hacer nuevas preguntas quiero que esas preguntas también se suban en otro array distinto
 
 Última sesión: pendiente de ver como calcular, en teoría una sesión desde que entra hsata que sale
+
+En progreso en el banner donde pone admin debe salir el banner con la imagen que haya seleccionado el usuario
+
+¿Se está usando editProfileContent y editProfileView pero el editProfile no sale?
+
+En la pestaña de editar perfil avatar debe mostrar el icono de perfil y el banner actual (componente editProfile) no todos los avatares. Para cambiarlo el usuario debe darle a un botón de editar
+
+editProfileView --> carga editProfileContent (avatar, nombre usuario etc) --> selector de avatar --> listado iconos
+
+Debe salir una ventana para poder cambiar los iconos

@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const fs = require("fs");
+const path = require("path");
 const gameController = require("../controllers/game.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 const { CategoryStat } = require("../models");
@@ -6,6 +8,89 @@ const {
   generateAdaptiveReinforcement,
   generateAdaptiveQuizQuestions,
 } = require("../controllers/gemini-service");
+
+const STATIC_QUIZ_PATH = path.join(
+  __dirname,
+  "../../../ludoScript/public/quizQuestions.json",
+);
+
+let STATIC_QUIZ_BANK = [];
+try {
+  STATIC_QUIZ_BANK = JSON.parse(fs.readFileSync(STATIC_QUIZ_PATH, "utf-8"));
+} catch (error) {
+  console.error(
+    "No se pudo cargar quizQuestions.json para el fallback adaptativo:",
+    error.message,
+  );
+}
+
+function shuffle(items) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function buildAdaptiveCounts(ranked, totalQuestions = 50) {
+  if (!ranked.length) return [];
+
+  const weights = ranked.map((entry) => Math.max(entry.errorRate, 0));
+  const normalizedWeights = weights.every((weight) => weight === 0)
+    ? ranked.map(() => 1)
+    : weights;
+  const totalWeight = normalizedWeights.reduce((sum, weight) => sum + weight, 0);
+  const exactCounts = normalizedWeights.map(
+    (weight) => (weight / totalWeight) * totalQuestions,
+  );
+  const counts = exactCounts.map((count) => Math.max(1, Math.floor(count)));
+
+  let assigned = counts.reduce((sum, count) => sum + count, 0);
+  while (assigned < totalQuestions) {
+    let bestIdx = 0;
+    let bestFraction = -Infinity;
+    for (let i = 0; i < exactCounts.length; i += 1) {
+      const fraction = exactCounts[i] - counts[i];
+      if (fraction > bestFraction) {
+        bestFraction = fraction;
+        bestIdx = i;
+      }
+    }
+    counts[bestIdx] += 1;
+    assigned += 1;
+  }
+
+  while (assigned > totalQuestions) {
+    const removable = counts
+      .map((count, index) => ({ count, index }))
+      .filter(({ count }) => count > 1)
+      .sort((a, b) => b.count - a.count)[0];
+    if (!removable) break;
+    counts[removable.index] -= 1;
+    assigned -= 1;
+  }
+
+  return ranked.map((entry, index) => ({
+    category: entry.category,
+    errorRate: entry.errorRate,
+    count: counts[index],
+  }));
+}
+
+function buildAdaptiveFallbackQuestions(categories, limit = 15) {
+  const priority = new Map(
+    categories.map((entry, index) => [entry.category, index]),
+  );
+
+  const prioritized = shuffle(STATIC_QUIZ_BANK).sort((a, b) => {
+    const aRank = priority.has(a.category) ? priority.get(a.category) : Infinity;
+    const bRank = priority.has(b.category) ? priority.get(b.category) : Infinity;
+    return aRank - bRank;
+  });
+
+  return prioritized.slice(0, Math.min(limit, prioritized.length));
+}
 
 // GET /api/games  (público: ranking general)
 router.get("/", gameController.getAll);
@@ -46,21 +131,23 @@ router.get("/adaptive-quiz", async (req, res, next) => {
       .sort((a, b) => b.errorRate - a.errorRate)
       .slice(0, 3); // Máximo 3 categorías
 
-    // Distribuye 50 preguntas proporcionales a la tasa de error
-    const totalRate = ranked.reduce((sum, c) => sum + c.errorRate, 0);
-    let remaining = 50;
-    const categories = ranked.map((c, idx) => {
-      const isLast = idx === ranked.length - 1;
-      const count = isLast
-        ? remaining
-        : Math.max(1, Math.round((c.errorRate / totalRate) * 50));
-      remaining -= isLast ? 0 : count;
-      return { category: c.category, count, errorRate: c.errorRate };
-    });
+    const categories = buildAdaptiveCounts(ranked, 50);
+    let questions;
+    let source = "gemini";
 
-    const questions = await generateAdaptiveQuizQuestions(categories);
+    try {
+      questions = await generateAdaptiveQuizQuestions(categories);
+    } catch (error) {
+      source = "local-fallback";
+      questions = buildAdaptiveFallbackQuestions(categories, 15);
+      console.warn(
+        "[adaptive-quiz] Gemini no disponible, usando fallback local:",
+        error.message,
+      );
+    }
 
     res.json({
+      source,
       questions,
       weakCategories: categories.map(({ category, errorRate, count }) => ({
         category,

@@ -18,13 +18,17 @@ export const pdfService = {
    * @param {File} file - Objeto File del input nativo del navegador
    * @returns {Promise<{ id, originalName, createdAt }>}
    */
-  uploadPdf(file) {
+  uploadPdf(file, options = {}) {
     const formData = new FormData();
     // El campo "file" debe coincidir con el nombre que espera multer en el backend
     formData.append("file", file);
     // No se fija Content-Type manualmente: axios detecta FormData y añade
     // automáticamente multipart/form-data con el boundary correcto.
-    return api.post("/pdfs", formData);
+    return api.post("/pdfs", formData, {
+      onUploadProgress: options.onUploadProgress,
+      signal: options.signal,
+      timeout: options.timeout ?? 180000,
+    });
   },
 
   /**

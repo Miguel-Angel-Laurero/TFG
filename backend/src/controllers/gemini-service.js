@@ -12,6 +12,8 @@ const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
 });
 
 const fileManager = new GoogleAIFileManager(apiKey);
+const GEMINI_MAX_RETRIES = 3;
+const GEMINI_RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
 
 // ── schemas de salida estructurada ───────────────────────────────────────────
 // Definen el contrato exacto de lo que Gemini debe devolver.
@@ -104,6 +106,24 @@ function validateGameContent(parsed) {
     throw new Error("Faltan 'quizQuestions' o 'flashCards' como arrays.");
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRetryableGeminiError(error) {
+  const status = Number(error?.status);
+  if (GEMINI_RETRYABLE_STATUS.has(status)) return true;
+
+  const message = String(error?.message ?? "").toLowerCase();
+  return (
+    message.includes("rate limit") ||
+    message.includes("resource exhausted") ||
+    message.includes("overloaded") ||
+    message.includes("unavailable") ||
+    message.includes("deadline exceeded")
+  );
+}
+
 // Sube un buffer a la Gemini Files API y devuelve el objeto file resultante.
 // Escribe el buffer en un fichero temporal, lo sube y elimina el temporal.
 async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
@@ -145,18 +165,33 @@ async function callGemini(prompt, fileBuffer, mimeType, responseSchema = null) {
   if (responseSchema) generationConfig.responseSchema = responseSchema;
 
   try {
-    const result = await model.generateContent({
-      generationConfig,
-      contents: [{ role: "user", parts }],
-    });
+    for (let attempt = 1; attempt <= GEMINI_MAX_RETRIES; attempt += 1) {
+      try {
+        const result = await model.generateContent({
+          generationConfig,
+          contents: [{ role: "user", parts }],
+        });
 
-    // Con responseSchema Gemini garantiza JSON válido → JSON.parse directo.
-    // Sin schema se limpia por si acaso lleva envoltorio de markdown.
-    const raw = result.response.text().trim();
-    const clean = responseSchema
-      ? raw
-      : raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-    return JSON.parse(clean);
+        // Con responseSchema Gemini garantiza JSON válido → JSON.parse directo.
+        // Sin schema se limpia por si acaso lleva envoltorio de markdown.
+        const raw = result.response.text().trim();
+        const clean = responseSchema
+          ? raw
+          : raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+        return JSON.parse(clean);
+      } catch (error) {
+        if (
+          attempt >= GEMINI_MAX_RETRIES ||
+          !isRetryableGeminiError(error)
+        ) {
+          throw error;
+        }
+
+        const backoffMs =
+          700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 250);
+        await sleep(backoffMs);
+      }
+    }
   } finally {
     // Elimina el archivo de los servidores de Gemini una vez procesado
     if (uploadedFile) {

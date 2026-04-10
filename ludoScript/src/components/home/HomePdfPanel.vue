@@ -26,6 +26,23 @@
 
         <!-- Error de subida -->
         <p v-if="uploadError" class="text-xs text-red-400 flex-shrink-0">{{ uploadError }}</p>
+        <div v-else-if="uploading" class="flex-shrink-0 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2">
+            <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="text-xs font-semibold text-indigo-200">{{ uploadStatusTitle }}</p>
+                    <p class="text-[11px] text-indigo-100/75 mt-0.5">{{ uploadStatusDescription }}</p>
+                </div>
+                <button @click="cancelUpload"
+                    class="text-[11px] font-semibold text-rose-300 hover:text-rose-200 transition-colors">
+                    Cancelar
+                </button>
+            </div>
+
+            <div class="mt-2 h-1.5 w-full rounded-full bg-slate-800/80 overflow-hidden">
+                <div class="h-full rounded-full bg-indigo-400 transition-all duration-300"
+                    :style="{ width: `${uploadProgressBar}%` }" />
+            </div>
+        </div>
 
         <!-- ═══════════════════════════════════════════════
              SECCIÓN: PREDEFINIDOS
@@ -234,6 +251,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import { pdfService } from '@/api/pdf.service'
 import {
     savePdfQuestionsToStorage,
@@ -249,6 +267,9 @@ const pdfs = ref([])
 const loading = ref(true)
 const uploading = ref(false)
 const uploadError = ref(null)
+const uploadStage = ref('idle')
+const uploadProgress = ref(0)
+const uploadAbortController = ref(null)
 const pendingDelete = ref(null)
 const fileInput = ref(null)
 // Estado local por PDF: { [id]: { hasLocal, savedToCloud, saving, saveError } }
@@ -269,6 +290,31 @@ const allUploadedSelected = computed(() =>
 const someUploadedSelected = computed(() =>
     !allUploadedSelected.value && pdfs.value.some(p => selectedFiles.value.includes(p.id))
 )
+
+const uploadStatusTitle = computed(() => {
+    if (uploadStage.value === 'uploading') {
+        return `Subiendo archivo${uploadProgress.value ? ` (${uploadProgress.value}%)` : '…'}`
+    }
+    if (uploadStage.value === 'processing') {
+        return 'Archivo enviado. Procesando con Gemini'
+    }
+    return ''
+})
+
+const uploadStatusDescription = computed(() => {
+    if (uploadStage.value === 'uploading') {
+        return 'Todavía se está transfiriendo el PDF al backend.'
+    }
+    if (uploadStage.value === 'processing') {
+        return 'La subida ya terminó; ahora el servidor está generando las preguntas y flashcards.'
+    }
+    return ''
+})
+
+const uploadProgressBar = computed(() => {
+    if (uploadStage.value === 'processing') return 100
+    return Math.max(6, uploadProgress.value || 0)
+})
 
 function toggleAllUploaded() {
     if (allUploadedSelected.value) {
@@ -320,9 +366,23 @@ async function handleFileChange(event) {
 
     uploadError.value = null
     uploading.value = true
+    uploadStage.value = 'uploading'
+    uploadProgress.value = 0
+    uploadAbortController.value = new AbortController()
 
     try {
-        const res = await pdfService.uploadPdf(file)
+        const res = await pdfService.uploadPdf(file, {
+            signal: uploadAbortController.value.signal,
+            timeout: 180000,
+            onUploadProgress(progressEvent) {
+                if (!progressEvent.total) return
+                const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100)
+                uploadProgress.value = Math.min(100, percent)
+                if (percent >= 100) {
+                    uploadStage.value = 'processing'
+                }
+            },
+        })
         const { id, originalName, createdAt, quizQuestions, flashCards } = res.data
 
         // Guardar las 50 preguntas y 20 flashcards en localStorage
@@ -346,12 +406,27 @@ async function handleFileChange(event) {
         // Auto-seleccionar el PDF recién subido
         selectedFiles.value = [id, ...selectedFiles.value]
     } catch (err) {
-        uploadError.value =
-            err.response?.data?.error ?? 'Error al subir el PDF. Inténtalo de nuevo.'
+        if (axios.isCancel(err) || err.code === 'ERR_CANCELED') {
+            uploadError.value = 'La subida se canceló antes de terminar.'
+        } else if (err.code === 'ECONNABORTED') {
+            uploadError.value = 'La petición tardó demasiado. El archivo puede haberse enviado, pero el procesado no terminó a tiempo.'
+        } else if (!err.response) {
+            uploadError.value = 'No se pudo completar la conexión con el servidor durante la subida.'
+        } else {
+            uploadError.value =
+                err.response?.data?.error ?? 'Error al subir el PDF. Inténtalo de nuevo.'
+        }
     } finally {
         uploading.value = false
+        uploadStage.value = 'idle'
+        uploadProgress.value = 0
+        uploadAbortController.value = null
         if (fileInput.value) fileInput.value.value = ''
     }
+}
+
+function cancelUpload() {
+    uploadAbortController.value?.abort()
 }
 
 // ─── Borrado ──────────────────────────────────────────────────────────────────
