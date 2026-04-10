@@ -5,6 +5,7 @@ router.use("/users", require("./user.routes"));
 router.use("/games", require("./game.routes"));
 router.use("/rewards", require("./rewards.routes"));
 router.use("/upload", require("./upload.routes"));
+router.use("/shop", require("./shop.routes"));
 // Rutas para la gestión de PDFs subidos por los usuarios
 router.use("/pdfs", require("./pdf.routes"));
 // Estadísticas por categoría temática del Quiz

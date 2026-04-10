@@ -1,41 +1,37 @@
-import { ref } from 'vue'
 import { useTransactionStore } from '@/stores/transaction.store'
+import api from '@/api/axios'
+import { useToast } from 'primevue/usetoast'
 
 export function useTransaction() {
-    const transactionStore = useTransactionStore()
-    const cargando = ref(false)
-    const error = ref(null)
+  const transactionStore = useTransactionStore()
+  const toast = useToast()
 
-    async function buyItem(item) {
-        error.value = null
-        if (transactionStore.coins < item.price) {
-            error.value = "No dispone de suficiente RAM para adquirir el producto."
-            return false;
-        }
-        try {
-            cargando.value = true
-            //Llamamos a la api
-            const res = await fetch('/api/compras', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({itemID: item.id})
-            })
-            //Si la peticion falla
-            if (!res.ok) throw new Error('Error al procesar la compra')
-            
-            //Tras recibir los datos realizamos las opreaciones necesarias para la compra
-            transactionStore.recalculateUserCoins(item.price)
-            transactionStore.addToUserInventory(item)
-            
-            return true
+  async function buyItem(product) {
+    try {
+      const { data } = await api.post(`/shop/buy/${product.id}`)
 
-        } catch(e) {
-            error.value = e.message
-            return false
-        } finally {
-            cargando.value = false
-        }
+      // Actualizar coins en el store
+      transactionStore.recalculateUserCoins(product.price)
+
+      // Marcar el producto como adquirido localmente (reactivo)
+      product.is_adquired = true
+
+      toast.add({
+        severity: 'success',
+        summary: '¡Compra realizada!',
+        detail: `Has comprado ${product.name}. Te quedan ${data.remainingCoins} monedas.`,
+        life: 3000,
+      })
+    } catch (err) {
+      const msg = err.response?.data?.message ?? 'Error al procesar la compra'
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: msg,
+        life: 3000,
+      })
     }
+  }
 
-    return { buyItem, cargando, error }
+  return { buyItem }
 }

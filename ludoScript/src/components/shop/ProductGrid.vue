@@ -54,6 +54,7 @@
     import { ref, computed, watch, onMounted } from 'vue';
     import { useShopStore } from '@/stores/shop.store';
     import { useTransaction } from '@/composables/useTransaction';
+    import api from '@/api/axios'
 
     const { buyItem } = useTransaction();
     const shopStore = useShopStore();
@@ -62,15 +63,16 @@
     const products = ref([])
     const loading = ref(true)
     onMounted(async () => {
-        try {
-          const response = await fetch('/itemData.json')
-          products.value = await response.json()
-        } catch {
-          console.error("Error al cargar los datos",error)
-        } finally {
-          loading.value = false;
-        }
-      })
+  try {
+      const { data } = await api.get('/shop')
+      console.log('Items recibidos:', data) 
+      products.value = data
+    } catch {
+      console.error('Error al cargar los items de la tienda')
+    } finally {
+      loading.value = false
+    }
+  })
   const filteredProducts = computed(() => {
     return products.value.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(shopStore.searchQuery?.toLowerCase() || '');
