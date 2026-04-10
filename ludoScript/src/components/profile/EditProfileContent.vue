@@ -17,17 +17,7 @@
         <!-- Selector de avatar (iconos predefinidos) -->
         <div class="bg-slate-800/90 backdrop-blur-sm rounded-xl p-5 shadow-xl flex flex-col gap-3">
             <label class="text-gray-300 font-semibold text-sm">Avatar</label>
-            <div v-if="loadingIcons" class="text-white/40 text-sm py-4 text-center">Cargando iconos…</div>
-            <div v-else class="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                <button v-for="icon in icons" :key="icon.id" @click="selectedAvatar = icon.img" :class="[
-                    'rounded-full p-1 border-2 transition-all duration-200 focus:outline-none',
-                    selectedAvatar === icon.img
-                        ? 'border-blue-400 ring-2 ring-blue-400/50'
-                        : 'border-transparent hover:border-slate-500'
-                ]" :title="icon.name">
-                    <img :src="icon.img" :alt="icon.name" class="w-12 h-12 rounded-full object-cover" />
-                </button>
-            </div>
+            <EditProfile/>
         </div>
 
         <!-- Equipamiento del avatar -->
@@ -60,6 +50,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 import { userService } from '@/api/user.service'
 import AvatarProfile from './AvatarProfile.vue'
+import EditProfile from './EditProfile.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
