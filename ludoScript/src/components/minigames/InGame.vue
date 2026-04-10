@@ -51,8 +51,6 @@ import ConfettiBackground from '../shared/ConfettiBackground.vue'
 import Quiz from './Quiz.vue'
 import QuizIntro from './QuizIntro.vue'
 import FlashCard from './FlashCard.vue'
-import FixTheBug from './FixTheBug.vue'
-import CodeSorter from './CodeSorter.vue'
 import { useGameProgress } from '@/composables/useGameProgress'
 import { useGameExit } from '@/composables/useGameExit'
 
@@ -70,8 +68,6 @@ onMounted(() => resetProgress())
 const games = {
   Quiz,
   Flashcards: FlashCard,
-  FixTheBug,
-  CodeSorter,
 }
 
 const selectedGame = computed(() => games[route.query.game] ?? null)

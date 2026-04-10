@@ -42,7 +42,7 @@ const {
   load, next, restart,
 } = useActivitySession(flashCardsUrl)
 const loadingManual = ref(true)
-const { withMinTime } = useLoadingTimer(loadingManual, 5000)
+const { withMinTime } = useLoadingTimer(loadingManual, 3000)
 
 onMounted(async() => {
   await withMinTime(load) // Pasa la función directamente
