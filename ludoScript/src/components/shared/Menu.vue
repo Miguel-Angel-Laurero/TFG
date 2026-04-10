@@ -72,6 +72,11 @@ const items = ref([
                 command: () => router.push('/shop-view/')
             },
             {
+                label: 'Multijugador',
+                icon: 'pi pi-users',
+                command: () => router.push('/multiplayer/')
+            },
+            {
                 label: 'Cerrar sesión',
                 icon: 'pi pi-sign-out',
                 command: () => {

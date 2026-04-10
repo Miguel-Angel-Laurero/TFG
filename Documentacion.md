@@ -399,7 +399,20 @@ El contenido generado por Gemini no es efímero: **se guarda en la BD en el mome
 1. **Desde la Home:** tras subir un PDF aparecen los botones "Quiz" y "Flashcards" que navegan con el `pdfId` recién creado.
 2. **Desde el Perfil → sección "Mis PDFs":** `PdfManager.vue` lista todos los PDFs del usuario (llamando a `GET /api/pdfs`) y muestra botones "Jugar Quiz" y "Flashcards" para cada uno. El usuario puede volver cuantas veces quiera.
 
-Cada vez que el usuario entra al minijuego con un `pdfId`, el backend lee las preguntas de la BD (sin llamar a Gemini) y las devuelve al frontend, que las baraja de nuevo para ofrecer una experiencia diferente en cada partida.
+Nota técnica — Multijugador: temporizador y corrección de bug
+
+- Síntoma: cuando todos los jugadores respondían antes de que expirase el tiempo de una pregunta, en la siguiente pregunta se observaba una alternancia entre dos contadores (el contador residual de la pregunta anterior y el nuevo), es decir, los ticks del cronómetro se solapaban.
+- Causa raíz: en la implementación inicial el `setInterval` que emitía `game:timer` se almacenaba en una variable local dentro de `advanceQuestion()`. Si `revealQuestion()` se ejecutaba antes de que expirase el `setTimeout` de fin de pregunta (por ejemplo porque todos respondieron rápido), no había referencia disponible para cancelar ese `setInterval`, por lo que seguía emitiendo ticks.
+- Solución aplicada: el `setInterval` ahora se guarda en el objeto `room` como `room.tickInterval`. Se limpian explícitamente `room.tickInterval` y `room.questionTimer` en `revealQuestion()`, en el inicio de `advanceQuestion()` y en `destroyRoom()`, llamando a `clearInterval(...)` y `clearTimeout(...)` según corresponda.
+- Resultado: cada nueva pregunta comienza con un contador limpio (p. ej. 20s) y no quedan ticks residuales de preguntas anteriores. Al contestar antes de tiempo, el servidor limpia los timers y la siguiente pregunta arranca correctamente.
+
+Pruebas recomendadas:
+
+1. Crear una sala con al menos 2 jugadores.
+2. Iniciar la partida y responder la primera pregunta inmediatamente (antes de 1s).
+3. Comprobar en ambos clientes que la segunda pregunta muestra un único contador descendente, sin alternancias ni aceleraciones.
+
+Si quieres, puedo añadir una prueba automatizada que simule dos sockets respondiendo rápido y verifique que no quedan `tickInterval` activos entre preguntas.
 
 ```
 Primera vez:
@@ -679,3 +692,59 @@ const singlePdfId =
 Con esto, `?pdfIds=10` con un solo ID y sin `includePredefined=true` también resuelve al modo localStorage donde están las preguntas de Gemini.
 
 **Beneficio para el usuario:** al pulsar "Estudiar General" en un PDF que acaba de subir o que tiene guardado localmente, las preguntas generadas por la IA se cargan correctamente en lugar de mostrar la pantalla de error.
+
+---
+
+## Refactorización técnica: modularización del `Quiz` y pruebas unitarias
+
+Resumen
+
+Se ha realizado una refactorización de la lógica del minijuego `Quiz` en el frontend con dos objetivos principales: (1) separar responsabilidades para mejorar mantenibilidad y (2) habilitar pruebas unitarias que validen cada fase de la actividad de forma aislada.
+
+Alcance
+
+La intervención afectó exclusivamente al frontend (carpeta `ludoScript`) y consistió en extraer lógica a módulos reutilizables y añadir una batería de tests automatizados. No se introdujeron cambios en la API ni en la base de datos.
+
+Cambios implementados (resumen técnico)
+
+- Se crearon dos módulos reutilizables para encapsular responsabilidades claras:
+  - `ludoScript/src/composables/useQuizLoader.js`: encapsula las estrategias de carga de preguntas (estático, PDF local, mixto, adaptativo) y expone funciones públicas para probar cada modo de carga por separado.
+  - `ludoScript/src/composables/useQuizController.js`: gestiona la interacción del jugador (selección de respuesta, avance, reinicio) y la lógica final (envío de estadísticas, cálculo de recompensa, persistencia de partida).
+- `ludoScript/src/components/minigames/Quiz.vue` fue simplificado: ahora orquesta los composables anteriores y mantiene la plantilla/UI intacta.
+- Se añadió configuración y dependencias para pruebas unitarias con Vitest: `ludoScript/vitest.config.js` y actualización de `ludoScript/package.json` (script `test`).
+- Tests añadidos (unitarios):
+  - `ludoScript/src/composables/__tests__/useQuizLoader.spec.js` — cubre: carga estática, carga desde PDF local, modo mixto (PDF + estático), y adaptativo (API y fallback).
+  - `ludoScript/src/composables/__tests__/useQuizController.spec.js` — cubre: selección de respuesta, conteo de resultados, fórmula de puntuación, finalización de sesión y reinicio.
+
+Estrategia de diseño
+
+- Separación de responsabilidades: la carga de datos (I/O y selección de preguntas) queda en `useQuizLoader`; la gestión de interacción y efectos colaterales (envío de stats, creación de juego) en `useQuizController`.
+- Inyección de dependencias: los servicios externos (API, servicios del dominio) se inyectan en los tests para facilitar el aislamiento y evitar efectos de red.
+- Tests deterministas: se usaron mocks controlados para `fetch`, la instancia de axios y las utilidades de selección (`useAdaptiveSelection`) de modo que los tests sean repetibles y rapídos.
+
+Ejecución de pruebas
+
+Desde la carpeta `ludoScript`:
+
+```bash
+npm install
+npm test        # ejecuta Vitest (modo por defecto)
+npx vitest run  # ejecutar una sola pasada
+```
+
+También es posible ejecutar un test concreto en modo `run` o `watch` apuntando al fichero dentro de `src/composables/__tests__`.
+
+Resultados
+
+Se añadieron 23 pruebas unitarias que verifican las rutas críticas del `Quiz`. En el entorno de desarrollo local las pruebas se ejecutaron correctamente (`23 passed`).
+
+Impacto y beneficios
+
+- Mantenibilidad: menor acoplamiento entre UI y lógica de negocio; los cambios futuros en la selección o puntuación se pueden validar sin tocar la plantilla.
+- Testabilidad: ahora cada fase (carga, interacción, finalización) puede probarse de forma aislada, lo que facilita detectar regresiones.
+- Riesgo: los cambios se limitan al frontend; la integración con el backend permanece sin cambios funcionales.
+
+Recomendaciones futuras
+
+- Añadir pruebas de integración que cubran la interacción completa entre `Quiz.vue` y el backend (endpoints `/api/pdfs/:id/quiz` y `/games/adaptive-quiz`).
+- Integrar un pipeline CI que ejecute `npm test` para evitar regresiones automáticas.

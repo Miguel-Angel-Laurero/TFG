@@ -46,6 +46,30 @@
         </button>
       </div>
 
+      <!-- Tarjeta multijugador (siempre visible, independiente del contenido) -->
+      <div class="group relative flex items-center gap-6 px-7 py-6 rounded-2xl
+               bg-slate-800/50 backdrop-blur-md border border-yellow-500/40
+               cursor-pointer transition-all duration-300
+               hover:-translate-y-1 hover:border-yellow-400/70
+               hover:shadow-[0_8px_32px_rgba(234,179,8,0.18)]" @click="goToMultiplayer">
+        <span class="text-4xl select-none transition-all duration-300
+                 group-hover:brightness-125 group-hover:scale-110 shrink-0">
+          🎮
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="text-xl font-bold bg-clip-text text-transparent
+                    bg-gradient-to-r from-yellow-300 to-amber-400">
+            Multijugador
+          </p>
+          <p class="text-sm text-slate-400 mt-0.5">Compite con otros jugadores en tiempo real.</p>
+        </div>
+        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold
+                 bg-yellow-500/80 hover:bg-yellow-400 text-gray-900
+                 transition-colors duration-200 pointer-events-none">
+          Jugar →
+        </button>
+      </div>
+
       <!-- Aviso: ningún contenido seleccionado -->
       <div v-if="noSelectionWarning"
         class="flex items-start gap-2 bg-amber-900/30 border border-amber-500/40 rounded-lg px-3 py-2">
@@ -109,6 +133,10 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+function goToMultiplayer() {
+  router.push({ path: '/multiplayer/' })
+}
 
 function goToGame(name) {
   if (isPdfGame(name)) {

@@ -71,221 +71,93 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-// ─── Props de dificultad (pasados desde InGame.vue vía QuizIntro) ─────────────
-// difficulty:  1 | 2 | 3 | 'personalizado' | null  (null = sin filtro)
-// unlockedMap: { [category]: unlockedDifficulty }   (solo con 'personalizado')
+// ─── Props de dificultad (pasados desde InGame.vue vía QuizIntro)
 const props = defineProps({
   difficulty: { default: null },
   unlockedMap: { default: null },
 })
-import { useActivitySession } from '@/composables/useActivitySession'
+
+import { useQuizLoader } from '@/composables/useQuizLoader'
+import { useQuizController } from '@/composables/useQuizController'
 import { useQuizStats } from '@/composables/useQuizStats'
 import { useQuizReward } from '@/composables/useQuizReward'
 import { useCategoryStats } from '@/composables/useCategoryStats'
-import {
-  pickRandomIds,
-  filterByIds,
-  hasPdfInStorage,
-  loadPdfQuestionsFromStorage,
-  errorRateBadgeClass,
-  formatCategoryLabel,
-  calculateWeakCategories,
-} from '@/composables/useAdaptiveSelection'
-import api from '@/api/axios'
-import { categoryStatsService } from '@/api/categoryStats.service'
-import { gameService } from '@/api/game.service'
-import { getSessionSummary } from '@/composables/useSessionTracker'
+import { errorRateBadgeClass, formatCategoryLabel } from '@/composables/useAdaptiveSelection'
 import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import QuizQuestion from './QuizQuestion.vue'
 import { useLoadingTimer } from '@/composables/useLoadingTimer'
 
 const route = useRoute()
+const router = useRouter()
 
-// ─── Sesión genérica ──────────────────────────────────────────────────────────
-const {
-  loading, finished, currentIndex, currentItem, totalItems, isLastItem,
-  loadDirect, next, restart,
-} = useActivitySession('/quizQuestions.json')
+// Loading UI guard (mantener comportamiento anterior)
 const loadingManual = ref(true)
 const { withMinTime } = useLoadingTimer(loadingManual, 3000)
 
-// ─── Estado específico del Quiz ───────────────────────────────────────────────
-const selectedAnswer = ref(null)
-const answered = ref(false)
-const results = ref([])
+// Recompensas y tracking de categoría (inyecciones para los composables)
+const { trackAnswer, submitSession, resetSession, setPdfSource } = useCategoryStats()
+const { earnedReward, rankLabel, rankColor, grantQuizReward } = useQuizReward()
 
-// Categorías débiles recibidas del endpoint adaptativo (para el badge)
-const adaptiveWeakCategories = ref([])
+// Loader: encapsula modos de carga y expone funciones testables
+const loader = useQuizLoader({ jsonUrl: '/quizQuestions.json', setPdfSource })
+const {
+  loading,
+  finished,
+  currentIndex,
+  currentItem,
+  totalItems,
+  isLastItem,
+  loadDirect,
+  next,
+  restart,
+  loadError,
+  adaptiveWeakCategories,
+  loadStaticMode,
+  loadPdfLocalMode,
+  loadMixedMode,
+  loadAdaptiveMode,
+  initFromRoute,
+} = loader
 
-// Categorías débiles calculadas en cliente tras finalizar (para el botón en resultados)
-const weakCategoriesAfterQuiz = ref([])
-
-const router = useRouter()
-
-// ─── Estado de error de carga ─────────────────────────────────────────────────
-const loadError = ref(false)
-
-// ─── Carga inicial según el modo detectado ────────────────────────────────────
-onMounted(async () => {
-  await withMinTime(()=> {
-    const isAdaptive = route.query.adaptive === 'true'
-    const pdfIdsList = route.query.pdfIds?.split(',').filter(Boolean) ?? []
-    const hasPdfQuery = pdfIdsList.length > 0 || !!route.query.pdfId
-  
-    if (isAdaptive) {
-      loadAdaptiveMode()
-    } else if (hasPdfQuery) {
-      const pdfId = pdfIdsList[0] ?? route.query.pdfId
-      const includePredefined = route.query.includePredefined === 'true'
-      if (!hasPdfInStorage(pdfId)) {
-        loadError.value = true
-        loadDirect([])
-      } else if (includePredefined) {
-        loadMixedMode(pdfId)
-      } else {
-        loadPdfLocalMode(pdfId)
-      }
-    } else {
-      loadStaticMode()
-    }
-  
-    results.value = new Array(totalItems.value).fill(null)
-  })
+// Controller: acciones del quiz y lógica finalizable
+const controller = useQuizController({
+  currentItem,
+  currentIndex,
+  totalItems,
+  isLastItem,
+  next,
+  restart,
+  trackAnswer,
+  submitSession,
+  resetSession,
+  grantQuizReward,
+  rankLabelRef: rankLabel,
 })
 
-// Modo estático puro: 15 preguntas aleatorias del banco JS
-async function loadStaticMode() {
-  try {
-    const res = await fetch('/quizQuestions.json')
-    const allQ = await res.json()
-    const ids = pickRandomIds(allQ, Math.min(15, allQ.length))
-    await loadDirect(filterByIds(allQ, ids))
-  } catch {
-    loadError.value = true
-    await loadDirect([])
-  }
-}
+const {
+  selectedAnswer,
+  answered,
+  results,
+  initResults,
+  selectAnswer,
+  handleNext,
+  handleRestart,
+  goToAdaptiveQuizFromResults,
+  weakCategoriesAfterQuiz,
+} = controller
 
-// Modo PDF solo: usa las preguntas del localStorage y los IDs activos guardados
-async function loadPdfLocalMode(pdfId) {
-  const stored = loadPdfQuestionsFromStorage(pdfId)
-  if (!stored) {
-    loadError.value = true
-    await loadDirect([])
-    return
-  }
-  setPdfSource(pdfId)
-  const activeItems = filterByIds(stored.questions, stored.activeIds)
-  await loadDirect(activeItems)
-}
-
-// Modo mixto: PDF (10 preguntas) + banco estático JS (5 preguntas) — Bug 1 fix
-async function loadMixedMode(pdfId) {
-  const stored = loadPdfQuestionsFromStorage(pdfId)
-  if (!stored) {
-    loadError.value = true
-    await loadDirect([])
-    return
-  }
-  setPdfSource(pdfId)
-  const pdfItems = filterByIds(stored.questions, stored.activeIds).slice(0, 10)
-  try {
-    const res = await fetch('/quizQuestions.json')
-    const staticQ = await res.json()
-    const staticItems = filterByIds(staticQ, pickRandomIds(staticQ, 5))
-    await loadDirect([...pdfItems, ...staticItems])
-  } catch {
-    await loadDirect(pdfItems)
-  }
-}
-
-// Modo adaptativo: llama al endpoint, selecciona 15 preguntas aleatorias
-async function loadAdaptiveMode() {
-  try {
-    const res = await api.get('/games/adaptive-quiz')
-    if (res.status === 204 || !res.data?.questions?.length) {
-      await loadStaticMode()
-      return
-    }
-    const { questions, weakCategories } = res.data
-    adaptiveWeakCategories.value = weakCategories ?? []
-    const ids = pickRandomIds(questions, Math.min(15, questions.length))
-    await loadDirect(filterByIds(questions, ids))
-  } catch {
-    await loadStaticMode()
-  }
-}
-
-// ─── Estadísticas ─────────────────────────────────────────────────────────────
+// Estadísticas de UI
 const { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor } =
   useQuizStats(results, totalItems)
 
 const score = computed(() => Math.max(0, correctCount.value - wrongCount.value / 3))
 
-// ─── Recompensa ───────────────────────────────────────────────────────────────
-const { earnedReward, rankLabel, rankColor, grantQuizReward } = useQuizReward()
-
-// ─── Estadísticas por categoría ───────────────────────────────────────────────
-const { trackAnswer, submitSession, resetSession, setPdfSource } = useCategoryStats()
-
-// ─── Acciones ─────────────────────────────────────────────────────────────────
-function selectAnswer(idx) {
-  if (answered.value) return
-  selectedAnswer.value = idx
-  answered.value = true
-  const isCorrect = idx === currentItem.value.correct
-  results.value[currentIndex.value] = isCorrect
-  trackAnswer(
-    currentItem.value.category,
-    isCorrect,
-    currentItem.value.id,
-    currentItem.value.difficulty ?? null,
-  )
-}
-
-async function handleNext() {
-  if (isLastItem.value) {
-    // Capturar el tiempo de la sesión antes de que se pierda al navegar
-    const summary = getSessionSummary()
-    await submitSession()
-    await grantQuizReward(score.value, totalItems.value)
-    // Guardar partida en el backend con los resultados calculados en el cliente
-    try {
-      await gameService.createGame({
-        gameName: 'Quiz',
-        score: score.value,
-        duration: summary?.elapsedMin ?? 0,
-        result: rankLabel.value?.toLowerCase() ?? 'suspenso',
-      })
-    } catch (_) { /* no bloquear si falla la red */ }
-    // Calcular categorías débiles para el botón de práctica adaptativa en resultados
-    try {
-      const res = await categoryStatsService.getAll()
-      weakCategoriesAfterQuiz.value = calculateWeakCategories(res.data ?? [], 5)
-    } catch (_) {
-      weakCategoriesAfterQuiz.value = []
-    }
-  }
-  next(() => {
-    selectedAnswer.value = null
-    answered.value = false
+// Inicialización: respetamos el timer de carga mínimo
+onMounted(async () => {
+  await withMinTime(async () => {
+    await initFromRoute(route)
+    initResults(totalItems.value)
   })
-}
-
-function handleRestart() {
-  loadError.value = false
-  resetSession()
-  weakCategoriesAfterQuiz.value = []
-  adaptiveWeakCategories.value = []
-  restart(() => {
-    selectedAnswer.value = null
-    answered.value = false
-    results.value = new Array(totalItems.value).fill(null)
-  })
-}
-
-function goToAdaptiveQuizFromResults() {
-  router.push({ path: '/in-game-view/', query: { game: 'Quiz', adaptive: 'true' } })
-}
+})
 </script>

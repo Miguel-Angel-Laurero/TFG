@@ -1,4 +1,5 @@
 require("dotenv").config();
+const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -7,8 +8,10 @@ const config = require("./config/config");
 const { sequelize } = require("./src/models");
 const routes = require("./src/routes");
 const errorHandler = require("./src/middlewares/errorHandler.middleware");
+const { initSocket } = require("./src/socket");
 
 const app = express();
+const httpServer = http.createServer(app);
 
 // ── Middlewares globales ────────────────────────────────────────────────────
 app.use(cors({ origin: config.clientUrl, credentials: true }));
@@ -35,7 +38,8 @@ sequelize
   .sync({ alter: config.nodeEnv !== "production" })
   .then(() => {
     console.log("✅ Base de datos sincronizada");
-    app.listen(config.port, () => {
+    initSocket(httpServer, config.clientUrl);
+    httpServer.listen(config.port, () => {
       console.log(`🚀 Servidor en http://localhost:${config.port}`);
     });
   })
