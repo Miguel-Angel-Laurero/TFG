@@ -16,7 +16,11 @@ const register = async (req, res, next) => {
 
     await UserData.create({ user_id: user.id });
 
-    const token = generateToken({ id: user.id, role: user.role });
+    const token = generateToken({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+    });
 
     res.status(201).json({
       token,
@@ -51,7 +55,11 @@ const login = async (req, res, next) => {
       await userData.update({ first_login: false });
     }
     
-    const token = generateToken({ id: user.id, role: user.role });
+    const token = generateToken({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+    });
 
     res.json({
       token,

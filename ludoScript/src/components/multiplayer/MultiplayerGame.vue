@@ -1,13 +1,10 @@
 <template>
     <div class="flex flex-col items-center gap-6 w-full max-w-3xl mx-auto p-4">
-
-        <!-- Header de pregunta -->
         <div class="w-full flex justify-between items-center text-white/60 text-sm font-medium">
             <span>Pregunta {{ questionIndex + 1 }} / {{ mp.currentQuestion?.totalQuestions }}</span>
             <span class="uppercase tracking-wide text-xs">{{ mp.currentQuestion?.category?.replace(/-/g, ' ') }}</span>
         </div>
 
-        <!-- Barra de timer -->
         <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
             <div class="h-full rounded-full transition-all duration-1000" :class="timerBarColor"
                 :style="{ width: timerPercent + '%' }" />
@@ -16,12 +13,10 @@
             {{ mp.timerRemaining }}
         </div>
 
-        <!-- Enunciado -->
         <h2 class="text-white text-xl sm:text-2xl font-bold text-center leading-snug px-2">
             {{ mp.currentQuestion?.question }}
         </h2>
 
-        <!-- Opciones -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <button v-for="(option, idx) in mp.currentQuestion?.options" :key="idx"
                 :disabled="mp.hasAnswered || mp.timerRemaining === 0" @click="handleAnswer(idx)"
@@ -32,12 +27,11 @@
             </button>
         </div>
 
-        <!-- Feedback de respuesta propia -->
         <transition name="fade">
             <div v-if="mp.lastAnswerResult" class="w-full rounded-2xl px-5 py-4 text-center"
                 :class="mp.lastAnswerResult.correct ? 'bg-emerald-500/20 border border-emerald-400' : 'bg-red-500/20 border border-red-400'">
                 <p class="font-bold text-lg" :class="mp.lastAnswerResult.correct ? 'text-emerald-300' : 'text-red-300'">
-                    {{ mp.lastAnswerResult.correct ? '¡Correcto! 🎉' : 'Incorrecto 😞' }}
+                    {{ mp.lastAnswerResult.correct ? 'Correcto' : 'Incorrecto' }}
                 </p>
                 <p v-if="mp.lastAnswerResult.correct" class="text-white/70 text-sm mt-1">
                     +{{ mp.lastAnswerResult.pointsEarned }} puntos
@@ -46,7 +40,6 @@
             </div>
         </transition>
 
-        <!-- Resultado de pregunta (para todos cuando termina el tiempo) -->
         <transition name="fade">
             <div v-if="mp.lastQuestionEnd && !mp.lastAnswerResult"
                 class="w-full bg-white/5 rounded-2xl px-5 py-4 text-center">
@@ -57,14 +50,23 @@
             </div>
         </transition>
 
-        <!-- Mini ranking lateral -->
         <div class="w-full bg-white/5 rounded-2xl p-4">
-            <h4 class="text-white/60 text-xs uppercase tracking-wide mb-2">Clasificación</h4>
+            <h4 class="text-white/60 text-xs uppercase tracking-wide mb-2">Clasificacion</h4>
             <ol class="flex flex-col gap-1">
-                <li v-for="(p, i) in sortedPlayers" :key="p.userId" class="flex items-center gap-3 text-sm">
-                    <span class="text-white/40 w-4 text-right">{{ i + 1 }}</span>
-                    <span class="text-white font-medium flex-1">{{ p.username }}</span>
-                    <span class="text-yellow-400 font-bold">{{ p.score }}</span>
+                <li v-for="(p, i) in sortedPlayers" :key="p.userId"
+                    class="flex items-center gap-3 rounded-xl px-2 py-1 text-sm"
+                    :class="isCurrentUser(p) ? 'bg-cyan-400/10 ring-1 ring-inset ring-cyan-300/25' : ''">
+                    <span class="w-4 text-right" :class="isCurrentUser(p) ? 'text-cyan-200' : 'text-white/40'">
+                        {{ i + 1 }}
+                    </span>
+                    <span class="flex-1 font-medium" :class="isCurrentUser(p) ? 'text-cyan-100 font-semibold' : 'text-white'">
+                        {{ p.username }}
+                    </span>
+                    <span v-if="isCurrentUser(p)"
+                        class="rounded-full border border-cyan-300/40 bg-cyan-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-200">
+                        Tu
+                    </span>
+                    <span class="font-bold" :class="isCurrentUser(p) ? 'text-cyan-200' : 'text-yellow-400'">{{ p.score }}</span>
                 </li>
             </ol>
         </div>
@@ -73,8 +75,10 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth.store'
 import { useMultiplayerStore } from '@/stores/multiplayer.store'
 
+const auth = useAuthStore()
 const mp = useMultiplayerStore()
 const LABELS = ['A', 'B', 'C', 'D']
 
@@ -101,22 +105,23 @@ const sortedPlayers = computed(() =>
     [...mp.players].sort((a, b) => b.score - a.score)
 )
 
+function isCurrentUser(player) {
+    return Number(player?.userId) === Number(auth.user?.id)
+}
+
 function optionClass(idx) {
     const end = mp.lastQuestionEnd
     const result = mp.lastAnswerResult
 
     if (!end && !result) {
-        // Antes de responder
         return 'border-white/20 bg-white/5 hover:bg-white/15 hover:border-white/40 cursor-pointer'
     }
 
-    // Revelar respuesta correcta cuando acabó el tiempo (lastQuestionEnd)
     if (end) {
         if (idx === end.correctIndex) return 'border-emerald-400 bg-emerald-500/20 text-emerald-200'
         return 'border-white/10 bg-white/5 opacity-50'
     }
 
-    // Feedback inmediato tras responder (lastAnswerResult)
     if (result) {
         const isCorrect = idx === result.correctIndex
         if (isCorrect) return 'border-emerald-400 bg-emerald-500/20 text-emerald-200'

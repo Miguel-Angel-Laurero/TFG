@@ -414,6 +414,30 @@ Pruebas recomendadas:
 
 Si quieres, puedo añadir una prueba automatizada que simule dos sockets respondiendo rápido y verifique que no quedan `tickInterval` activos entre preguntas.
 
+Nota técnica — Multijugador: flujo del nombre de usuario en sockets
+
+- Flujo actual:
+  1. En `auth.controller.js`, al hacer `login` o `register`, el backend firma un JWT con `id`, `username` y `role`.
+  2. El frontend abre la conexión de Socket.IO enviando ese token en `socket.handshake.auth.token`.
+  3. En `backend/src/socket/index.js`, el middleware valida el JWT y copia sus datos a `socket.user = { id, username }`.
+  4. En `backend/src/socket/gameHandler.js`, al crear o unirse a una sala se pasa `socket.user.username` a `roomManager`.
+  5. En `backend/src/socket/roomManager.js`, ese valor se guarda en cada entrada de `room.players` y luego `getPlayersPublic(room)` lo serializa como `username`.
+  6. El cliente recibe `players` y `ranking` y los renderiza en el lobby, la clasificación lateral y la tabla final.
+
+- Bug detectado:
+  - El token se estaba firmando solo con `id` y `role`.
+  - El socket intentaba leer `payload.username`, pero ese campo no existía en el JWT.
+  - Consecuencia: en multijugador, los jugadores llegaban con `username = undefined`, así que la UI mostraba la fila, el icono y el estado `HOST`, pero no el nombre.
+
+- Solución aplicada:
+  - Se añadió `username` al payload del JWT en `register` y `login`.
+  - Esto no introduce un riesgo relevante por sí mismo, porque el nombre de usuario no es un secreto; simplemente deja disponible en el token un dato público que el servidor ya conocía.
+  - El backend sigue validando la firma del JWT, así que el cliente no puede inventarse un `username` arbitrario sin invalidar el token.
+
+- Implicación operativa:
+  - Los tokens emitidos antes de este cambio no contienen `username`.
+  - Para ver los nombres correctamente en multijugador, hay que cerrar sesión y volver a iniciar sesión para obtener un JWT nuevo.
+
 ```
 Primera vez:
   Subir PDF → Gemini genera 20 preguntas → BD guarda → jugar

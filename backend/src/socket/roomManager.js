@@ -332,7 +332,7 @@ function revealQuestion(room, io) {
   // Pausa entre pregunta y la siguiente
   setTimeout(() => {
     advanceQuestion(room, io);
-  }, 4000);
+  }, 2500);
 }
 
 /**

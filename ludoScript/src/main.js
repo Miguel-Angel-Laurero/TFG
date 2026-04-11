@@ -10,9 +10,7 @@ import { ConfirmationService } from "primevue"; // v4
 import App from "./App.vue";
 import router from "./router/router";
 import {
-  logLocalStorageSize,
   tagLudoKeysWithCurrentUser,
-  setCurrentLocalUser,
 } from "./utils/localStorageSize";
 import { useAuthStore } from "./stores/auth.store";
 
@@ -40,9 +38,7 @@ try {
     } catch (e) {
       /* noop */
     }
-    logLocalStorageSize("localStorage (startup)", user);
   } else {
-    logLocalStorageSize("localStorage (startup)");
     // si el usuario se carga más tarde (fetchMe), volvemos a etiquetar
     try {
       watch(
@@ -54,7 +50,6 @@ try {
             } catch (e) {
               /* noop */
             }
-            logLocalStorageSize("localStorage (user-loaded)", v);
           }
         },
       );
