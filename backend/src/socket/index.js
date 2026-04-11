@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const { verifyToken } = require("../utils/jwt");
+const { User } = require("../models");
 const { registerGameHandlers } = require("./gameHandler");
 
 /**
@@ -19,18 +20,35 @@ function initSocket(httpServer, clientUrl) {
   });
 
   // ── Middleware JWT ──────────────────────────────────────────────────────────
-  io.use((socket, next) => {
-    const token = socket.handshake.auth?.token;
-    if (!token) {
-      return next(new Error("Unauthorized: token required"));
+  io.use(async (socket, next) => {
+    try {
+      const token = socket.handshake.auth?.token;
+      if (!token) {
+        return next(new Error("Unauthorized: token required"));
+      }
+      const payload = verifyToken(token);
+      if (!payload) {
+        return next(new Error("Unauthorized: invalid or expired token"));
+      }
+
+      let username = payload.username;
+      if (!username && payload.id) {
+        const user = await User.findByPk(payload.id, {
+          attributes: ["id", "username"],
+        });
+        if (!user) {
+          return next(new Error("Unauthorized: user not found"));
+        }
+        username = user.username;
+      }
+
+      // Adjunta datos del usuario al socket para uso en handlers.
+      // Si el JWT es antiguo y no incluye username, se recupera desde BD.
+      socket.user = { id: payload.id, username };
+      next();
+    } catch (error) {
+      next(new Error("Unauthorized: socket authentication failed"));
     }
-    const payload = verifyToken(token);
-    if (!payload) {
-      return next(new Error("Unauthorized: invalid or expired token"));
-    }
-    // Adjunta datos del usuario al socket para uso en handlers
-    socket.user = { id: payload.id, username: payload.username };
-    next();
   });
 
   // ── Handlers de eventos ────────────────────────────────────────────────────
