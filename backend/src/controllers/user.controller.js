@@ -3,7 +3,6 @@ const { hashPassword } = require("../utils/bcrypt");
 
 const getAll = async (req, res, next) => {
   try {
-    // Solo admin puede listar todos los usuarios
     if (req.user.role !== "admin") {
       return res.status(403).json({ message: "Acceso denegado" });
     }
@@ -42,10 +41,11 @@ const update = async (req, res, next) => {
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
-    const { username, avatar, password } = req.body;
+    const { username, avatar, banner, password } = req.body;
     const updates = {};
     if (username) updates.username = username;
-    if (avatar) updates.avatar = avatar;
+    if (avatar !== undefined) updates.avatar = avatar;
+    if (banner !== undefined) updates.banner = banner;
     if (password) updates.password = await hashPassword(password);
 
     await user.update(updates);

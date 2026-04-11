@@ -15,7 +15,7 @@ import { recordAnswer } from "@/composables/useSessionTracker";
 
 const LS_LAST_SESSION = "ludoscript_lastSession";
 const LS_WEEKLY = "ludoscript_weeklySessions";
-const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const SESSION_HISTORY_MS = 14 * 24 * 60 * 60 * 1000;
 
 export function useCategoryStats() {
   // { [category]: { correct, total, failedIds: number[], byDifficulty: { [1|2|3]: { correct, total } } } }
@@ -88,7 +88,7 @@ export function useCategoryStats() {
     try {
       localStorage.setItem(LS_LAST_SESSION, JSON.stringify(sessionData));
       const stored = JSON.parse(localStorage.getItem(LS_WEEKLY) || "[]");
-      const cutoff = Date.now() - ONE_WEEK_MS;
+      const cutoff = Date.now() - SESSION_HISTORY_MS;
       const pruned = stored.filter((s) => s.timestamp > cutoff);
       pruned.push(sessionData);
       localStorage.setItem(LS_WEEKLY, JSON.stringify(pruned));

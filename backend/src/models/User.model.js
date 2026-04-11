@@ -24,7 +24,12 @@ const User = sequelize.define("User", {
     allowNull: false,
   },
   avatar: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
+    allowNull: true,
+    defaultValue: null,
+  },
+  banner: {
+    type: DataTypes.TEXT,
     allowNull: true,
     defaultValue: null,
   },

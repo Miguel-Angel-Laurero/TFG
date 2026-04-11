@@ -801,3 +801,103 @@ Recomendaciones futuras
 - Añadir pruebas de integración que cubran la interacción completa entre `Quiz.vue` y el backend (endpoints `/api/pdfs/:id/quiz` y `/games/adaptive-quiz`).
 - Integrar un pipeline CI que ejecute `npm test` para evitar regresiones automáticas.
 
+
+---
+
+## Perfil de usuario: avatar, banner y visualizacion
+
+### Objetivo
+
+Permitir que el usuario edite su nombre, icono de perfil y banner desde la vista de edicion, persistir esos cambios en backend y reflejarlos en el perfil y en la cabecera de la aplicacion.
+
+### Archivos implicados
+
+Frontend:
+
+- `ludoScript/src/components/profile/EditProfileContent.vue`
+- `ludoScript/src/components/profile/EditProfile.vue`
+- `ludoScript/src/components/shared/UserInfo.vue`
+- `ludoScript/src/components/shared/Menu.vue`
+- `ludoScript/src/views/ProfileView.vue`
+- `ludoScript/src/api/user.service.js`
+- `ludoScript/src/stores/auth.store.js`
+
+Backend:
+
+- `backend/src/models/User.model.js`
+- `backend/src/controllers/user.controller.js`
+
+### Como funciona ahora el flujo
+
+1. El usuario entra en `EditProfileView`.
+2. `EditProfileContent.vue` comprueba si `auth.user` ya esta cargado. Si no lo esta, llama a `auth.fetchMe()` antes de permitir guardar.
+3. La pantalla muestra un campo para editar `username` y una tarjeta con el icono actual y el banner actual.
+4. Cada visual tiene su boton de editar. Al pulsarlo, se abre una ventana modal interna con las opciones cargadas desde `itemData.json`.
+5. La seleccion se guarda temporalmente en `selectedAvatar` y `selectedBanner`.
+6. Al pulsar `Guardar cambios`, la funcion `save()` construye un objeto `updates` solo con los campos que realmente han cambiado.
+7. El frontend hace `PUT /api/users/:id` mediante `userService.update(id, updates)`.
+8. El backend recibe `username`, `avatar` y `banner` en `user.controller.js` y actualiza el usuario.
+9. Despues del guardado, el frontend llama a `auth.fetchMe()` para refrescar el store global y propagar los cambios a toda la UI.
+
+### Persistencia en base de datos
+
+El modelo `User` incluye ahora estos campos visuales:
+
+- `avatar`
+- `banner`
+
+Ambos se almacenan como `TEXT` en `User.model.js`, no como `STRING(255)`, porque las URLs firmadas de Supabase pueden superar los 255 caracteres.
+
+### Donde se muestran avatar y banner
+
+#### Vista de perfil
+
+En `ProfileView.vue` ya no existe un bloque superior independiente con avatar y banner. La vista se simplifico para mostrar solo:
+
+- `UserStats`
+- `WeeklyResume`
+
+La visualizacion del usuario se hace exclusivamente dentro de `Tu Progreso`.
+
+#### Bloque `Tu Progreso`
+
+`UserInfo.vue` es ahora el unico lugar del perfil donde se renderizan:
+
+- el `avatar` del usuario
+- el `banner` del usuario como fondo del bloque superior
+- `username`
+- `email`
+
+De esta forma se evita duplicar la misma informacion visual dos veces en la pantalla.
+
+#### Menu superior
+
+El icono peque�o de usuario junto a la zona de tienda se renderiza desde `Menu.vue` usando directamente `auth.user?.avatar`.
+
+Si el usuario no tiene avatar, se muestra un fallback visual.
+
+### Comportamiento del boton `Guardar cambios`
+
+El boton esta deshabilitado mientras el perfil se esta cargando o mientras una peticion de guardado esta en curso.
+
+Antes de enviar la peticion:
+
+- valida que exista `auth.user.id`
+- valida que el nombre no este vacio
+
+Despues del intento de guardado:
+
+- muestra `toast` de exito si la operacion sale bien
+- muestra `toast` informativo si no habia cambios
+- muestra `toast` de error si el backend falla
+
+### Decision tecnica actual
+
+Actualmente se guarda en BD la URL visual del recurso (`avatar` y `banner`). Esto permite que el cambio se refleje rapido en frontend, pero tiene una limitacion: si se usan URLs firmadas con expiracion, pueden dejar de ser validas con el tiempo.
+
+La mejora recomendada a futuro es guardar una referencia estable:
+
+- el `id` del item, o
+- la ruta interna del archivo en storage
+
+y generar la URL final solo en el momento de mostrar la imagen.

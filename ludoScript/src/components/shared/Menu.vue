@@ -20,16 +20,29 @@
                         alt="Moneda de RAM" class="w-6 h-6 object-contain">
                 </span>
             </RouterLink>
-            <Avatar
-                image="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/items/icons/icon_portatil.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaXRlbXMvaWNvbnMvaWNvbl9wb3J0YXRpbC5wbmciLCJpYXQiOjE3NzM4MzAwOTQsImV4cCI6MTgwNTM2NjA5NH0.hrXnk8XtCUhl-udVXZgwqx6Du13c-M7CykqHHhhV2Qg"
-                class="cursor-pointer hover:opacity-80 transition-opacity" size="medium" shape="circle"
-                @click="toggle" />
+            <button
+                type="button"
+                class="cursor-pointer hover:opacity-80 transition-opacity ml-3"
+                @click="toggle"
+            >
+                <img
+                    v-if="auth.user?.avatar"
+                    :src="auth.user.avatar"
+                    alt="Avatar del usuario"
+                    class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-400"
+                >
+                <div
+                    v-else
+                    class="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center ring-2 ring-blue-400 text-slate-200"
+                >
+                    <span class="text-sm">👤</span>
+                </div>
+            </button>
         </template>
     </div>
 </template>
 <script setup>
 import { ref, computed } from 'vue';
-import Avatar from 'primevue/avatar';
 import Menu from 'primevue/menu';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.store';
@@ -71,11 +84,11 @@ const items = ref([
                 icon: 'pi pi-shop',
                 command: () => router.push('/shop-view/')
             },
-            {
-                label: 'Multijugador',
-                icon: 'pi pi-users',
-                command: () => router.push('/multiplayer/')
-            },
+            // {
+            //     label: 'Multijugador',
+            //     icon: 'pi pi-users',
+            //     command: () => router.push('/multiplayer/')
+            // },
             {
                 label: 'Cerrar sesión',
                 icon: 'pi pi-sign-out',

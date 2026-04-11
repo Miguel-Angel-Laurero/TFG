@@ -10,7 +10,7 @@
             <div class="lg:col-span-5 flex flex-col gap-4 overflow-y-auto min-h-0 pr-1">
                 <UserStats />
                 <!-- Resumen semanal por categoría (últimas 7 sesiones) -->
-                <WeeklyResume />
+                <FortnightResume />
             </div>
         </div>
     </div>
@@ -18,6 +18,6 @@
 <script setup>
 import AvatarProfile from './AvatarProfile.vue';
 import Banner from './Banner.vue';
+import FortnightResume from './FortnightResume.vue';
 import UserStats from './UserStats.vue';
-import WeeklyResume from './WeeklyResume.vue';
 </script>
