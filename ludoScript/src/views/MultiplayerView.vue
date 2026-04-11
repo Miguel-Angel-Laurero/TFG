@@ -95,8 +95,9 @@ watch(() => mp.status, (newStatus) => {
 })
 
 function handleReset() {
-    mp.$reset()
+    mp.resetState()
     subView.value = null
+    router.push('/')
 }
 </script>
 

@@ -99,7 +99,7 @@ export const useMultiplayerStore = defineStore("multiplayer", () => {
     const socket = socketService.getSocket();
     if (socket) socket.emit("room:leave");
     socketService.disconnect();
-    _reset();
+    resetState();
   }
 
   // ── Eventos entrantes ────────────────────────────────────────────────────────
@@ -188,7 +188,7 @@ export const useMultiplayerStore = defineStore("multiplayer", () => {
     });
   }
 
-  function _reset() {
+  function resetState() {
     roomCode.value = null;
     isHost.value = false;
     players.value = [];
@@ -228,5 +228,6 @@ export const useMultiplayerStore = defineStore("multiplayer", () => {
     startGame,
     sendAnswer,
     leaveRoom,
+    resetState,
   };
 });

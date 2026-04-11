@@ -439,6 +439,34 @@ Nota técnica — Multijugador: flujo del nombre de usuario en sockets
   - Para ver los nombres correctamente en multijugador, hay que cerrar sesión y volver a iniciar sesión para obtener un JWT nuevo.
 
 ```
+```
+Nota técnica — Multijugador: botón "Volver" al terminar o al cerrar la sala
+
+- Flujo esperado:
+  1. Cuando la partida termina, el servidor emite `game:finished` con el `ranking`.
+  2. El store multijugador guarda ese ranking y cambia `status` a `finished`.
+  3. `MultiplayerResults.vue` muestra la clasificaciÃ³n final.
+  4. Al pulsar `Volver al inicio`, el cliente debe abandonar la sala, desconectar el socket, resetear el store y navegar a `/`.
+  5. Si el host abandona durante lobby o partida, el servidor emite `room:closed`.
+  6. El store cambia `status` a `closed`, conserva el mensaje de error y desconecta el socket.
+  7. `MultiplayerView.vue` muestra la vista "La sala ha sido cerrada" con el botÃ³n `Volver`.
+
+- Bug detectado:
+  - El botÃ³n `Volver` del estado `closed` llamaba a `mp.$reset()`.
+  - Ese store estÃ¡ definido como setup store de Pinia, y en esa implementaciÃ³n no existÃ­a un `$reset` personalizado expuesto desde `multiplayer.store.js`.
+  - AdemÃ¡s, ese handler no navegaba al home; solo intentaba devolver el estado a `idle` dentro de la propia ruta `/multiplayer/`.
+  - Consecuencia: cuando el host cerraba la sala, el botÃ³n no restauraba correctamente el estado y no llevaba al usuario de vuelta al inicio.
+
+- SoluciÃ³n aplicada:
+  - Se expuso una acciÃ³n pÃºblica `resetState()` en `ludoScript/src/stores/multiplayer.store.js`.
+  - `leaveRoom()` reutiliza ahora ese mismo reseteo interno tras emitir `room:leave` y desconectar el socket.
+  - En `ludoScript/src/views/MultiplayerView.vue`, el botÃ³n del estado `closed` sustituye `mp.$reset()` por `mp.resetState()` y despuÃ©s ejecuta `router.push('/')`.
+
+- Resultado:
+  - En partida finalizada, el botÃ³n de resultados sigue el flujo correcto: salir de la sala, limpiar estado y volver al inicio.
+  - En sala cerrada por el host, el botÃ³n `Volver` vuelve a funcionar de forma consistente: limpia el store y navega al home.
+
+```
 Primera vez:
   Subir PDF → Gemini genera 20 preguntas → BD guarda → jugar
 
@@ -772,3 +800,4 @@ Recomendaciones futuras
 
 - Añadir pruebas de integración que cubran la interacción completa entre `Quiz.vue` y el backend (endpoints `/api/pdfs/:id/quiz` y `/games/adaptive-quiz`).
 - Integrar un pipeline CI que ejecute `npm test` para evitar regresiones automáticas.
+
