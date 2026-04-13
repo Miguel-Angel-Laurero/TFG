@@ -1,45 +1,49 @@
 <template>
-  <main class="h-full w-full flex overflow-hidden" @mousemove="onDrag" @mouseup="stopDrag" @mouseleave="stopDrag">
+  <main class="h-full w-full flex flex-col md:flex-row overflow-hidden bg-blue-950" @mousemove="onDrag" @mouseup="stopDrag" @mouseleave="stopDrag">
 
-    <!-- Left panel: PDF manager (ancho dinámico) -->
-    <aside :style="{ width: panelWidth + 'px' }"
-      class="shrink-0 border-r border-blue-900/40 px-4 py-6 overflow-y-auto flex flex-col">
-      <HomePdfPanel v-model:selectedFiles="selectedFiles" v-model:pdfCount="pdfCount"
-        v-model:selectedPredefined="selectedPredefined" />
+    <aside 
+      :style="isMobile ? {} : { width: panelWidth + 'px' }"
+      class="w-full md:shrink-0 border-b md:border-b-0 md:border-r border-blue-900/40 px-4 py-4 md:py-6 overflow-y-auto flex flex-col transition-all"
+    >
+      <HomePdfPanel 
+        v-model:selectedFiles="selectedFiles" 
+        v-model:pdfCount="pdfCount"
+        v-model:selectedPredefined="selectedPredefined" 
+      />
     </aside>
 
-    <!-- Resize handle -->
-    <div class="w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
-      @mousedown.prevent="startDrag" />
+    <div 
+      class="hidden md:block w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
+      @mousedown.prevent="startDrag" 
+    />
 
-    <!-- Center: minigames -->
-    <section class="flex-1 flex justify-center overflow-y-auto py-8 min-w-0">
-      <div class="w-full max-w-2xl px-8">
-        <h2 class="text-2xl font-righteous text-white mb-4">Minijuegos</h2>
+    <section class="flex-1 flex justify-center overflow-y-auto py-6 md:py-8 min-w-0">
+      <div class="w-full max-w-2xl px-4 md:px-8">
+        <h2 class="text-xl md:text-2xl font-righteous text-white mb-4 text-center md:text-left">Minijuegos</h2>
 
-        <!-- Estado de Fuente (Nielsen: Visibilidad del estado) -->
         <div :class="[
-          'mb-6 px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 border transition-colors',
+          'mb-6 px-4 py-2.5 rounded-xl text-xs md:text-sm font-medium flex items-center gap-2 border transition-colors',
           selectedFiles.length > 0 || selectedPredefined
             ? 'bg-indigo-900/40 border-indigo-500/50 text-indigo-300'
             : 'bg-amber-900/30 border-amber-500/40 text-amber-300'
         ]">
-          <span>{{ modeIcon }}</span>
-          <span>{{ modeLabel }}</span>
+          <span class="shrink-0">{{ modeIcon }}</span>
+          <span class="leading-tight">{{ modeLabel }}</span>
         </div>
 
         <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined" />
       </div>
     </section>
 
-    <!-- Right panel: category heat maps -->
-    <aside class="w-80 shrink-0 border-l border-blue-900/40 px-6 py-8 overflow-y-auto">
+    <aside class="w-full md:w-80 shrink-0 border-t md:border-t-0 md:border-l border-blue-900/40 px-6 py-8 overflow-y-auto bg-blue-900/10">
+      <h3 class="text-white font-righteous mb-4 md:hidden text-center text-lg">Estadísticas</h3>
       <CategoryHeatMap />
     </aside>
   </main>
 </template>
+
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import GameGrid from '@/components/home/GameGrid.vue'
 import CategoryHeatMap from '@/components/home/CategoryHeatMap.vue'
 import HomePdfPanel from '@/components/home/HomePdfPanel.vue'
@@ -48,40 +52,46 @@ const selectedFiles = ref([])
 const pdfCount = ref(0)
 const selectedPredefined = ref(true)
 
+// Lógica para detectar si es móvil
+const isMobile = ref(false)
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+onUnmounted(() => window.removeEventListener('resize', checkMobile))
+
+// ... (Resto de tus computeds modeIcon y modeLabel se mantienen igual) ...
+
 const modeIcon = computed(() => {
   const hasPdfs = selectedFiles.value.length > 0
   if (!hasPdfs && !selectedPredefined.value) return '⚠️'
-  if (hasPdfs && selectedPredefined.value) return '📂'
-  if (hasPdfs) return '📂'
-  return '📚'
+  return hasPdfs ? '📂' : '📚'
 })
 
 const modeLabel = computed(() => {
   const hasPdfs = selectedFiles.value.length > 0
   const n = selectedFiles.value.length
-  if (!hasPdfs && !selectedPredefined.value) return 'Selecciona al menos un contenido para jugar'
-  if (hasPdfs && selectedPredefined.value) return `Modo: Mixto — Predefinido + ${n} archivo${n > 1 ? 's' : ''}`
-  if (hasPdfs) return `Modo: Personalizado (${n} archivo${n > 1 ? 's' : ''} seleccionado${n > 1 ? 's' : ''})`
-  return 'Modo: General — biblioteca del sistema'
+  if (!hasPdfs && !selectedPredefined.value) return 'Selecciona contenido'
+  if (hasPdfs && selectedPredefined.value) return `Mixto (${n} PDF)`
+  if (hasPdfs) return `Personalizado (${n})`
+  return 'Modo General'
 })
 
 // ─── Panel redimensionable ───────────────────────────────────────────────────
 const MIN_WIDTH = 240
 const MAX_WIDTH = 600
-const panelWidth = ref(384)   // equivale a w-96 (96 × 4 = 384px)
+const panelWidth = ref(300) 
 let dragging = false
 
-function startDrag() {
-  dragging = true
-}
-
+function startDrag() { if (!isMobile.value) dragging = true }
 function onDrag(e) {
-  if (!dragging) return
+  if (!dragging || isMobile.value) return
   const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, e.clientX))
   panelWidth.value = newWidth
 }
-
-function stopDrag() {
-  dragging = false
-}
+function stopDrag() { dragging = false }
 </script>

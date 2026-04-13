@@ -1,41 +1,44 @@
 <template>
-    <div class="flex items-center">
+    <div class="flex items-center gap-2 sm:gap-4">
         <template v-if="auth.ready && !auth.isLoggedIn">
             <RouterLink to="/login-view"
-                class="border-2 border-yellow-400 text-yellow-400 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 hover:text-black transition-colors">
+                class="text-xs sm:text-base border-2 border-yellow-400 text-yellow-400 px-3 py-1 sm:px-4 sm:py-2 rounded-lg font-bold hover:bg-yellow-400 hover:text-black transition-colors whitespace-nowrap">
                 Iniciar sesión
             </RouterLink>
         </template>
 
-        <template v-else-if="auth.ready && auth.isLoggedIn" class="mx-2">
+        <template v-else-if="auth.ready && auth.isLoggedIn">
             <Menu ref="menu" :model="items" :popup="true" />
+            
             <RouterLink v-if="!isInShop" to="/shop-view/"
-                class="flex items-center gap-3 bg-white/5 border border-yellow-400/30 text-yellow-400 font-righteous text-xl px-6 py-3 rounded-xl hover:bg-yellow-400/10 transition-colors w-full justify-center">
-                🛒 Tienda
+                class="flex items-center gap-2 bg-white/5 border border-yellow-400/30 text-yellow-400 font-righteous px-3 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-yellow-400/10 transition-colors">
+                
+                <span class="text-lg sm:text-xl hidden xs:block">🛒 Tienda</span>
+                <span class="text-xl xs:hidden">🛒</span>
 
-                <span
-                    class="bg-yellow-400 text-black font-extrabold text-sm px-3 py-1 rounded-full flex items-center gap-2 ml-2">
+                <span class="bg-yellow-400 text-black font-extrabold text-[10px] sm:text-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full flex items-center gap-1 sm:gap-2">
                     <span>{{ auth.userData?.coins ?? 0 }}</span>
                     <img src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
-                        alt="Moneda de RAM" class="w-6 h-6 object-contain">
+                        alt="coin" class="w-4 h-4 sm:w-6 sm:h-6 object-contain">
                 </span>
             </RouterLink>
+
             <button
                 type="button"
-                class="cursor-pointer hover:opacity-80 transition-opacity ml-3"
+                class="cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
                 @click="toggle"
             >
                 <img
                     v-if="auth.user?.avatar"
                     :src="auth.user.avatar"
-                    alt="Avatar del usuario"
-                    class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-400"
+                    alt="Avatar"
+                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-blue-400"
                 >
                 <div
                     v-else
-                    class="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center ring-2 ring-blue-400 text-slate-200"
+                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-600 flex items-center justify-center ring-2 ring-blue-400 text-slate-200"
                 >
-                    <span class="text-sm">👤</span>
+                    <span class="text-xs sm:text-sm">👤</span>
                 </div>
             </button>
         </template>

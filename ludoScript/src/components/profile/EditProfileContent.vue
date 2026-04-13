@@ -22,8 +22,8 @@
             <EditProfile
                 :avatar="selectedAvatar"
                 :banner="selectedBanner"
-                @edit-avatar="openSelector('avatar')"
-                @edit-banner="openSelector('banner')"
+                @select-avatar="selectedAvatar = $event"
+                @select-banner="selectedBanner = $event"
             />
         </div>
 
@@ -120,7 +120,9 @@ import { useAuthStore } from '@/stores/auth.store'
 import { userService } from '@/api/user.service'
 import AvatarProfile from './AvatarProfile.vue'
 import EditProfile from './EditProfile.vue'
+import { useEquipmentStore } from '@/stores/equipment.store'
 
+const equipmentStore = useEquipmentStore()
 const router = useRouter()
 const auth = useAuthStore()
 const toast = useToast()
@@ -137,13 +139,14 @@ const selectorOpen = ref(false)
 const selectorType = ref('avatar')
 
 const currentOptions = computed(() =>
-    selectorType.value === 'avatar' ? iconOptions.value : bannerOptions.value
+selectorType.value === 'avatar' ? iconOptions.value : bannerOptions.value
 )
 
 const selectorTitle = computed(() =>
-    selectorType.value === 'avatar' ? 'Selecciona tu icono de perfil' : 'Selecciona tu banner de perfil'
+selectorType.value === 'avatar' ? 'Selecciona tu icono de perfil' : 'Selecciona tu banner de perfil'
 )
 
+onMounted(() => equipmentStore.fetchItems())
 onMounted(async () => {
     try {
         if (!auth.user?.id) {

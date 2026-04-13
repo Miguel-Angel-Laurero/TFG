@@ -32,11 +32,14 @@ const CATEGORY_TO_SLOT = {
     hands:     'hands',
     trinkets:  'trinkets',
     lowerbody: 'legs',
-    feets:     'feet', 
+    feets: 'feet', 
+    icon:      'icon',    // ← ajusta al nombre real que devuelve tu API
+    banner:    'banner',
 }
 
 const EMPTY_SLOTS = {
-    head: null, torso: null, hands: null, trinkets: null, legs: null, feet: null
+    head: null, torso: null, hands: null, trinkets: null, legs: null, feet: null,
+    icon: null, banner: null,
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -44,7 +47,7 @@ const EMPTY_SLOTS = {
 export const useEquipmentStore = defineStore('equipment', () => {
     const equipped     = reactive({ ...EMPTY_SLOTS })
     const selectedSlot = ref(null)
-    const itemPool     = reactive({ head: [], torso: [], hands: [], trinkets: [], legs: [], feet: [] })
+    const itemPool     = reactive({ head: [], torso: [], hands: [], trinkets: [], legs: [], feet: [], icon: [], banner: []})
     const loading      = ref(false)
     const error        = ref(null)
 

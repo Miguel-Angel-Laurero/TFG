@@ -1,19 +1,28 @@
 <template>
-    <div class="w-full bg-indigo-900 text-gray-50/50 bottom-0 px-6 py-4">
-        <p><span class="font-righteous">LudoScript </span>- Aprende a programar jugando. Retos, puntos y logros que harán tu aprendizaje adictivo.</p>
-        <div class="w-full flex border-t-1 mt-2 justify-between">
-            <p class="flex items-center text-xs">&copy; 2026 LudoScript - Todos los derechos reservados </p>
-            <div class="py-2">
-                <i class="pi pi-discord px-2 hover:cursor-pointer hover:text-indigo-200"></i>
-                <i class="pi pi-twitter px-2 hover:cursor-pointer hover:text-indigo-200"></i>
-                <i class="pi pi-linkedin px-2 hover:cursor-pointer hover:text-indigo-200"></i>
-                <i class="pi pi-github px-2 hover:cursor-pointer hover:text-indigo-200"></i>
+    <footer class="w-full bg-indigo-900 text-gray-50/50 px-6 py-6">
+        <p class="text-sm md:text-base text-center md:text-left mb-6 md:mb-4">
+            <span class="font-righteous text-gray-50">LudoScript </span>
+            - Aprende a programar jugando. Retos, puntos y logros que harán tu aprendizaje adictivo.
+        </p>
+
+        <div class="w-full border-t border-white/10 pt-6 md:pt-4 flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            <p class="text-[10px] sm:text-xs text-center order-3 md:order-1">
+                &copy; 2026 LudoScript - Todos los derechos reservados 
+            </p>
+
+            <div class="flex items-center justify-center gap-2 order-1 md:order-2">
+                <i class="pi pi-discord p-2 hover:cursor-pointer hover:text-indigo-200 transition-colors"></i>
+                <i class="pi pi-twitter p-2 hover:cursor-pointer hover:text-indigo-200 transition-colors"></i>
+                <i class="pi pi-linkedin p-2 hover:cursor-pointer hover:text-indigo-200 transition-colors"></i>
+                <i class="pi pi-github p-2 hover:cursor-pointer hover:text-indigo-200 transition-colors"></i>
             </div>
-            <div class="flex flex-wrap justify-center sm:justify-end items-center gap-x-4 gap-y-2 text-xs">
-                <span class="px-4">Privacidad</span>
-                <span class="px-4">Terminos de uso</span>
-                <span class="px-4">Cookies</span>
+
+            <div class="flex flex-wrap justify-center md:justify-end items-center gap-x-4 gap-y-2 text-[10px] sm:text-xs order-2 md:order-3">
+                <span class="hover:text-white cursor-pointer transition-colors">Privacidad</span>
+                <span class="hover:text-white cursor-pointer transition-colors">Términos de uso</span>
+                <span class="hover:text-white cursor-pointer transition-colors">Cookies</span>
             </div>
         </div>
-    </div>
+    </footer>
 </template>
