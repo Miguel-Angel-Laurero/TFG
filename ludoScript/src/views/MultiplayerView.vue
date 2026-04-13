@@ -49,7 +49,7 @@
             <!-- ── jugando ── -->
             <template v-else-if="mp.status === 'playing'">
                 <MultiplayerGame v-if="mp.currentQuestion" />
-                <div v-else class="text-white/60 text-lg animate-pulse">Cargando pregunta…</div>
+                <Loading v-else/>
             </template>
 
             <!-- ── finished ── -->
@@ -84,6 +84,7 @@ import RoomJoin from '@/components/multiplayer/RoomJoin.vue'
 import MultiplayerLobby from '@/components/multiplayer/MultiplayerLobby.vue'
 import MultiplayerGame from '@/components/multiplayer/MultiplayerGame.vue'
 import MultiplayerResults from '@/components/multiplayer/MultiplayerResults.vue'
+import Loading from '@/components/shared/Loading.vue'
 
 const router = useRouter()
 const mp = useMultiplayerStore()
