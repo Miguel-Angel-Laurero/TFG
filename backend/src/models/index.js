@@ -4,9 +4,8 @@ const Game = require("./Game.model");
 const UserData = require("./UserData.model");
 const ItemsUser = require("./ItemsUser.model");
 const Item = require("./Item.model");
-// Modelo para los PDFs subidos por usuarios y el contenido generado por Gemini
+const ItemCategory = require("./ItemCategory.model");
 const UserPdf = require("./UserPdf.model");
-// Modelo para el seguimiento de estadísticas por categoría temática del Quiz
 const CategoryStat = require("./CategoryStat.model");
 
 // ── Asociaciones ────────────────────────────────────────────────────────────
@@ -22,20 +21,14 @@ ItemsUser.belongsTo(User, { foreignKey: "user_id", as: "user" });
 Item.hasMany(ItemsUser, { foreignKey: "item_id", as: "owners" });
 ItemsUser.belongsTo(Item, { foreignKey: "item_id", as: "item" });
 
-// Un usuario puede tener muchos PDFs; al eliminar un usuario se eliminan sus PDFs
-User.hasMany(UserPdf, {
-  foreignKey: "userId",
-  as: "pdfs",
-  onDelete: "CASCADE",
-});
+// Item pertenece a una categoría
+ItemCategory.hasMany(Item, { foreignKey: "type_id", as: "items" });
+Item.belongsTo(ItemCategory, { foreignKey: "type_id", as: "category" });
+
+User.hasMany(UserPdf, { foreignKey: "userId", as: "pdfs", onDelete: "CASCADE" });
 UserPdf.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-// Un usuario acumula estadísticas por categoría; al eliminarlo se borran sus stats
-User.hasMany(CategoryStat, {
-  foreignKey: "userId",
-  as: "categoryStats",
-  onDelete: "CASCADE",
-});
+User.hasMany(CategoryStat, { foreignKey: "userId", as: "categoryStats", onDelete: "CASCADE" });
 CategoryStat.belongsTo(User, { foreignKey: "userId", as: "user" });
 
 module.exports = {
@@ -45,6 +38,7 @@ module.exports = {
   UserData,
   ItemsUser,
   Item,
+  ItemCategory,
   UserPdf,
   CategoryStat,
 };

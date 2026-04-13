@@ -43,18 +43,6 @@ export function useAvatarSize(containerRef, slotOverrides = {}) {
         )
     })
 
-    const centralSlotStyles = computed(() => {
-        const half = (slot) => `calc(50% - ${slotSizes.value[slot].w / 2}px)`
-        const h = cardHeight.value
-        return {
-            head:     { top: Math.floor(h * -0.15) + 'px', left: half('head'),     width: slotSizes.value.head.w     + 'px', height: slotSizes.value.head.h     + 'px' },
-            torso:    { top: Math.floor(h * 0.40)  + 'px', left: half('torso'),    width: slotSizes.value.torso.w    + 'px', height: slotSizes.value.torso.h    + 'px' },
-            trinkets: { top: Math.floor(h * 0.50)  + 'px', left: half('trinkets'), width: slotSizes.value.trinkets.w + 'px', height: slotSizes.value.trinkets.h + 'px' },
-            hands:    { top: Math.floor(h * 0.35)  + 'px', right: half('hands'),   width: slotSizes.value.hands.w    + 'px', height: slotSizes.value.hands.h    + 'px' },
-            legs:     { top: Math.floor(h * 0.55)  + 'px', left: half('legs'),     width: slotSizes.value.legs.w     + 'px', height: slotSizes.value.legs.h     + 'px' },
-            feet:     { top: Math.floor(h * 0.70)  + 'px', left: half('feet'),     width: slotSizes.value.feet.w     + 'px', height: slotSizes.value.feet.h     + 'px' },
-        }
-    })
 
-    return { slotSize, cardWidth, cardHeight, centralSlotSize, slotSizes, centralSlotStyles }
+    return { slotSize, cardWidth, cardHeight, slotSizes }
 }

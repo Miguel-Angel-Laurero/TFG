@@ -10,16 +10,6 @@
                     alt="plantilla-pj"
                     class="relative w-[calc(100%-4px)] h-[calc(100%-96px)] object-contain"
                 >
-                <div
-                    v-for="slot in slots" :key="slot.id"
-                    class="rounded-xl absolute border-2 border-white/40"
-                    :style="positions[slot.id]"
-                >
-                    <transition name="equip">
-                        <img v-if="equipped[slot.id]" :key="equipped[slot.id]?.id"
-                             :src="equipped[slot.id]?.img" class="w-full h-full object-fill">
-                    </transition>
-                </div>
             </div>
         </template>
     </Card>
@@ -29,11 +19,8 @@
 import Card from 'primevue/card'
 
 defineProps({
-    slots:     { type: Array,  required: true },
-    equipped:  { type: Object, required: true },
-    positions: { type: Object, required: true },
-    width:     { type: Number, default: 160 },
-    height:    { type: Number, default: 256 },
+    width:  { type: Number, default: 160 },
+    height: { type: Number, default: 256 },
 })
 </script>
 

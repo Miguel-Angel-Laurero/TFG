@@ -14,8 +14,8 @@
                         : 'border-white/20 hover:border-white/50'"
                     @click="$emit('select', item)"
                 >
-                    <img :src="item.img" :alt="item.nombre" class="w-8 h-8 object-contain">
-                    <span class="text-white/70 text-xs text-center leading-tight">{{ item.nombre }}</span>
+                    <img :src="item.img" :alt="item.name" class="w-8 h-8 object-contain">
+                    <span class="text-white/70 text-xs text-center leading-tight">{{ item.name }}</span>
                 </div>
             </div>
         </div>
@@ -23,6 +23,15 @@
 </template>
 
 <script setup>
+const SLOT_TO_CATEGORY = {
+    head:     'headwear',
+    torso:    'upperbody',
+    hands:    'hands',
+    trinkets: 'trinkets',
+    legs:     'lowerbody',
+    feet:     'feets',
+}
+
 defineProps({
     slot:      { type: String, default: null },
     equipped:  { type: Object, required: true },

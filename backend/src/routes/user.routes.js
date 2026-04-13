@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
+const userItemsController = require("../controllers/userItems.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 
 // Todas las rutas de usuario requieren autenticación
@@ -16,5 +17,11 @@ router.put("/:id", userController.update);
 
 // DELETE /api/users/:id
 router.delete("/:id", userController.remove);
+
+// GET /api/users/:id/items
+router.get("/:id/items", userItemsController.getUserItems);
+
+// PUT /api/users/:id/items/:itemsUserId/equip
+router.put("/:id/items/:itemsUserId/equip", userItemsController.equipItem);
 
 module.exports = router;
