@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref, computed } from "vue";
 
-// ─── Mocks de módulos importados a nivel de módulo por useQuizController ──────
-// Son necesarios para que el módulo cargue en Node sin errores.
 vi.mock("@/api/categoryStats.service", () => ({ categoryStatsService: {} }));
 vi.mock("@/api/game.service", () => ({ gameService: {} }));
 vi.mock("@/composables/useSessionTracker", () => ({
@@ -16,13 +14,23 @@ vi.mock("vue-router", () => ({ useRouter: vi.fn(() => ({ push: vi.fn() })) }));
 import { useQuizController } from "@/composables/useQuizController";
 
 describe("useQuizController", () => {
-  // Dependencias inyectadas en cada test
-  let currentItem, currentIndex, totalItems, isLastItem;
-  let next, restart, trackAnswer;
-  let submitSession, resetSession, grantQuizReward, rankLabelRef;
-  let gameSvc, categorySvc, getSessionSummaryFn, calcWeakCategories, router;
+  let currentItem;
+  let currentIndex;
+  let totalItems;
+  let isLastItem;
+  let next;
+  let restart;
+  let trackAnswer;
+  let submitSession;
+  let resetSession;
+  let grantQuizReward;
+  let rankLabelRef;
+  let gameSvc;
+  let categorySvc;
+  let getSessionSummaryFn;
+  let calcWeakCategories;
+  let router;
 
-  // Crea un controlador con el estado actual del test
   function makeCtrl() {
     return useQuizController({
       currentItem,
@@ -45,17 +53,22 @@ describe("useQuizController", () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks(); // limpia call history; respeta implementaciones
+    vi.clearAllMocks();
 
-    currentItem = ref({ correct: 1, category: "math", id: 42, difficulty: 2 });
+    currentItem = ref({
+      correct: 1,
+      category: "math",
+      id: 42,
+      difficulty: 2,
+      topic: "closures",
+    });
     currentIndex = ref(0);
     totalItems = ref(2);
     isLastItem = computed(() => currentIndex.value + 1 >= totalItems.value);
 
-    // next simula avanzar el índice como lo haría useActivitySession
     next = vi.fn((onReset) => {
       onReset?.();
-      currentIndex.value++;
+      currentIndex.value += 1;
     });
     restart = vi.fn((onReset) => {
       onReset?.();
@@ -75,49 +88,59 @@ describe("useQuizController", () => {
     router = { push: vi.fn() };
   });
 
-  // ─── selectAnswer ─────────────────────────────────────────────────────────
   describe("selectAnswer", () => {
-    it("registra true cuando el índice coincide con correct", () => {
+    it("registra true cuando el indice coincide con correct", () => {
       const ctrl = makeCtrl();
       ctrl.initResults(2);
-      ctrl.selectAnswer(1); // correct = 1
+      ctrl.selectAnswer(1);
 
       expect(ctrl.results.value[0]).toBe(true);
       expect(ctrl.answered.value).toBe(true);
-      expect(trackAnswer).toHaveBeenCalledWith("math", true, 42, 2);
+      expect(trackAnswer).toHaveBeenCalledWith(
+        "math",
+        true,
+        42,
+        2,
+        "closures",
+      );
     });
 
-    it("registra false cuando el índice no coincide con correct", () => {
+    it("registra false cuando el indice no coincide con correct", () => {
       const ctrl = makeCtrl();
       ctrl.initResults(2);
-      ctrl.selectAnswer(0); // correct = 1
+      ctrl.selectAnswer(0);
 
       expect(ctrl.results.value[0]).toBe(false);
-      expect(trackAnswer).toHaveBeenCalledWith("math", false, 42, 2);
+      expect(trackAnswer).toHaveBeenCalledWith(
+        "math",
+        false,
+        42,
+        2,
+        "closures",
+      );
     });
 
-    it("ignora la segunda llamada si ya está respondida (answered = true)", () => {
+    it("ignora la segunda llamada si ya esta respondida", () => {
       const ctrl = makeCtrl();
       ctrl.initResults(2);
-      ctrl.selectAnswer(1); // correcta
-      ctrl.selectAnswer(0); // debe ignorarse
+      ctrl.selectAnswer(1);
+      ctrl.selectAnswer(0);
 
-      expect(ctrl.selectedAnswer.value).toBe(1); // no cambia
+      expect(ctrl.selectedAnswer.value).toBe(1);
       expect(trackAnswer).toHaveBeenCalledTimes(1);
     });
   });
 
-  // ─── score ────────────────────────────────────────────────────────────────
   describe("score", () => {
-    it("aplica la fórmula: aciertos - errores / 3", () => {
+    it("aplica la formula de puntuacion", () => {
       const ctrl = makeCtrl();
-      ctrl.results.value = [true, true, false]; // 2 aciertos, 1 error → 2 - 1/3 ≈ 1.667
+      ctrl.results.value = [true, true, false];
       expect(ctrl.score.value).toBeCloseTo(5 / 3);
     });
 
     it("nunca devuelve un valor negativo", () => {
       const ctrl = makeCtrl();
-      ctrl.results.value = [false, false, false]; // 0 - 1 → negativo sin el max(0)
+      ctrl.results.value = [false, false, false];
       expect(ctrl.score.value).toBe(0);
     });
 
@@ -128,30 +151,27 @@ describe("useQuizController", () => {
     });
   });
 
-  // ─── handleNext ───────────────────────────────────────────────────────────
   describe("handleNext", () => {
-    it("avanza sin llamar a servicios cuando NO es el último ítem", async () => {
+    it("avanza sin llamar a servicios cuando no es el ultimo item", async () => {
       const ctrl = makeCtrl();
       ctrl.initResults(2);
-      ctrl.selectAnswer(1); // índice 0, no es el último
+      ctrl.selectAnswer(1);
       await ctrl.handleNext();
 
       expect(submitSession).not.toHaveBeenCalled();
       expect(gameSvc.createGame).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledTimes(1);
-      expect(ctrl.answered.value).toBe(false); // reseteado por el callback de next
+      expect(ctrl.answered.value).toBe(false);
     });
 
-    it("llama a todos los servicios al finalizar el último ítem", async () => {
+    it("llama a los servicios al finalizar el ultimo item", async () => {
       const ctrl = makeCtrl();
       ctrl.initResults(2);
 
-      // Responder y avanzar la primera pregunta
       ctrl.selectAnswer(1);
-      await ctrl.handleNext(); // currentIndex pasa a 1
+      await ctrl.handleNext();
 
-      // Responder y finalizar la última pregunta (isLastItem = true)
-      ctrl.selectAnswer(0); // respuesta incorrecta
+      ctrl.selectAnswer(0);
       await ctrl.handleNext();
 
       expect(submitSession).toHaveBeenCalledTimes(1);
@@ -160,7 +180,7 @@ describe("useQuizController", () => {
         expect.objectContaining({
           gameName: "Quiz",
           duration: 5,
-          result: "aprobado", // rankLabelRef.value.toLowerCase()
+          result: "aprobado",
         }),
       );
       expect(categorySvc.getAll).toHaveBeenCalledTimes(1);
@@ -169,15 +189,14 @@ describe("useQuizController", () => {
     it("no bloquea el flujo si createGame falla", async () => {
       gameSvc.createGame.mockRejectedValueOnce(new Error("timeout"));
 
-      currentIndex.value = 1; // ya en el último ítem
+      currentIndex.value = 1;
       const ctrl = makeCtrl();
       ctrl.initResults(2);
       ctrl.selectAnswer(1);
       await ctrl.handleNext();
 
-      // submitSession y grantQuizReward siguen llamándose aunque createGame falle
       expect(submitSession).toHaveBeenCalled();
-      expect(next).toHaveBeenCalled(); // el flujo continúa
+      expect(next).toHaveBeenCalled();
     });
 
     it("guarda weakCategoriesAfterQuiz con lo que devuelve categoryStatsService", async () => {
@@ -186,17 +205,16 @@ describe("useQuizController", () => {
       ];
       categorySvc.getAll.mockResolvedValueOnce({ data: fakeStats });
 
-      currentIndex.value = 1; // último ítem
+      currentIndex.value = 1;
       const ctrl = makeCtrl();
       ctrl.initResults(2);
       ctrl.selectAnswer(1);
       await ctrl.handleNext();
 
-      // calculateWeakCategories está mockeado como (stats) => stats
       expect(ctrl.weakCategoriesAfterQuiz.value).toEqual(fakeStats);
     });
 
-    it("calcula categorías débiles con umbral 5 al terminar el quiz", async () => {
+    it("calcula categorias debiles con umbral 5 al terminar el quiz", async () => {
       const fakeStats = [
         { category: "scope", correct: 1, total: 5 },
         { category: "arrays", correct: 4, total: 6 },
@@ -205,7 +223,7 @@ describe("useQuizController", () => {
       categorySvc.getAll.mockResolvedValueOnce({ data: fakeStats });
       calcWeakCategories.mockReturnValueOnce(weakCategories);
 
-      currentIndex.value = 1; // último ítem
+      currentIndex.value = 1;
       const ctrl = makeCtrl();
       ctrl.initResults(2);
       ctrl.selectAnswer(1);
@@ -216,7 +234,6 @@ describe("useQuizController", () => {
     });
   });
 
-  // ─── handleRestart ────────────────────────────────────────────────────────
   describe("handleRestart", () => {
     it("llama a resetSession y restart, limpia el estado interno", () => {
       const ctrl = makeCtrl();
@@ -226,8 +243,6 @@ describe("useQuizController", () => {
 
       expect(resetSession).toHaveBeenCalledTimes(1);
       expect(restart).toHaveBeenCalledTimes(1);
-
-      // El callback de restart reinicia results, selectedAnswer y answered
       expect(ctrl.selectedAnswer.value).toBeNull();
       expect(ctrl.answered.value).toBe(false);
       expect(ctrl.results.value).toEqual([null, null]);

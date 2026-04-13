@@ -1,15 +1,23 @@
-import { beforeEach, describe, expect, it } from "vitest";
+﻿import { beforeEach, describe, expect, it } from "vitest";
 import {
   calculateWeakCategories,
   hasPdfInStorage,
   loadPdfQuestionsFromStorage,
   savePdfQuestionsToStorage,
+  selectAdaptiveQuestions,
+  trackTutorialQuestionResult,
 } from "@/composables/useAdaptiveSelection";
 
-const makeQuestions = (n, start = 1) =>
+const makeQuestions = (n, start = 1, category = "fundamentos-js", topic = "tipos-coercion") =>
   Array.from({ length: n }, (_, i) => ({
     id: i + start,
+    category,
+    topic,
+    difficulty: ((i % 3) + 1),
     question: `Pregunta ${i + start}`,
+    options: ["A", "B", "C", "D"],
+    correct: 0,
+    explanation: "Explicacion",
   }));
 
 describe("useAdaptiveSelection", () => {
@@ -18,7 +26,7 @@ describe("useAdaptiveSelection", () => {
   });
 
   describe("calculateWeakCategories", () => {
-    it("filtra categorías con pocos intentos y ordena de más débil a más fuerte", () => {
+    it("filtra categorias con pocos intentos y ordena de mas debil a mas fuerte", () => {
       const stats = [
         { category: "arrays", correct: 2, total: 5 },
         { category: "scope", correct: 1, total: 5 },
@@ -44,15 +52,9 @@ describe("useAdaptiveSelection", () => {
 
       expect(activeIds).toHaveLength(15);
       expect(new Set(activeIds).size).toBe(activeIds.length);
-      expect(activeIds.every((id) => questions.some((q) => q.id === id))).toBe(
-        true,
-      );
+      expect(activeIds.every((id) => questions.some((q) => q.id === id))).toBe(true);
       expect(hasPdfInStorage("pdf-1")).toBe(true);
-      expect(stored).toEqual({
-        questions,
-        flashCards,
-        activeIds,
-      });
+      expect(stored).toEqual({ questions, flashCards, activeIds });
     });
 
     it("si hay menos de 15 preguntas, activa todas las disponibles", () => {
@@ -62,6 +64,36 @@ describe("useAdaptiveSelection", () => {
 
       expect(activeIds).toHaveLength(6);
       expect(new Set(activeIds)).toEqual(new Set(questions.map((q) => q.id)));
+    });
+  });
+
+  describe("selectAdaptiveQuestions", () => {
+    it("prioriza bloques debiles y devuelve 15 preguntas sin repetir", () => {
+      const bank = [
+        ...makeQuestions(30, 1, "fundamentos-js", "tipos-coercion"),
+        ...makeQuestions(30, 101, "arrays-colecciones", "arrays-metodos"),
+        ...makeQuestions(30, 201, "funciones-scope", "closures-hoisting"),
+        ...makeQuestions(30, 301, "objetos", "objetos"),
+        ...makeQuestions(30, 401, "asincronia", "promesas"),
+      ];
+
+      trackTutorialQuestionResult({
+        category: "fundamentos-js",
+        topic: "tipos-coercion",
+        questionId: 1,
+        isCorrect: false,
+      });
+
+      const result = selectAdaptiveQuestions(bank, [
+        { category: "fundamentos-js", correct: 1, total: 5 },
+        { category: "arrays-colecciones", correct: 2, total: 5 },
+        { category: "funciones-scope", correct: 5, total: 8 },
+      ]);
+
+      expect(result.questions).toHaveLength(15);
+      expect(new Set(result.questions.map((q) => q.id)).size).toBe(15);
+      expect(result.weakCategories[0].category).toBe("fundamentos-js");
+      expect(result.questions.some((q) => q.category === "fundamentos-js")).toBe(true);
     });
   });
 });

@@ -105,9 +105,10 @@ router.get("/my", gameController.getMine);
 router.get("/weekly", gameController.getWeekly);
 
 // GET /api/games/adaptive-quiz
-// Calcula las categorías más débiles del usuario (algorimo de pesos por tasa de error),
-// genera 50 preguntas focalizadas con Gemini y devuelve el array junto a los metadatos
-// de las categorías débiles para que el frontend muestre el badge visual.
+// Endpoint legado de compatibilidad. El flujo principal del frontend ya usa
+// el selector adaptativo local sobre el banco tutorial, pero esta ruta se
+// conserva para clientes antiguos mientras siga siendo inocua.
+// Devuelve preguntas focalizadas por categorías débiles y sus metadatos.
 // Prerequisito: al menos 1 categoría con total >= 5 respuestas. Si no, devuelve 204.
 router.get("/adaptive-quiz", async (req, res, next) => {
   try {
@@ -141,7 +142,7 @@ router.get("/adaptive-quiz", async (req, res, next) => {
       source = "local-fallback";
       questions = buildAdaptiveFallbackQuestions(categories, 15);
       console.warn(
-        "[adaptive-quiz] Gemini no disponible, usando fallback local:",
+        "[adaptive-quiz] Endpoint legado usando fallback local de compatibilidad:",
         error.message,
       );
     }

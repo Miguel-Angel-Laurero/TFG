@@ -105,21 +105,12 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from '@/components/shared/Header.vue'
 import Footer from '@/components/shared/Footer.vue'
+import { getQuizCategoryLabel } from '@/utils/quizCategories'
 
 const route = useRoute()
 const categoryKey = computed(() => route.query.category ?? '')
 
 const LS_LAST_SESSION = 'ludoscript_lastSession'
-
-const CATEGORY_LABELS = {
-  'tipos-coercion':  'Tipos & Coercion',
-  'arrays-metodos':  'Arrays',
-  'scope-variables': 'Scope',
-  'funciones':       'Funciones',
-  'asincronia':      'Asincronia',
-  'sintaxis-es6':    'ES6+',
-  'objetos':         'Objetos',
-}
 
 function masteryColor(correct, total) {
   if (total === 0) return '#374151'
@@ -130,7 +121,7 @@ function masteryColor(correct, total) {
   return '#ef4444'
 }
 
-const categoryLabel = computed(() => CATEGORY_LABELS[categoryKey.value] ?? categoryKey.value)
+const categoryLabel = computed(() => getQuizCategoryLabel(categoryKey.value))
 
 const loading = ref(true)
 const allQuestions = ref([])

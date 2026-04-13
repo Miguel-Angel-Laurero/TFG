@@ -1,192 +1,3752 @@
 [
   {
     "id": 1,
-    "category": "tipos-coercion",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 1,
-    "question": "¿Qué diferencia hay entre `==` y `===` en JavaScript?",
+    "question": "Que afirmacion describe mejor la diferencia entre == y ===?",
     "options": [
-      "No hay diferencia, son equivalentes",
-      "`===` compara valor y tipo, `==` solo compara valor con coerción",
-      "`==` es más estricto que `===`",
-      "`===` solo funciona con números"
+      "=== compara valor y tipo sin coercion, == puede convertir tipos antes de comparar",
+      "== y === son equivalentes en JavaScript moderno",
+      "== es mas estricto que === porque no convierte tipos",
+      "=== solo se usa con numeros y == con strings"
     ],
-    "correct": 1,
-    "explanation": "`===` es la igualdad estricta: compara valor Y tipo sin ninguna conversión. `==` aplica coerción de tipos antes de comparar, por lo que `'1' == 1` devuelve `true` aunque uno es string y el otro número. Usa siempre `===` para evitar comportamientos inesperados."
+    "correct": 0,
+    "explanation": "=== evita conversiones implicitas. Es la comparacion recomendada para no mezclar tipos sin querer."
   },
   {
     "id": 2,
-    "category": "tipos-coercion",
-    "difficulty": 2,
-    "question": "¿Cuál es el resultado de `typeof null` en JavaScript?",
-    "options": ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""],
-    "correct": 2,
-    "explanation": "Es un bug histórico de JavaScript que nunca se corrigió por compatibilidad. `typeof null` devuelve `'object'`, aunque `null` no es un objeto. Para comprobar si algo es `null` usa `valor === null`."
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
+    "difficulty": 1,
+    "question": "Si repasas la diferencia entre == y ===, con que idea basica deberias quedarte?",
+    "options": [
+      "== y === son equivalentes en JavaScript moderno",
+      "== es mas estricto que === porque no convierte tipos",
+      "=== solo se usa con numeros y == con strings",
+      "=== compara valor y tipo sin coercion, == puede convertir tipos antes de comparar"
+    ],
+    "correct": 3,
+    "explanation": "=== evita conversiones implicitas. Es la comparacion recomendada para no mezclar tipos sin querer."
   },
   {
     "id": 3,
-    "category": "arrays-metodos",
-    "difficulty": 1,
-    "question": "¿Qué hace el método `Array.prototype.map()`?",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la diferencia entre == y ===?",
     "options": [
-      "Filtra los elementos de un array según una condición",
-      "Reduce el array a un único valor acumulado",
-      "Crea un nuevo array transformando cada elemento con una función",
-      "Busca el índice de un elemento en el array"
+      "== es mas estricto que === porque no convierte tipos",
+      "=== solo se usa con numeros y == con strings",
+      "=== compara valor y tipo sin coercion, == puede convertir tipos antes de comparar",
+      "== y === son equivalentes en JavaScript moderno"
     ],
     "correct": 2,
-    "explanation": "`map()` itera sobre cada elemento, aplica la función que le pasas y devuelve un **nuevo array** del mismo tamaño con los resultados transformados. No modifica el array original. Para filtrar usa `filter()`, para acumular usa `reduce()`."
+    "explanation": "=== evita conversiones implicitas. Es la comparacion recomendada para no mezclar tipos sin querer."
   },
   {
     "id": 4,
-    "category": "scope-variables",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 2,
-    "question": "¿Qué es el hoisting en JavaScript?",
+    "question": "Para evitar errores frecuentes, que enunciado sobre la diferencia entre == y === es el mas correcto?",
     "options": [
-      "Un método para ordenar arrays",
-      "El mecanismo por el que las declaraciones se mueven al inicio de su ámbito antes de ejecutarse",
-      "Una forma de heredar propiedades entre objetos",
-      "El proceso de convertir tipos de datos automáticamente"
+      "=== solo se usa con numeros y == con strings",
+      "=== compara valor y tipo sin coercion, == puede convertir tipos antes de comparar",
+      "== y === son equivalentes en JavaScript moderno",
+      "== es mas estricto que === porque no convierte tipos"
     ],
     "correct": 1,
-    "explanation": "El motor de JS procesa las declaraciones en dos fases: primero las registra (hoisting) y luego las ejecuta. Las declaraciones con `var` y `function` se elevan con su valor, pero `let` y `const` quedan en la 'temporal dead zone' hasta su línea de declaración."
+    "explanation": "=== evita conversiones implicitas. Es la comparacion recomendada para no mezclar tipos sin querer."
   },
   {
     "id": 5,
-    "category": "funciones",
-    "difficulty": 1,
-    "question": "¿Cuál de estas opciones declara correctamente una función flecha?",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la diferencia entre == y ===?",
     "options": [
-      "function => (x) { return x * 2 }",
-      "const doble = function(x) => x * 2",
-      "const doble = (x) => x * 2",
-      "arrow doble(x) { return x * 2 }"
+      "=== compara valor y tipo sin coercion, == puede convertir tipos antes de comparar",
+      "== y === son equivalentes en JavaScript moderno",
+      "== es mas estricto que === porque no convierte tipos",
+      "=== solo se usa con numeros y == con strings"
     ],
-    "correct": 2,
-    "explanation": "La sintaxis de función flecha es `(parámetros) => expresión` o `(parámetros) => { cuerpo }`. Si solo hay un parámetro puedes omitir los paréntesis: `x => x * 2`. Si el cuerpo es una expresión directa, se omiten las llaves y el `return` es implícito."
+    "correct": 0,
+    "explanation": "=== evita conversiones implicitas. Es la comparacion recomendada para no mezclar tipos sin querer."
   },
   {
     "id": 6,
-    "category": "arrays-metodos",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 1,
-    "question": "¿Qué devuelve `[1, 2, 3].find(x => x > 1)`?",
-    "options": ["[2, 3]", "2", "true", "1"],
-    "correct": 1,
-    "explanation": "`find()` devuelve el **primer elemento** que cumple la condición, no todos. Para obtener todos los que cumplan la condición usa `filter()`. Si ningún elemento cumple la condición, `find()` devuelve `undefined`."
+    "question": "Que afirmacion describe mejor el resultado de typeof null?",
+    "options": [
+      "typeof null devuelve 'object' por un comportamiento historico del lenguaje",
+      "typeof null devuelve 'null' porque null es su propio tipo textual",
+      "typeof null devuelve 'undefined' porque no tiene valor",
+      "typeof null lanza un error porque null no tiene propiedades"
+    ],
+    "correct": 0,
+    "explanation": "typeof null devuelve 'object' por compatibilidad historica. Para comprobar null se usa valor === null."
   },
   {
     "id": 7,
-    "category": "scope-variables",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 1,
-    "question": "¿Cuál es la diferencia entre `let` y `var`?",
+    "question": "Si repasas el resultado de typeof null, con que idea basica deberias quedarte?",
     "options": [
-      "`let` tiene ámbito de bloque, `var` tiene ámbito de función",
-      "`var` tiene ámbito de bloque, `let` tiene ámbito de función",
-      "No hay diferencia funcional entre ambos",
-      "`let` no permite reasignación de valor"
+      "typeof null devuelve 'null' porque null es su propio tipo textual",
+      "typeof null devuelve 'undefined' porque no tiene valor",
+      "typeof null lanza un error porque null no tiene propiedades",
+      "typeof null devuelve 'object' por un comportamiento historico del lenguaje"
     ],
-    "correct": 0,
-    "explanation": "`let` tiene **ámbito de bloque** (entre llaves `{}`): no es accesible fuera del bloque donde se declaró. `var` tiene **ámbito de función**: es accesible en toda la función aunque se declare dentro de un `if` o `for`. Usa `let` y `const` en ES6+."
+    "correct": 3,
+    "explanation": "typeof null devuelve 'object' por compatibilidad historica. Para comprobar null se usa valor === null."
   },
   {
     "id": 8,
-    "category": "asincronia",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 2,
-    "question": "¿Qué es una Promesa (Promise) en JavaScript?",
+    "question": "En una revision de codigo, que conviene recordar sobre el resultado de typeof null?",
     "options": [
-      "Un tipo de bucle para operaciones asíncronas",
-      "Un objeto que representa el resultado eventual de una operación asíncrona",
-      "Una función que siempre devuelve un valor inmediatamente",
-      "Un método para sincronizar múltiples funciones"
+      "typeof null devuelve 'undefined' porque no tiene valor",
+      "typeof null lanza un error porque null no tiene propiedades",
+      "typeof null devuelve 'object' por un comportamiento historico del lenguaje",
+      "typeof null devuelve 'null' porque null es su propio tipo textual"
     ],
-    "correct": 1,
-    "explanation": "Una Promise es un objeto que representa una operación cuyo resultado todavía no está disponible. Puede estar pendiente (`pending`), resuelta con éxito (`fulfilled`) o rechazada (`rejected`). Se encadena con `.then()` / `.catch()` o se consume con `await`."
+    "correct": 2,
+    "explanation": "typeof null devuelve 'object' por compatibilidad historica. Para comprobar null se usa valor === null."
   },
   {
     "id": 9,
-    "category": "sintaxis-es6",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 2,
-    "question": "¿Qué hace el operador spread (`...`) en este código: `const b = [...a, 4]`?",
+    "question": "Para evitar errores frecuentes, que enunciado sobre el resultado de typeof null es el mas correcto?",
     "options": [
-      "Modifica el array `a` añadiendo el 4 al final",
-      "Crea un nuevo array con los elementos de `a` más el 4",
-      "Concatena `a` con el número 4 como string",
-      "Lanza un error si `a` no es iterable"
+      "typeof null lanza un error porque null no tiene propiedades",
+      "typeof null devuelve 'object' por un comportamiento historico del lenguaje",
+      "typeof null devuelve 'null' porque null es su propio tipo textual",
+      "typeof null devuelve 'undefined' porque no tiene valor"
     ],
     "correct": 1,
-    "explanation": "El operador spread `...` expande los elementos de un iterable en el lugar donde se usa. `[...a, 4]` crea un **nuevo array** (no modifica `a`) que contiene todos los elementos de `a` seguidos del valor `4`. También se puede usar en objetos: `{ ...obj, clave: valor }`."
+    "explanation": "typeof null devuelve 'object' por compatibilidad historica. Para comprobar null se usa valor === null."
   },
   {
     "id": 10,
-    "category": "tipos-coercion",
-    "difficulty": 1,
-    "question": "¿Cuál es el resultado de `Boolean('')`?",
-    "options": ["true", "undefined", "null", "false"],
-    "correct": 3,
-    "explanation": "En JavaScript los valores **falsy** son: `false`, `0`, `''` (string vacío), `null`, `undefined` y `NaN`. Todos los demás son **truthy**. La cadena vacía `''` es falsy, por lo que `Boolean('')` devuelve `false`."
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el resultado de typeof null?",
+    "options": [
+      "typeof null devuelve 'object' por un comportamiento historico del lenguaje",
+      "typeof null devuelve 'null' porque null es su propio tipo textual",
+      "typeof null devuelve 'undefined' porque no tiene valor",
+      "typeof null lanza un error porque null no tiene propiedades"
+    ],
+    "correct": 0,
+    "explanation": "typeof null devuelve 'object' por compatibilidad historica. Para comprobar null se usa valor === null."
   },
   {
     "id": 11,
-    "category": "arrays-metodos",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 1,
-    "question": "¿Qué método se usa para añadir un elemento al final de un array?",
+    "question": "Que afirmacion describe mejor los valores falsy en JavaScript?",
     "options": [
-      "array.append()",
-      "array.push()",
-      "array.add()",
-      "array.insert()"
+      "Valores como false, 0, '', null, undefined y NaN se consideran falsy",
+      "Cualquier string no vacio y cualquier array son falsy",
+      "Solo false y null son falsy; el resto son truthy",
+      "NaN es truthy porque es un valor numerico especial"
     ],
-    "correct": 1,
-    "explanation": "`push()` añade uno o más elementos al **final** del array y devuelve el nuevo tamaño. Para añadir al principio usa `unshift()`. Para eliminar el último elemento usa `pop()`, y para eliminar el primero usa `shift()`. `append()`, `add()` e `insert()` no existen en arrays nativos de JS."
+    "correct": 0,
+    "explanation": "Falsy significa que al convertir a booleano el resultado es false. Muchos bugs vienen de olvidar este detalle."
   },
   {
     "id": 12,
-    "category": "scope-variables",
-    "difficulty": 3,
-    "question": "¿Qué es el closure en JavaScript?",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
+    "difficulty": 1,
+    "question": "Si repasas los valores falsy en JavaScript, con que idea basica deberias quedarte?",
     "options": [
-      "Un método para cerrar la conexión con el servidor",
-      "Una función que recuerda las variables de su ámbito externo aunque ese ámbito ya haya terminado",
-      "Un bloque try/catch para manejar errores",
-      "Una clase abstracta que no puede instanciarse"
+      "Cualquier string no vacio y cualquier array son falsy",
+      "Solo false y null son falsy; el resto son truthy",
+      "NaN es truthy porque es un valor numerico especial",
+      "Valores como false, 0, '', null, undefined y NaN se consideran falsy"
     ],
-    "correct": 1,
-    "explanation": "Un closure es una función que 'cierra sobre' las variables de su ámbito léxico exterior, manteniéndolas vivas incluso cuando la función externa ya ha retornado. Ejemplo: un contador con `let count = 0` dentro de una función que devuelve otra función que incrementa `count`."
+    "correct": 3,
+    "explanation": "Falsy significa que al convertir a booleano el resultado es false. Muchos bugs vienen de olvidar este detalle."
   },
   {
     "id": 13,
-    "category": "objetos",
-    "difficulty": 1,
-    "question": "¿Qué devuelve `Object.keys({ a: 1, b: 2, c: 3 })`?",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre los valores falsy en JavaScript?",
     "options": [
-      "[1, 2, 3]",
-      "{ a: 1, b: 2, c: 3 }",
-      "[\"a\", \"b\", \"c\"]",
-      "3"
+      "Solo false y null son falsy; el resto son truthy",
+      "NaN es truthy porque es un valor numerico especial",
+      "Valores como false, 0, '', null, undefined y NaN se consideran falsy",
+      "Cualquier string no vacio y cualquier array son falsy"
     ],
     "correct": 2,
-    "explanation": "`Object.keys()` devuelve un **array con las claves** (nombres de propiedad) propias y enumerables del objeto. Para obtener los valores usa `Object.values()`, y para pares `[clave, valor]` usa `Object.entries()`."
+    "explanation": "Falsy significa que al convertir a booleano el resultado es false. Muchos bugs vienen de olvidar este detalle."
   },
   {
     "id": 14,
-    "category": "asincronia",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 2,
-    "question": "¿Qué significa `async/await` en JavaScript?",
+    "question": "Para evitar errores frecuentes, que enunciado sobre los valores falsy en JavaScript es el mas correcto?",
     "options": [
-      "Son palabras clave para declarar variables asíncronas",
-      "Permiten escribir código asíncrono basado en Promesas de forma más legible y secuencial",
-      "Crean hilos de ejecución paralelos",
-      "Son una alternativa a los bucles for para iterar arrays"
+      "NaN es truthy porque es un valor numerico especial",
+      "Valores como false, 0, '', null, undefined y NaN se consideran falsy",
+      "Cualquier string no vacio y cualquier array son falsy",
+      "Solo false y null son falsy; el resto son truthy"
     ],
     "correct": 1,
-    "explanation": "`async` marca una función como asíncrona (siempre devuelve una Promise). Dentro de ella, `await` pausa la ejecución hasta que la Promise se resuelva, permitiendo escribir código asíncrono con apariencia síncrona. JavaScript es single-thread; `async/await` no crea hilos paralelos."
+    "explanation": "Falsy significa que al convertir a booleano el resultado es false. Muchos bugs vienen de olvidar este detalle."
   },
   {
     "id": 15,
-    "category": "tipos-coercion",
+    "category": "fundamentos-js",
+    "topic": "tipos-coercion",
     "difficulty": 3,
-    "question": "¿Cuál es el resultado de `console.log(0.1 + 0.2 === 0.3)` en JavaScript?",
-    "options": ["true", "undefined", "false", "NaN"],
+    "question": "Cual es la opcion mas precisa cuando se habla de los valores falsy en JavaScript?",
+    "options": [
+      "Valores como false, 0, '', null, undefined y NaN se consideran falsy",
+      "Cualquier string no vacio y cualquier array son falsy",
+      "Solo false y null son falsy; el resto son truthy",
+      "NaN es truthy porque es un valor numerico especial"
+    ],
+    "correct": 0,
+    "explanation": "Falsy significa que al convertir a booleano el resultado es false. Muchos bugs vienen de olvidar este detalle."
+  },
+  {
+    "id": 16,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el operador spread en arrays?",
+    "options": [
+      "Spread crea un nuevo array expandiendo los elementos del iterable",
+      "Spread modifica siempre el array original para ahorrar memoria",
+      "Spread solo funciona con strings, no con arrays",
+      "Spread convierte automaticamente todos los elementos a string"
+    ],
+    "correct": 0,
+    "explanation": "Con [...a, nuevo] obtienes una copia con elementos adicionales. No muta el array original."
+  },
+  {
+    "id": 17,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 1,
+    "question": "Si repasas el operador spread en arrays, con que idea basica deberias quedarte?",
+    "options": [
+      "Spread modifica siempre el array original para ahorrar memoria",
+      "Spread solo funciona con strings, no con arrays",
+      "Spread convierte automaticamente todos los elementos a string",
+      "Spread crea un nuevo array expandiendo los elementos del iterable"
+    ],
+    "correct": 3,
+    "explanation": "Con [...a, nuevo] obtienes una copia con elementos adicionales. No muta el array original."
+  },
+  {
+    "id": 18,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el operador spread en arrays?",
+    "options": [
+      "Spread solo funciona con strings, no con arrays",
+      "Spread convierte automaticamente todos los elementos a string",
+      "Spread crea un nuevo array expandiendo los elementos del iterable",
+      "Spread modifica siempre el array original para ahorrar memoria"
+    ],
     "correct": 2,
-    "explanation": "`0.1 + 0.2` en JavaScript da `0.30000000000000004` por la representación en punto flotante IEEE 754. Para comparar números decimales, usa un margen de tolerancia: `Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON`."
+    "explanation": "Con [...a, nuevo] obtienes una copia con elementos adicionales. No muta el array original."
+  },
+  {
+    "id": 19,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el operador spread en arrays es el mas correcto?",
+    "options": [
+      "Spread convierte automaticamente todos los elementos a string",
+      "Spread crea un nuevo array expandiendo los elementos del iterable",
+      "Spread modifica siempre el array original para ahorrar memoria",
+      "Spread solo funciona con strings, no con arrays"
+    ],
+    "correct": 1,
+    "explanation": "Con [...a, nuevo] obtienes una copia con elementos adicionales. No muta el array original."
+  },
+  {
+    "id": 20,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el operador spread en arrays?",
+    "options": [
+      "Spread crea un nuevo array expandiendo los elementos del iterable",
+      "Spread modifica siempre el array original para ahorrar memoria",
+      "Spread solo funciona con strings, no con arrays",
+      "Spread convierte automaticamente todos los elementos a string"
+    ],
+    "correct": 0,
+    "explanation": "Con [...a, nuevo] obtienes una copia con elementos adicionales. No muta el array original."
+  },
+  {
+    "id": 21,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor las template literals?",
+    "options": [
+      "Permiten interpolar expresiones con ${...} y escribir strings multilinea con backticks",
+      "Sustituyen a JSON y solo sirven para serializar objetos",
+      "Solo aceptan variables simples, no expresiones",
+      "Obligan a escapar siempre las comillas dobles y simples"
+    ],
+    "correct": 0,
+    "explanation": "Las template literals mejoran la legibilidad al construir mensajes y fragmentos de texto dinamicos."
+  },
+  {
+    "id": 22,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 1,
+    "question": "Si repasas las template literals, con que idea basica deberias quedarte?",
+    "options": [
+      "Sustituyen a JSON y solo sirven para serializar objetos",
+      "Solo aceptan variables simples, no expresiones",
+      "Obligan a escapar siempre las comillas dobles y simples",
+      "Permiten interpolar expresiones con ${...} y escribir strings multilinea con backticks"
+    ],
+    "correct": 3,
+    "explanation": "Las template literals mejoran la legibilidad al construir mensajes y fragmentos de texto dinamicos."
+  },
+  {
+    "id": 23,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre las template literals?",
+    "options": [
+      "Solo aceptan variables simples, no expresiones",
+      "Obligan a escapar siempre las comillas dobles y simples",
+      "Permiten interpolar expresiones con ${...} y escribir strings multilinea con backticks",
+      "Sustituyen a JSON y solo sirven para serializar objetos"
+    ],
+    "correct": 2,
+    "explanation": "Las template literals mejoran la legibilidad al construir mensajes y fragmentos de texto dinamicos."
+  },
+  {
+    "id": 24,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre las template literals es el mas correcto?",
+    "options": [
+      "Obligan a escapar siempre las comillas dobles y simples",
+      "Permiten interpolar expresiones con ${...} y escribir strings multilinea con backticks",
+      "Sustituyen a JSON y solo sirven para serializar objetos",
+      "Solo aceptan variables simples, no expresiones"
+    ],
+    "correct": 1,
+    "explanation": "Las template literals mejoran la legibilidad al construir mensajes y fragmentos de texto dinamicos."
+  },
+  {
+    "id": 25,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de las template literals?",
+    "options": [
+      "Permiten interpolar expresiones con ${...} y escribir strings multilinea con backticks",
+      "Sustituyen a JSON y solo sirven para serializar objetos",
+      "Solo aceptan variables simples, no expresiones",
+      "Obligan a escapar siempre las comillas dobles y simples"
+    ],
+    "correct": 0,
+    "explanation": "Las template literals mejoran la legibilidad al construir mensajes y fragmentos de texto dinamicos."
+  },
+  {
+    "id": 26,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor lo que garantiza const?",
+    "options": [
+      "Impide reasignar la variable, pero no vuelve inmutable el objeto almacenado",
+      "Impide cambiar tanto la referencia como las propiedades internas del objeto",
+      "Se puede reasignar dentro de un if porque const tiene scope especial",
+      "Solo sirve para declarar numeros y strings"
+    ],
+    "correct": 0,
+    "explanation": "const protege la referencia. Si quieres inmutabilidad profunda necesitas otras tecnicas o convenciones."
+  },
+  {
+    "id": 27,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 1,
+    "question": "Si repasas lo que garantiza const, con que idea basica deberias quedarte?",
+    "options": [
+      "Impide cambiar tanto la referencia como las propiedades internas del objeto",
+      "Se puede reasignar dentro de un if porque const tiene scope especial",
+      "Solo sirve para declarar numeros y strings",
+      "Impide reasignar la variable, pero no vuelve inmutable el objeto almacenado"
+    ],
+    "correct": 3,
+    "explanation": "const protege la referencia. Si quieres inmutabilidad profunda necesitas otras tecnicas o convenciones."
+  },
+  {
+    "id": 28,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre lo que garantiza const?",
+    "options": [
+      "Se puede reasignar dentro de un if porque const tiene scope especial",
+      "Solo sirve para declarar numeros y strings",
+      "Impide reasignar la variable, pero no vuelve inmutable el objeto almacenado",
+      "Impide cambiar tanto la referencia como las propiedades internas del objeto"
+    ],
+    "correct": 2,
+    "explanation": "const protege la referencia. Si quieres inmutabilidad profunda necesitas otras tecnicas o convenciones."
+  },
+  {
+    "id": 29,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre lo que garantiza const es el mas correcto?",
+    "options": [
+      "Solo sirve para declarar numeros y strings",
+      "Impide reasignar la variable, pero no vuelve inmutable el objeto almacenado",
+      "Impide cambiar tanto la referencia como las propiedades internas del objeto",
+      "Se puede reasignar dentro de un if porque const tiene scope especial"
+    ],
+    "correct": 1,
+    "explanation": "const protege la referencia. Si quieres inmutabilidad profunda necesitas otras tecnicas o convenciones."
+  },
+  {
+    "id": 30,
+    "category": "fundamentos-js",
+    "topic": "sintaxis-es6",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de lo que garantiza const?",
+    "options": [
+      "Impide reasignar la variable, pero no vuelve inmutable el objeto almacenado",
+      "Impide cambiar tanto la referencia como las propiedades internas del objeto",
+      "Se puede reasignar dentro de un if porque const tiene scope especial",
+      "Solo sirve para declarar numeros y strings"
+    ],
+    "correct": 0,
+    "explanation": "const protege la referencia. Si quieres inmutabilidad profunda necesitas otras tecnicas o convenciones."
+  },
+  {
+    "id": 31,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el operador ternario?",
+    "options": [
+      "Permite elegir entre dos expresiones segun una condicion",
+      "Sirve para declarar tres variables en una sola linea",
+      "Solo puede usarse dentro de un bucle for",
+      "Es equivalente a un switch con tres casos obligatorios"
+    ],
+    "correct": 0,
+    "explanation": "condicion ? valorSiTrue : valorSiFalse es util para decisiones breves y expresivas."
+  },
+  {
+    "id": 32,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Si repasas el operador ternario, con que idea basica deberias quedarte?",
+    "options": [
+      "Sirve para declarar tres variables en una sola linea",
+      "Solo puede usarse dentro de un bucle for",
+      "Es equivalente a un switch con tres casos obligatorios",
+      "Permite elegir entre dos expresiones segun una condicion"
+    ],
+    "correct": 3,
+    "explanation": "condicion ? valorSiTrue : valorSiFalse es util para decisiones breves y expresivas."
+  },
+  {
+    "id": 33,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el operador ternario?",
+    "options": [
+      "Solo puede usarse dentro de un bucle for",
+      "Es equivalente a un switch con tres casos obligatorios",
+      "Permite elegir entre dos expresiones segun una condicion",
+      "Sirve para declarar tres variables en una sola linea"
+    ],
+    "correct": 2,
+    "explanation": "condicion ? valorSiTrue : valorSiFalse es util para decisiones breves y expresivas."
+  },
+  {
+    "id": 34,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el operador ternario es el mas correcto?",
+    "options": [
+      "Es equivalente a un switch con tres casos obligatorios",
+      "Permite elegir entre dos expresiones segun una condicion",
+      "Sirve para declarar tres variables en una sola linea",
+      "Solo puede usarse dentro de un bucle for"
+    ],
+    "correct": 1,
+    "explanation": "condicion ? valorSiTrue : valorSiFalse es util para decisiones breves y expresivas."
+  },
+  {
+    "id": 35,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el operador ternario?",
+    "options": [
+      "Permite elegir entre dos expresiones segun una condicion",
+      "Sirve para declarar tres variables en una sola linea",
+      "Solo puede usarse dentro de un bucle for",
+      "Es equivalente a un switch con tres casos obligatorios"
+    ],
+    "correct": 0,
+    "explanation": "condicion ? valorSiTrue : valorSiFalse es util para decisiones breves y expresivas."
+  },
+  {
+    "id": 36,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el short circuit con ||?",
+    "options": [
+      "Devuelve el primer valor truthy o, si no existe, el ultimo valor evaluado",
+      "Devuelve siempre true o false, nunca otro valor",
+      "Ejecuta siempre ambas expresiones antes de decidir",
+      "Convierte todos los operandos a numero antes de compararlos"
+    ],
+    "correct": 0,
+    "explanation": "|| se usa mucho para defaults, aunque para null o undefined suele ser mas preciso usar ??."
+  },
+  {
+    "id": 37,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Si repasas el short circuit con ||, con que idea basica deberias quedarte?",
+    "options": [
+      "Devuelve siempre true o false, nunca otro valor",
+      "Ejecuta siempre ambas expresiones antes de decidir",
+      "Convierte todos los operandos a numero antes de compararlos",
+      "Devuelve el primer valor truthy o, si no existe, el ultimo valor evaluado"
+    ],
+    "correct": 3,
+    "explanation": "|| se usa mucho para defaults, aunque para null o undefined suele ser mas preciso usar ??."
+  },
+  {
+    "id": 38,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el short circuit con ||?",
+    "options": [
+      "Ejecuta siempre ambas expresiones antes de decidir",
+      "Convierte todos los operandos a numero antes de compararlos",
+      "Devuelve el primer valor truthy o, si no existe, el ultimo valor evaluado",
+      "Devuelve siempre true o false, nunca otro valor"
+    ],
+    "correct": 2,
+    "explanation": "|| se usa mucho para defaults, aunque para null o undefined suele ser mas preciso usar ??."
+  },
+  {
+    "id": 39,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el short circuit con || es el mas correcto?",
+    "options": [
+      "Convierte todos los operandos a numero antes de compararlos",
+      "Devuelve el primer valor truthy o, si no existe, el ultimo valor evaluado",
+      "Devuelve siempre true o false, nunca otro valor",
+      "Ejecuta siempre ambas expresiones antes de decidir"
+    ],
+    "correct": 1,
+    "explanation": "|| se usa mucho para defaults, aunque para null o undefined suele ser mas preciso usar ??."
+  },
+  {
+    "id": 40,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el short circuit con ||?",
+    "options": [
+      "Devuelve el primer valor truthy o, si no existe, el ultimo valor evaluado",
+      "Devuelve siempre true o false, nunca otro valor",
+      "Ejecuta siempre ambas expresiones antes de decidir",
+      "Convierte todos los operandos a numero antes de compararlos"
+    ],
+    "correct": 0,
+    "explanation": "|| se usa mucho para defaults, aunque para null o undefined suele ser mas preciso usar ??."
+  },
+  {
+    "id": 41,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor los parametros por defecto?",
+    "options": [
+      "Solo se aplican cuando el argumento recibido es undefined",
+      "Tambien se aplican si el argumento es null, 0 o ''",
+      "No funcionan con funciones flecha",
+      "Sobrescriben siempre cualquier argumento enviado"
+    ],
+    "correct": 0,
+    "explanation": "null no activa el valor por defecto. Ese matiz es importante al disenar APIs y helpers."
+  },
+  {
+    "id": 42,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Si repasas los parametros por defecto, con que idea basica deberias quedarte?",
+    "options": [
+      "Tambien se aplican si el argumento es null, 0 o ''",
+      "No funcionan con funciones flecha",
+      "Sobrescriben siempre cualquier argumento enviado",
+      "Solo se aplican cuando el argumento recibido es undefined"
+    ],
+    "correct": 3,
+    "explanation": "null no activa el valor por defecto. Ese matiz es importante al disenar APIs y helpers."
+  },
+  {
+    "id": 43,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre los parametros por defecto?",
+    "options": [
+      "No funcionan con funciones flecha",
+      "Sobrescriben siempre cualquier argumento enviado",
+      "Solo se aplican cuando el argumento recibido es undefined",
+      "Tambien se aplican si el argumento es null, 0 o ''"
+    ],
+    "correct": 2,
+    "explanation": "null no activa el valor por defecto. Ese matiz es importante al disenar APIs y helpers."
+  },
+  {
+    "id": 44,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre los parametros por defecto es el mas correcto?",
+    "options": [
+      "Sobrescriben siempre cualquier argumento enviado",
+      "Solo se aplican cuando el argumento recibido es undefined",
+      "Tambien se aplican si el argumento es null, 0 o ''",
+      "No funcionan con funciones flecha"
+    ],
+    "correct": 1,
+    "explanation": "null no activa el valor por defecto. Ese matiz es importante al disenar APIs y helpers."
+  },
+  {
+    "id": 45,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de los parametros por defecto?",
+    "options": [
+      "Solo se aplican cuando el argumento recibido es undefined",
+      "Tambien se aplican si el argumento es null, 0 o ''",
+      "No funcionan con funciones flecha",
+      "Sobrescriben siempre cualquier argumento enviado"
+    ],
+    "correct": 0,
+    "explanation": "null no activa el valor por defecto. Ese matiz es importante al disenar APIs y helpers."
+  },
+  {
+    "id": 46,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el operador nullish coalescing ???",
+    "options": [
+      "Usa el valor de la derecha solo cuando la izquierda es null o undefined",
+      "Actua igual que || y trata 0 y '' como ausentes",
+      "Solo se puede usar con booleanos",
+      "Convierte la expresion en string si el valor es null"
+    ],
+    "correct": 0,
+    "explanation": "?? evita perder valores validos como 0 o ''. Es preferible a || cuando quieres distinguir ausencia real."
+  },
+  {
+    "id": 47,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 1,
+    "question": "Si repasas el operador nullish coalescing ??, con que idea basica deberias quedarte?",
+    "options": [
+      "Actua igual que || y trata 0 y '' como ausentes",
+      "Solo se puede usar con booleanos",
+      "Convierte la expresion en string si el valor es null",
+      "Usa el valor de la derecha solo cuando la izquierda es null o undefined"
+    ],
+    "correct": 3,
+    "explanation": "?? evita perder valores validos como 0 o ''. Es preferible a || cuando quieres distinguir ausencia real."
+  },
+  {
+    "id": 48,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el operador nullish coalescing ???",
+    "options": [
+      "Solo se puede usar con booleanos",
+      "Convierte la expresion en string si el valor es null",
+      "Usa el valor de la derecha solo cuando la izquierda es null o undefined",
+      "Actua igual que || y trata 0 y '' como ausentes"
+    ],
+    "correct": 2,
+    "explanation": "?? evita perder valores validos como 0 o ''. Es preferible a || cuando quieres distinguir ausencia real."
+  },
+  {
+    "id": 49,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el operador nullish coalescing ?? es el mas correcto?",
+    "options": [
+      "Convierte la expresion en string si el valor es null",
+      "Usa el valor de la derecha solo cuando la izquierda es null o undefined",
+      "Actua igual que || y trata 0 y '' como ausentes",
+      "Solo se puede usar con booleanos"
+    ],
+    "correct": 1,
+    "explanation": "?? evita perder valores validos como 0 o ''. Es preferible a || cuando quieres distinguir ausencia real."
+  },
+  {
+    "id": 50,
+    "category": "fundamentos-js",
+    "topic": "operadores-condicionales",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el operador nullish coalescing ???",
+    "options": [
+      "Usa el valor de la derecha solo cuando la izquierda es null o undefined",
+      "Actua igual que || y trata 0 y '' como ausentes",
+      "Solo se puede usar con booleanos",
+      "Convierte la expresion en string si el valor es null"
+    ],
+    "correct": 0,
+    "explanation": "?? evita perder valores validos como 0 o ''. Es preferible a || cuando quieres distinguir ausencia real."
+  },
+  {
+    "id": 51,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el metodo map?",
+    "options": [
+      "Devuelve un nuevo array transformando cada elemento sin mutar el original",
+      "Filtra elementos y acorta el array segun una condicion",
+      "Busca el primer elemento que cumpla una condicion",
+      "Ordena automaticamente el array de menor a mayor"
+    ],
+    "correct": 0,
+    "explanation": "map es ideal cuando quieres mantener el mismo numero de elementos pero transformados."
+  },
+  {
+    "id": 52,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Si repasas el metodo map, con que idea basica deberias quedarte?",
+    "options": [
+      "Filtra elementos y acorta el array segun una condicion",
+      "Busca el primer elemento que cumpla una condicion",
+      "Ordena automaticamente el array de menor a mayor",
+      "Devuelve un nuevo array transformando cada elemento sin mutar el original"
+    ],
+    "correct": 3,
+    "explanation": "map es ideal cuando quieres mantener el mismo numero de elementos pero transformados."
+  },
+  {
+    "id": 53,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el metodo map?",
+    "options": [
+      "Busca el primer elemento que cumpla una condicion",
+      "Ordena automaticamente el array de menor a mayor",
+      "Devuelve un nuevo array transformando cada elemento sin mutar el original",
+      "Filtra elementos y acorta el array segun una condicion"
+    ],
+    "correct": 2,
+    "explanation": "map es ideal cuando quieres mantener el mismo numero de elementos pero transformados."
+  },
+  {
+    "id": 54,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el metodo map es el mas correcto?",
+    "options": [
+      "Ordena automaticamente el array de menor a mayor",
+      "Devuelve un nuevo array transformando cada elemento sin mutar el original",
+      "Filtra elementos y acorta el array segun una condicion",
+      "Busca el primer elemento que cumpla una condicion"
+    ],
+    "correct": 1,
+    "explanation": "map es ideal cuando quieres mantener el mismo numero de elementos pero transformados."
+  },
+  {
+    "id": 55,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el metodo map?",
+    "options": [
+      "Devuelve un nuevo array transformando cada elemento sin mutar el original",
+      "Filtra elementos y acorta el array segun una condicion",
+      "Busca el primer elemento que cumpla una condicion",
+      "Ordena automaticamente el array de menor a mayor"
+    ],
+    "correct": 0,
+    "explanation": "map es ideal cuando quieres mantener el mismo numero de elementos pero transformados."
+  },
+  {
+    "id": 56,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el metodo filter?",
+    "options": [
+      "Devuelve un nuevo array con los elementos que cumplen la condicion",
+      "Devuelve un booleano indicando si todos cumplen la condicion",
+      "Devuelve solo el primer elemento que cumple la condicion",
+      "Reduce el array a un unico valor acumulado"
+    ],
+    "correct": 0,
+    "explanation": "filter no modifica el array original. Crea una coleccion nueva con un subconjunto."
+  },
+  {
+    "id": 57,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Si repasas el metodo filter, con que idea basica deberias quedarte?",
+    "options": [
+      "Devuelve un booleano indicando si todos cumplen la condicion",
+      "Devuelve solo el primer elemento que cumple la condicion",
+      "Reduce el array a un unico valor acumulado",
+      "Devuelve un nuevo array con los elementos que cumplen la condicion"
+    ],
+    "correct": 3,
+    "explanation": "filter no modifica el array original. Crea una coleccion nueva con un subconjunto."
+  },
+  {
+    "id": 58,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el metodo filter?",
+    "options": [
+      "Devuelve solo el primer elemento que cumple la condicion",
+      "Reduce el array a un unico valor acumulado",
+      "Devuelve un nuevo array con los elementos que cumplen la condicion",
+      "Devuelve un booleano indicando si todos cumplen la condicion"
+    ],
+    "correct": 2,
+    "explanation": "filter no modifica el array original. Crea una coleccion nueva con un subconjunto."
+  },
+  {
+    "id": 59,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el metodo filter es el mas correcto?",
+    "options": [
+      "Reduce el array a un unico valor acumulado",
+      "Devuelve un nuevo array con los elementos que cumplen la condicion",
+      "Devuelve un booleano indicando si todos cumplen la condicion",
+      "Devuelve solo el primer elemento que cumple la condicion"
+    ],
+    "correct": 1,
+    "explanation": "filter no modifica el array original. Crea una coleccion nueva con un subconjunto."
+  },
+  {
+    "id": 60,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el metodo filter?",
+    "options": [
+      "Devuelve un nuevo array con los elementos que cumplen la condicion",
+      "Devuelve un booleano indicando si todos cumplen la condicion",
+      "Devuelve solo el primer elemento que cumple la condicion",
+      "Reduce el array a un unico valor acumulado"
+    ],
+    "correct": 0,
+    "explanation": "filter no modifica el array original. Crea una coleccion nueva con un subconjunto."
+  },
+  {
+    "id": 61,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el metodo find?",
+    "options": [
+      "Devuelve el primer elemento que cumple la condicion o undefined",
+      "Devuelve todos los elementos que cumplen la condicion",
+      "Devuelve el indice y el valor en una tupla",
+      "Siempre devuelve true o false"
+    ],
+    "correct": 0,
+    "explanation": "Si necesitas todos los elementos usa filter. find se queda con la primera coincidencia."
+  },
+  {
+    "id": 62,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Si repasas el metodo find, con que idea basica deberias quedarte?",
+    "options": [
+      "Devuelve todos los elementos que cumplen la condicion",
+      "Devuelve el indice y el valor en una tupla",
+      "Siempre devuelve true o false",
+      "Devuelve el primer elemento que cumple la condicion o undefined"
+    ],
+    "correct": 3,
+    "explanation": "Si necesitas todos los elementos usa filter. find se queda con la primera coincidencia."
+  },
+  {
+    "id": 63,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el metodo find?",
+    "options": [
+      "Devuelve el indice y el valor en una tupla",
+      "Siempre devuelve true o false",
+      "Devuelve el primer elemento que cumple la condicion o undefined",
+      "Devuelve todos los elementos que cumplen la condicion"
+    ],
+    "correct": 2,
+    "explanation": "Si necesitas todos los elementos usa filter. find se queda con la primera coincidencia."
+  },
+  {
+    "id": 64,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el metodo find es el mas correcto?",
+    "options": [
+      "Siempre devuelve true o false",
+      "Devuelve el primer elemento que cumple la condicion o undefined",
+      "Devuelve todos los elementos que cumplen la condicion",
+      "Devuelve el indice y el valor en una tupla"
+    ],
+    "correct": 1,
+    "explanation": "Si necesitas todos los elementos usa filter. find se queda con la primera coincidencia."
+  },
+  {
+    "id": 65,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el metodo find?",
+    "options": [
+      "Devuelve el primer elemento que cumple la condicion o undefined",
+      "Devuelve todos los elementos que cumplen la condicion",
+      "Devuelve el indice y el valor en una tupla",
+      "Siempre devuelve true o false"
+    ],
+    "correct": 0,
+    "explanation": "Si necesitas todos los elementos usa filter. find se queda con la primera coincidencia."
+  },
+  {
+    "id": 66,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el metodo reduce?",
+    "options": [
+      "Permite acumular los elementos de un array en un unico resultado",
+      "Solo sirve para reducir el tamano del array borrando elementos",
+      "Se usa unicamente para arrays numericos",
+      "Devuelve siempre otro array del mismo tamano"
+    ],
+    "correct": 0,
+    "explanation": "reduce puede producir numeros, objetos, arrays u otras estructuras segun el acumulador."
+  },
+  {
+    "id": 67,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 1,
+    "question": "Si repasas el metodo reduce, con que idea basica deberias quedarte?",
+    "options": [
+      "Solo sirve para reducir el tamano del array borrando elementos",
+      "Se usa unicamente para arrays numericos",
+      "Devuelve siempre otro array del mismo tamano",
+      "Permite acumular los elementos de un array en un unico resultado"
+    ],
+    "correct": 3,
+    "explanation": "reduce puede producir numeros, objetos, arrays u otras estructuras segun el acumulador."
+  },
+  {
+    "id": 68,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el metodo reduce?",
+    "options": [
+      "Se usa unicamente para arrays numericos",
+      "Devuelve siempre otro array del mismo tamano",
+      "Permite acumular los elementos de un array en un unico resultado",
+      "Solo sirve para reducir el tamano del array borrando elementos"
+    ],
+    "correct": 2,
+    "explanation": "reduce puede producir numeros, objetos, arrays u otras estructuras segun el acumulador."
+  },
+  {
+    "id": 69,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el metodo reduce es el mas correcto?",
+    "options": [
+      "Devuelve siempre otro array del mismo tamano",
+      "Permite acumular los elementos de un array en un unico resultado",
+      "Solo sirve para reducir el tamano del array borrando elementos",
+      "Se usa unicamente para arrays numericos"
+    ],
+    "correct": 1,
+    "explanation": "reduce puede producir numeros, objetos, arrays u otras estructuras segun el acumulador."
+  },
+  {
+    "id": 70,
+    "category": "arrays-colecciones",
+    "topic": "arrays-metodos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el metodo reduce?",
+    "options": [
+      "Permite acumular los elementos de un array en un unico resultado",
+      "Solo sirve para reducir el tamano del array borrando elementos",
+      "Se usa unicamente para arrays numericos",
+      "Devuelve siempre otro array del mismo tamano"
+    ],
+    "correct": 0,
+    "explanation": "reduce puede producir numeros, objetos, arrays u otras estructuras segun el acumulador."
+  },
+  {
+    "id": 71,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la diferencia entre slice y splice?",
+    "options": [
+      "slice copia una porcion sin mutar; splice inserta o elimina mutando el array",
+      "Ambos copian una porcion y ninguno muta el array",
+      "splice solo se usa para strings y slice solo para arrays",
+      "slice muta y splice nunca muta"
+    ],
+    "correct": 0,
+    "explanation": "Confundir slice y splice es un error clasico. La letra p de splice ayuda a recordar que toca el original."
+  },
+  {
+    "id": 72,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 1,
+    "question": "Si repasas la diferencia entre slice y splice, con que idea basica deberias quedarte?",
+    "options": [
+      "Ambos copian una porcion y ninguno muta el array",
+      "splice solo se usa para strings y slice solo para arrays",
+      "slice muta y splice nunca muta",
+      "slice copia una porcion sin mutar; splice inserta o elimina mutando el array"
+    ],
+    "correct": 3,
+    "explanation": "Confundir slice y splice es un error clasico. La letra p de splice ayuda a recordar que toca el original."
+  },
+  {
+    "id": 73,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la diferencia entre slice y splice?",
+    "options": [
+      "splice solo se usa para strings y slice solo para arrays",
+      "slice muta y splice nunca muta",
+      "slice copia una porcion sin mutar; splice inserta o elimina mutando el array",
+      "Ambos copian una porcion y ninguno muta el array"
+    ],
+    "correct": 2,
+    "explanation": "Confundir slice y splice es un error clasico. La letra p de splice ayuda a recordar que toca el original."
+  },
+  {
+    "id": 74,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la diferencia entre slice y splice es el mas correcto?",
+    "options": [
+      "slice muta y splice nunca muta",
+      "slice copia una porcion sin mutar; splice inserta o elimina mutando el array",
+      "Ambos copian una porcion y ninguno muta el array",
+      "splice solo se usa para strings y slice solo para arrays"
+    ],
+    "correct": 1,
+    "explanation": "Confundir slice y splice es un error clasico. La letra p de splice ayuda a recordar que toca el original."
+  },
+  {
+    "id": 75,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la diferencia entre slice y splice?",
+    "options": [
+      "slice copia una porcion sin mutar; splice inserta o elimina mutando el array",
+      "Ambos copian una porcion y ninguno muta el array",
+      "splice solo se usa para strings y slice solo para arrays",
+      "slice muta y splice nunca muta"
+    ],
+    "correct": 0,
+    "explanation": "Confundir slice y splice es un error clasico. La letra p de splice ayuda a recordar que toca el original."
+  },
+  {
+    "id": 76,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor los metodos push y pop?",
+    "options": [
+      "Mutan el array original al anadir o quitar elementos del final",
+      "Siempre devuelven un array nuevo sin tocar el original",
+      "Solo funcionan en arrays vacios",
+      "Son equivalentes a shift y unshift en cualquier posicion"
+    ],
+    "correct": 0,
+    "explanation": "push y pop son mutables. Si buscas inmutabilidad, combina spread o slice con nuevas referencias."
+  },
+  {
+    "id": 77,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 1,
+    "question": "Si repasas los metodos push y pop, con que idea basica deberias quedarte?",
+    "options": [
+      "Siempre devuelven un array nuevo sin tocar el original",
+      "Solo funcionan en arrays vacios",
+      "Son equivalentes a shift y unshift en cualquier posicion",
+      "Mutan el array original al anadir o quitar elementos del final"
+    ],
+    "correct": 3,
+    "explanation": "push y pop son mutables. Si buscas inmutabilidad, combina spread o slice con nuevas referencias."
+  },
+  {
+    "id": 78,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre los metodos push y pop?",
+    "options": [
+      "Solo funcionan en arrays vacios",
+      "Son equivalentes a shift y unshift en cualquier posicion",
+      "Mutan el array original al anadir o quitar elementos del final",
+      "Siempre devuelven un array nuevo sin tocar el original"
+    ],
+    "correct": 2,
+    "explanation": "push y pop son mutables. Si buscas inmutabilidad, combina spread o slice con nuevas referencias."
+  },
+  {
+    "id": 79,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre los metodos push y pop es el mas correcto?",
+    "options": [
+      "Son equivalentes a shift y unshift en cualquier posicion",
+      "Mutan el array original al anadir o quitar elementos del final",
+      "Siempre devuelven un array nuevo sin tocar el original",
+      "Solo funcionan en arrays vacios"
+    ],
+    "correct": 1,
+    "explanation": "push y pop son mutables. Si buscas inmutabilidad, combina spread o slice con nuevas referencias."
+  },
+  {
+    "id": 80,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de los metodos push y pop?",
+    "options": [
+      "Mutan el array original al anadir o quitar elementos del final",
+      "Siempre devuelven un array nuevo sin tocar el original",
+      "Solo funcionan en arrays vacios",
+      "Son equivalentes a shift y unshift en cualquier posicion"
+    ],
+    "correct": 0,
+    "explanation": "push y pop son mutables. Si buscas inmutabilidad, combina spread o slice con nuevas referencias."
+  },
+  {
+    "id": 81,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la diferencia entre some y every?",
+    "options": [
+      "some comprueba si al menos uno cumple; every comprueba si todos cumplen",
+      "some devuelve un array y every un booleano",
+      "some y every hacen exactamente lo mismo con nombres distintos",
+      "every encuentra el primer elemento y some el ultimo"
+    ],
+    "correct": 0,
+    "explanation": "Ambos devuelven booleanos. Cambia el criterio: existencia frente a cumplimiento total."
+  },
+  {
+    "id": 82,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 1,
+    "question": "Si repasas la diferencia entre some y every, con que idea basica deberias quedarte?",
+    "options": [
+      "some devuelve un array y every un booleano",
+      "some y every hacen exactamente lo mismo con nombres distintos",
+      "every encuentra el primer elemento y some el ultimo",
+      "some comprueba si al menos uno cumple; every comprueba si todos cumplen"
+    ],
+    "correct": 3,
+    "explanation": "Ambos devuelven booleanos. Cambia el criterio: existencia frente a cumplimiento total."
+  },
+  {
+    "id": 83,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la diferencia entre some y every?",
+    "options": [
+      "some y every hacen exactamente lo mismo con nombres distintos",
+      "every encuentra el primer elemento y some el ultimo",
+      "some comprueba si al menos uno cumple; every comprueba si todos cumplen",
+      "some devuelve un array y every un booleano"
+    ],
+    "correct": 2,
+    "explanation": "Ambos devuelven booleanos. Cambia el criterio: existencia frente a cumplimiento total."
+  },
+  {
+    "id": 84,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la diferencia entre some y every es el mas correcto?",
+    "options": [
+      "every encuentra el primer elemento y some el ultimo",
+      "some comprueba si al menos uno cumple; every comprueba si todos cumplen",
+      "some devuelve un array y every un booleano",
+      "some y every hacen exactamente lo mismo con nombres distintos"
+    ],
+    "correct": 1,
+    "explanation": "Ambos devuelven booleanos. Cambia el criterio: existencia frente a cumplimiento total."
+  },
+  {
+    "id": 85,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la diferencia entre some y every?",
+    "options": [
+      "some comprueba si al menos uno cumple; every comprueba si todos cumplen",
+      "some devuelve un array y every un booleano",
+      "some y every hacen exactamente lo mismo con nombres distintos",
+      "every encuentra el primer elemento y some el ultimo"
+    ],
+    "correct": 0,
+    "explanation": "Ambos devuelven booleanos. Cambia el criterio: existencia frente a cumplimiento total."
+  },
+  {
+    "id": 86,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el valor de retorno de forEach?",
+    "options": [
+      "forEach devuelve undefined porque se usa para efectos laterales, no para transformar",
+      "forEach devuelve un array nuevo con los resultados del callback",
+      "forEach devuelve el numero de iteraciones realizadas",
+      "forEach devuelve el ultimo elemento visitado"
+    ],
+    "correct": 0,
+    "explanation": "Si necesitas transformar datos usa map. forEach es para ejecutar acciones por elemento."
+  },
+  {
+    "id": 87,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 1,
+    "question": "Si repasas el valor de retorno de forEach, con que idea basica deberias quedarte?",
+    "options": [
+      "forEach devuelve un array nuevo con los resultados del callback",
+      "forEach devuelve el numero de iteraciones realizadas",
+      "forEach devuelve el ultimo elemento visitado",
+      "forEach devuelve undefined porque se usa para efectos laterales, no para transformar"
+    ],
+    "correct": 3,
+    "explanation": "Si necesitas transformar datos usa map. forEach es para ejecutar acciones por elemento."
+  },
+  {
+    "id": 88,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el valor de retorno de forEach?",
+    "options": [
+      "forEach devuelve el numero de iteraciones realizadas",
+      "forEach devuelve el ultimo elemento visitado",
+      "forEach devuelve undefined porque se usa para efectos laterales, no para transformar",
+      "forEach devuelve un array nuevo con los resultados del callback"
+    ],
+    "correct": 2,
+    "explanation": "Si necesitas transformar datos usa map. forEach es para ejecutar acciones por elemento."
+  },
+  {
+    "id": 89,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el valor de retorno de forEach es el mas correcto?",
+    "options": [
+      "forEach devuelve el ultimo elemento visitado",
+      "forEach devuelve undefined porque se usa para efectos laterales, no para transformar",
+      "forEach devuelve un array nuevo con los resultados del callback",
+      "forEach devuelve el numero de iteraciones realizadas"
+    ],
+    "correct": 1,
+    "explanation": "Si necesitas transformar datos usa map. forEach es para ejecutar acciones por elemento."
+  },
+  {
+    "id": 90,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el valor de retorno de forEach?",
+    "options": [
+      "forEach devuelve undefined porque se usa para efectos laterales, no para transformar",
+      "forEach devuelve un array nuevo con los resultados del callback",
+      "forEach devuelve el numero de iteraciones realizadas",
+      "forEach devuelve el ultimo elemento visitado"
+    ],
+    "correct": 0,
+    "explanation": "Si necesitas transformar datos usa map. forEach es para ejecutar acciones por elemento."
+  },
+  {
+    "id": 91,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor Array.from?",
+    "options": [
+      "Crea un array a partir de un iterable o de un objeto array-like",
+      "Solo convierte objetos JSON validos en arrays",
+      "Ordena automaticamente los elementos al convertirlos",
+      "Solo funciona con arrays ya existentes"
+    ],
+    "correct": 0,
+    "explanation": "Array.from es util con strings, Sets, NodeLists y estructuras parecidas a arrays."
+  },
+  {
+    "id": 92,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 1,
+    "question": "Si repasas Array.from, con que idea basica deberias quedarte?",
+    "options": [
+      "Solo convierte objetos JSON validos en arrays",
+      "Ordena automaticamente los elementos al convertirlos",
+      "Solo funciona con arrays ya existentes",
+      "Crea un array a partir de un iterable o de un objeto array-like"
+    ],
+    "correct": 3,
+    "explanation": "Array.from es util con strings, Sets, NodeLists y estructuras parecidas a arrays."
+  },
+  {
+    "id": 93,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre Array.from?",
+    "options": [
+      "Ordena automaticamente los elementos al convertirlos",
+      "Solo funciona con arrays ya existentes",
+      "Crea un array a partir de un iterable o de un objeto array-like",
+      "Solo convierte objetos JSON validos en arrays"
+    ],
+    "correct": 2,
+    "explanation": "Array.from es util con strings, Sets, NodeLists y estructuras parecidas a arrays."
+  },
+  {
+    "id": 94,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre Array.from es el mas correcto?",
+    "options": [
+      "Solo funciona con arrays ya existentes",
+      "Crea un array a partir de un iterable o de un objeto array-like",
+      "Solo convierte objetos JSON validos en arrays",
+      "Ordena automaticamente los elementos al convertirlos"
+    ],
+    "correct": 1,
+    "explanation": "Array.from es util con strings, Sets, NodeLists y estructuras parecidas a arrays."
+  },
+  {
+    "id": 95,
+    "category": "arrays-colecciones",
+    "topic": "iteracion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de Array.from?",
+    "options": [
+      "Crea un array a partir de un iterable o de un objeto array-like",
+      "Solo convierte objetos JSON validos en arrays",
+      "Ordena automaticamente los elementos al convertirlos",
+      "Solo funciona con arrays ya existentes"
+    ],
+    "correct": 0,
+    "explanation": "Array.from es util con strings, Sets, NodeLists y estructuras parecidas a arrays."
+  },
+  {
+    "id": 96,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el uso de Set para eliminar duplicados?",
+    "options": [
+      "new Set(array) conserva valores unicos y luego puede convertirse a array con spread",
+      "Set ordena y elimina duplicados mutando el array original",
+      "Set solo funciona con numeros enteros",
+      "Set reemplaza siempre a Map porque guarda claves y valores"
+    ],
+    "correct": 0,
+    "explanation": "Set guarda valores unicos. Para volver a array puedes usar [...new Set(array)]."
+  },
+  {
+    "id": 97,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 1,
+    "question": "Si repasas el uso de Set para eliminar duplicados, con que idea basica deberias quedarte?",
+    "options": [
+      "Set ordena y elimina duplicados mutando el array original",
+      "Set solo funciona con numeros enteros",
+      "Set reemplaza siempre a Map porque guarda claves y valores",
+      "new Set(array) conserva valores unicos y luego puede convertirse a array con spread"
+    ],
+    "correct": 3,
+    "explanation": "Set guarda valores unicos. Para volver a array puedes usar [...new Set(array)]."
+  },
+  {
+    "id": 98,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el uso de Set para eliminar duplicados?",
+    "options": [
+      "Set solo funciona con numeros enteros",
+      "Set reemplaza siempre a Map porque guarda claves y valores",
+      "new Set(array) conserva valores unicos y luego puede convertirse a array con spread",
+      "Set ordena y elimina duplicados mutando el array original"
+    ],
+    "correct": 2,
+    "explanation": "Set guarda valores unicos. Para volver a array puedes usar [...new Set(array)]."
+  },
+  {
+    "id": 99,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el uso de Set para eliminar duplicados es el mas correcto?",
+    "options": [
+      "Set reemplaza siempre a Map porque guarda claves y valores",
+      "new Set(array) conserva valores unicos y luego puede convertirse a array con spread",
+      "Set ordena y elimina duplicados mutando el array original",
+      "Set solo funciona con numeros enteros"
+    ],
+    "correct": 1,
+    "explanation": "Set guarda valores unicos. Para volver a array puedes usar [...new Set(array)]."
+  },
+  {
+    "id": 100,
+    "category": "arrays-colecciones",
+    "topic": "inmutabilidad",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el uso de Set para eliminar duplicados?",
+    "options": [
+      "new Set(array) conserva valores unicos y luego puede convertirse a array con spread",
+      "Set ordena y elimina duplicados mutando el array original",
+      "Set solo funciona con numeros enteros",
+      "Set reemplaza siempre a Map porque guarda claves y valores"
+    ],
+    "correct": 0,
+    "explanation": "Set guarda valores unicos. Para volver a array puedes usar [...new Set(array)]."
+  },
+  {
+    "id": 101,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la diferencia entre let y var?",
+    "options": [
+      "let tiene scope de bloque; var tiene scope de funcion y se hoistea de forma distinta",
+      "var tiene scope de bloque y let de funcion",
+      "let no puede reasignarse y var si",
+      "No existe diferencia real entre let y var en ES6"
+    ],
+    "correct": 0,
+    "explanation": "let y const evitan muchos problemas heredados de var, sobre todo en bloques y bucles."
+  },
+  {
+    "id": 102,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 1,
+    "question": "Si repasas la diferencia entre let y var, con que idea basica deberias quedarte?",
+    "options": [
+      "var tiene scope de bloque y let de funcion",
+      "let no puede reasignarse y var si",
+      "No existe diferencia real entre let y var en ES6",
+      "let tiene scope de bloque; var tiene scope de funcion y se hoistea de forma distinta"
+    ],
+    "correct": 3,
+    "explanation": "let y const evitan muchos problemas heredados de var, sobre todo en bloques y bucles."
+  },
+  {
+    "id": 103,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la diferencia entre let y var?",
+    "options": [
+      "let no puede reasignarse y var si",
+      "No existe diferencia real entre let y var en ES6",
+      "let tiene scope de bloque; var tiene scope de funcion y se hoistea de forma distinta",
+      "var tiene scope de bloque y let de funcion"
+    ],
+    "correct": 2,
+    "explanation": "let y const evitan muchos problemas heredados de var, sobre todo en bloques y bucles."
+  },
+  {
+    "id": 104,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la diferencia entre let y var es el mas correcto?",
+    "options": [
+      "No existe diferencia real entre let y var en ES6",
+      "let tiene scope de bloque; var tiene scope de funcion y se hoistea de forma distinta",
+      "var tiene scope de bloque y let de funcion",
+      "let no puede reasignarse y var si"
+    ],
+    "correct": 1,
+    "explanation": "let y const evitan muchos problemas heredados de var, sobre todo en bloques y bucles."
+  },
+  {
+    "id": 105,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la diferencia entre let y var?",
+    "options": [
+      "let tiene scope de bloque; var tiene scope de funcion y se hoistea de forma distinta",
+      "var tiene scope de bloque y let de funcion",
+      "let no puede reasignarse y var si",
+      "No existe diferencia real entre let y var en ES6"
+    ],
+    "correct": 0,
+    "explanation": "let y const evitan muchos problemas heredados de var, sobre todo en bloques y bucles."
+  },
+  {
+    "id": 106,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el hoisting?",
+    "options": [
+      "Es el registro previo de declaraciones antes de ejecutar el codigo",
+      "Es una tecnica para ordenar arrays por referencia",
+      "Es la conversion automatica de tipos al comparar valores",
+      "Es el cierre automatico de variables fuera de una funcion"
+    ],
+    "correct": 0,
+    "explanation": "Las declaraciones se procesan antes de la ejecucion. En let y const aparece la zona temporal muerta."
+  },
+  {
+    "id": 107,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 1,
+    "question": "Si repasas el hoisting, con que idea basica deberias quedarte?",
+    "options": [
+      "Es una tecnica para ordenar arrays por referencia",
+      "Es la conversion automatica de tipos al comparar valores",
+      "Es el cierre automatico de variables fuera de una funcion",
+      "Es el registro previo de declaraciones antes de ejecutar el codigo"
+    ],
+    "correct": 3,
+    "explanation": "Las declaraciones se procesan antes de la ejecucion. En let y const aparece la zona temporal muerta."
+  },
+  {
+    "id": 108,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el hoisting?",
+    "options": [
+      "Es la conversion automatica de tipos al comparar valores",
+      "Es el cierre automatico de variables fuera de una funcion",
+      "Es el registro previo de declaraciones antes de ejecutar el codigo",
+      "Es una tecnica para ordenar arrays por referencia"
+    ],
+    "correct": 2,
+    "explanation": "Las declaraciones se procesan antes de la ejecucion. En let y const aparece la zona temporal muerta."
+  },
+  {
+    "id": 109,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el hoisting es el mas correcto?",
+    "options": [
+      "Es el cierre automatico de variables fuera de una funcion",
+      "Es el registro previo de declaraciones antes de ejecutar el codigo",
+      "Es una tecnica para ordenar arrays por referencia",
+      "Es la conversion automatica de tipos al comparar valores"
+    ],
+    "correct": 1,
+    "explanation": "Las declaraciones se procesan antes de la ejecucion. En let y const aparece la zona temporal muerta."
+  },
+  {
+    "id": 110,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el hoisting?",
+    "options": [
+      "Es el registro previo de declaraciones antes de ejecutar el codigo",
+      "Es una tecnica para ordenar arrays por referencia",
+      "Es la conversion automatica de tipos al comparar valores",
+      "Es el cierre automatico de variables fuera de una funcion"
+    ],
+    "correct": 0,
+    "explanation": "Las declaraciones se procesan antes de la ejecucion. En let y const aparece la zona temporal muerta."
+  },
+  {
+    "id": 111,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor un closure?",
+    "options": [
+      "Es una funcion que conserva acceso a variables de su entorno lexico aunque ese entorno haya terminado",
+      "Es una funcion que solo puede ejecutarse una vez",
+      "Es un bloque catch especializado en errores de alcance",
+      "Es la clausula final obligatoria de una clase"
+    ],
+    "correct": 0,
+    "explanation": "Los closures permiten encapsular estado y son la base de muchos patrones en JavaScript."
+  },
+  {
+    "id": 112,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 1,
+    "question": "Si repasas un closure, con que idea basica deberias quedarte?",
+    "options": [
+      "Es una funcion que solo puede ejecutarse una vez",
+      "Es un bloque catch especializado en errores de alcance",
+      "Es la clausula final obligatoria de una clase",
+      "Es una funcion que conserva acceso a variables de su entorno lexico aunque ese entorno haya terminado"
+    ],
+    "correct": 3,
+    "explanation": "Los closures permiten encapsular estado y son la base de muchos patrones en JavaScript."
+  },
+  {
+    "id": 113,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre un closure?",
+    "options": [
+      "Es un bloque catch especializado en errores de alcance",
+      "Es la clausula final obligatoria de una clase",
+      "Es una funcion que conserva acceso a variables de su entorno lexico aunque ese entorno haya terminado",
+      "Es una funcion que solo puede ejecutarse una vez"
+    ],
+    "correct": 2,
+    "explanation": "Los closures permiten encapsular estado y son la base de muchos patrones en JavaScript."
+  },
+  {
+    "id": 114,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre un closure es el mas correcto?",
+    "options": [
+      "Es la clausula final obligatoria de una clase",
+      "Es una funcion que conserva acceso a variables de su entorno lexico aunque ese entorno haya terminado",
+      "Es una funcion que solo puede ejecutarse una vez",
+      "Es un bloque catch especializado en errores de alcance"
+    ],
+    "correct": 1,
+    "explanation": "Los closures permiten encapsular estado y son la base de muchos patrones en JavaScript."
+  },
+  {
+    "id": 115,
+    "category": "funciones-scope",
+    "topic": "closures-hoisting",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de un closure?",
+    "options": [
+      "Es una funcion que conserva acceso a variables de su entorno lexico aunque ese entorno haya terminado",
+      "Es una funcion que solo puede ejecutarse una vez",
+      "Es un bloque catch especializado en errores de alcance",
+      "Es la clausula final obligatoria de una clase"
+    ],
+    "correct": 0,
+    "explanation": "Los closures permiten encapsular estado y son la base de muchos patrones en JavaScript."
+  },
+  {
+    "id": 116,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor las funciones flecha y this?",
+    "options": [
+      "Las arrow functions no tienen su propio this; capturan el this lexico exterior",
+      "Las arrow functions crean un this nuevo en cada llamada",
+      "this siempre apunta al archivo actual dentro de una arrow function",
+      "Las arrow functions no pueden usar parametros"
+    ],
+    "correct": 0,
+    "explanation": "Este comportamiento las hace utiles en callbacks, pero no para metodos que necesitan su propio this."
+  },
+  {
+    "id": 117,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Si repasas las funciones flecha y this, con que idea basica deberias quedarte?",
+    "options": [
+      "Las arrow functions crean un this nuevo en cada llamada",
+      "this siempre apunta al archivo actual dentro de una arrow function",
+      "Las arrow functions no pueden usar parametros",
+      "Las arrow functions no tienen su propio this; capturan el this lexico exterior"
+    ],
+    "correct": 3,
+    "explanation": "Este comportamiento las hace utiles en callbacks, pero no para metodos que necesitan su propio this."
+  },
+  {
+    "id": 118,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre las funciones flecha y this?",
+    "options": [
+      "this siempre apunta al archivo actual dentro de una arrow function",
+      "Las arrow functions no pueden usar parametros",
+      "Las arrow functions no tienen su propio this; capturan el this lexico exterior",
+      "Las arrow functions crean un this nuevo en cada llamada"
+    ],
+    "correct": 2,
+    "explanation": "Este comportamiento las hace utiles en callbacks, pero no para metodos que necesitan su propio this."
+  },
+  {
+    "id": 119,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre las funciones flecha y this es el mas correcto?",
+    "options": [
+      "Las arrow functions no pueden usar parametros",
+      "Las arrow functions no tienen su propio this; capturan el this lexico exterior",
+      "Las arrow functions crean un this nuevo en cada llamada",
+      "this siempre apunta al archivo actual dentro de una arrow function"
+    ],
+    "correct": 1,
+    "explanation": "Este comportamiento las hace utiles en callbacks, pero no para metodos que necesitan su propio this."
+  },
+  {
+    "id": 120,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de las funciones flecha y this?",
+    "options": [
+      "Las arrow functions no tienen su propio this; capturan el this lexico exterior",
+      "Las arrow functions crean un this nuevo en cada llamada",
+      "this siempre apunta al archivo actual dentro de una arrow function",
+      "Las arrow functions no pueden usar parametros"
+    ],
+    "correct": 0,
+    "explanation": "Este comportamiento las hace utiles en callbacks, pero no para metodos que necesitan su propio this."
+  },
+  {
+    "id": 121,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor los parametros rest?",
+    "options": [
+      "Permiten agrupar argumentos sobrantes en un array real",
+      "Convierten automaticamente cualquier parametro en objeto",
+      "Solo funcionan si la funcion no recibe argumentos normales",
+      "Sirven para pausar la funcion antes del return"
+    ],
+    "correct": 0,
+    "explanation": "rest usa ...nombre y debe ir al final de la lista de parametros."
+  },
+  {
+    "id": 122,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Si repasas los parametros rest, con que idea basica deberias quedarte?",
+    "options": [
+      "Convierten automaticamente cualquier parametro en objeto",
+      "Solo funcionan si la funcion no recibe argumentos normales",
+      "Sirven para pausar la funcion antes del return",
+      "Permiten agrupar argumentos sobrantes en un array real"
+    ],
+    "correct": 3,
+    "explanation": "rest usa ...nombre y debe ir al final de la lista de parametros."
+  },
+  {
+    "id": 123,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre los parametros rest?",
+    "options": [
+      "Solo funcionan si la funcion no recibe argumentos normales",
+      "Sirven para pausar la funcion antes del return",
+      "Permiten agrupar argumentos sobrantes en un array real",
+      "Convierten automaticamente cualquier parametro en objeto"
+    ],
+    "correct": 2,
+    "explanation": "rest usa ...nombre y debe ir al final de la lista de parametros."
+  },
+  {
+    "id": 124,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre los parametros rest es el mas correcto?",
+    "options": [
+      "Sirven para pausar la funcion antes del return",
+      "Permiten agrupar argumentos sobrantes en un array real",
+      "Convierten automaticamente cualquier parametro en objeto",
+      "Solo funcionan si la funcion no recibe argumentos normales"
+    ],
+    "correct": 1,
+    "explanation": "rest usa ...nombre y debe ir al final de la lista de parametros."
+  },
+  {
+    "id": 125,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de los parametros rest?",
+    "options": [
+      "Permiten agrupar argumentos sobrantes en un array real",
+      "Convierten automaticamente cualquier parametro en objeto",
+      "Solo funcionan si la funcion no recibe argumentos normales",
+      "Sirven para pausar la funcion antes del return"
+    ],
+    "correct": 0,
+    "explanation": "rest usa ...nombre y debe ir al final de la lista de parametros."
+  },
+  {
+    "id": 126,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor una funcion callback?",
+    "options": [
+      "Es una funcion que se pasa como argumento para ejecutarla mas tarde o en otro contexto",
+      "Es una funcion que siempre devuelve otra funcion",
+      "Es una funcion privada solo visible dentro de una clase",
+      "Es un metodo reservado para llamadas HTTP"
+    ],
+    "correct": 0,
+    "explanation": "Los callbacks aparecen en eventos, temporizadores y muchas APIs asincronas."
+  },
+  {
+    "id": 127,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Si repasas una funcion callback, con que idea basica deberias quedarte?",
+    "options": [
+      "Es una funcion que siempre devuelve otra funcion",
+      "Es una funcion privada solo visible dentro de una clase",
+      "Es un metodo reservado para llamadas HTTP",
+      "Es una funcion que se pasa como argumento para ejecutarla mas tarde o en otro contexto"
+    ],
+    "correct": 3,
+    "explanation": "Los callbacks aparecen en eventos, temporizadores y muchas APIs asincronas."
+  },
+  {
+    "id": 128,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre una funcion callback?",
+    "options": [
+      "Es una funcion privada solo visible dentro de una clase",
+      "Es un metodo reservado para llamadas HTTP",
+      "Es una funcion que se pasa como argumento para ejecutarla mas tarde o en otro contexto",
+      "Es una funcion que siempre devuelve otra funcion"
+    ],
+    "correct": 2,
+    "explanation": "Los callbacks aparecen en eventos, temporizadores y muchas APIs asincronas."
+  },
+  {
+    "id": 129,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre una funcion callback es el mas correcto?",
+    "options": [
+      "Es un metodo reservado para llamadas HTTP",
+      "Es una funcion que se pasa como argumento para ejecutarla mas tarde o en otro contexto",
+      "Es una funcion que siempre devuelve otra funcion",
+      "Es una funcion privada solo visible dentro de una clase"
+    ],
+    "correct": 1,
+    "explanation": "Los callbacks aparecen en eventos, temporizadores y muchas APIs asincronas."
+  },
+  {
+    "id": 130,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de una funcion callback?",
+    "options": [
+      "Es una funcion que se pasa como argumento para ejecutarla mas tarde o en otro contexto",
+      "Es una funcion que siempre devuelve otra funcion",
+      "Es una funcion privada solo visible dentro de una clase",
+      "Es un metodo reservado para llamadas HTTP"
+    ],
+    "correct": 0,
+    "explanation": "Los callbacks aparecen en eventos, temporizadores y muchas APIs asincronas."
+  },
+  {
+    "id": 131,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el scope lexico?",
+    "options": [
+      "Depende de donde se declara una funcion o variable en el codigo, no de donde se invoca",
+      "Depende exclusivamente del orden de las llamadas en tiempo de ejecucion",
+      "Solo existe en funciones flecha",
+      "Es una caracteristica propia de los arrays"
+    ],
+    "correct": 0,
+    "explanation": "JavaScript usa alcance lexico. El entorno viene definido por la estructura del codigo fuente."
+  },
+  {
+    "id": 132,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 1,
+    "question": "Si repasas el scope lexico, con que idea basica deberias quedarte?",
+    "options": [
+      "Depende exclusivamente del orden de las llamadas en tiempo de ejecucion",
+      "Solo existe en funciones flecha",
+      "Es una caracteristica propia de los arrays",
+      "Depende de donde se declara una funcion o variable en el codigo, no de donde se invoca"
+    ],
+    "correct": 3,
+    "explanation": "JavaScript usa alcance lexico. El entorno viene definido por la estructura del codigo fuente."
+  },
+  {
+    "id": 133,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el scope lexico?",
+    "options": [
+      "Solo existe en funciones flecha",
+      "Es una caracteristica propia de los arrays",
+      "Depende de donde se declara una funcion o variable en el codigo, no de donde se invoca",
+      "Depende exclusivamente del orden de las llamadas en tiempo de ejecucion"
+    ],
+    "correct": 2,
+    "explanation": "JavaScript usa alcance lexico. El entorno viene definido por la estructura del codigo fuente."
+  },
+  {
+    "id": 134,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el scope lexico es el mas correcto?",
+    "options": [
+      "Es una caracteristica propia de los arrays",
+      "Depende de donde se declara una funcion o variable en el codigo, no de donde se invoca",
+      "Depende exclusivamente del orden de las llamadas en tiempo de ejecucion",
+      "Solo existe en funciones flecha"
+    ],
+    "correct": 1,
+    "explanation": "JavaScript usa alcance lexico. El entorno viene definido por la estructura del codigo fuente."
+  },
+  {
+    "id": 135,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el scope lexico?",
+    "options": [
+      "Depende de donde se declara una funcion o variable en el codigo, no de donde se invoca",
+      "Depende exclusivamente del orden de las llamadas en tiempo de ejecucion",
+      "Solo existe en funciones flecha",
+      "Es una caracteristica propia de los arrays"
+    ],
+    "correct": 0,
+    "explanation": "JavaScript usa alcance lexico. El entorno viene definido por la estructura del codigo fuente."
+  },
+  {
+    "id": 136,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la temporal dead zone?",
+    "options": [
+      "Es el periodo previo a la declaracion de let o const en el que no puede accederse a la variable",
+      "Es una zona de memoria reservada para variables globales",
+      "Es el tiempo maximo antes de que una promise expire",
+      "Es un error exclusivo de las funciones tradicionales"
+    ],
+    "correct": 0,
+    "explanation": "Aunque la variable exista durante el parseo, no puede leerse antes de su declaracion."
+  },
+  {
+    "id": 137,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 1,
+    "question": "Si repasas la temporal dead zone, con que idea basica deberias quedarte?",
+    "options": [
+      "Es una zona de memoria reservada para variables globales",
+      "Es el tiempo maximo antes de que una promise expire",
+      "Es un error exclusivo de las funciones tradicionales",
+      "Es el periodo previo a la declaracion de let o const en el que no puede accederse a la variable"
+    ],
+    "correct": 3,
+    "explanation": "Aunque la variable exista durante el parseo, no puede leerse antes de su declaracion."
+  },
+  {
+    "id": 138,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la temporal dead zone?",
+    "options": [
+      "Es el tiempo maximo antes de que una promise expire",
+      "Es un error exclusivo de las funciones tradicionales",
+      "Es el periodo previo a la declaracion de let o const en el que no puede accederse a la variable",
+      "Es una zona de memoria reservada para variables globales"
+    ],
+    "correct": 2,
+    "explanation": "Aunque la variable exista durante el parseo, no puede leerse antes de su declaracion."
+  },
+  {
+    "id": 139,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la temporal dead zone es el mas correcto?",
+    "options": [
+      "Es un error exclusivo de las funciones tradicionales",
+      "Es el periodo previo a la declaracion de let o const en el que no puede accederse a la variable",
+      "Es una zona de memoria reservada para variables globales",
+      "Es el tiempo maximo antes de que una promise expire"
+    ],
+    "correct": 1,
+    "explanation": "Aunque la variable exista durante el parseo, no puede leerse antes de su declaracion."
+  },
+  {
+    "id": 140,
+    "category": "funciones-scope",
+    "topic": "scope-variables",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la temporal dead zone?",
+    "options": [
+      "Es el periodo previo a la declaracion de let o const en el que no puede accederse a la variable",
+      "Es una zona de memoria reservada para variables globales",
+      "Es el tiempo maximo antes de que una promise expire",
+      "Es un error exclusivo de las funciones tradicionales"
+    ],
+    "correct": 0,
+    "explanation": "Aunque la variable exista durante el parseo, no puede leerse antes de su declaracion."
+  },
+  {
+    "id": 141,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor usar destructuring en parametros?",
+    "options": [
+      "Permite extraer propiedades de un objeto directamente en la firma de la funcion",
+      "Obliga a pasar los argumentos en orden alfabetico",
+      "Convierte cualquier objeto en array automaticamente",
+      "Solo se puede usar en funciones async"
+    ],
+    "correct": 0,
+    "explanation": "Es util para parametros con nombre y para dejar claro que propiedades usa la funcion."
+  },
+  {
+    "id": 142,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Si repasas usar destructuring en parametros, con que idea basica deberias quedarte?",
+    "options": [
+      "Obliga a pasar los argumentos en orden alfabetico",
+      "Convierte cualquier objeto en array automaticamente",
+      "Solo se puede usar en funciones async",
+      "Permite extraer propiedades de un objeto directamente en la firma de la funcion"
+    ],
+    "correct": 3,
+    "explanation": "Es util para parametros con nombre y para dejar claro que propiedades usa la funcion."
+  },
+  {
+    "id": 143,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre usar destructuring en parametros?",
+    "options": [
+      "Convierte cualquier objeto en array automaticamente",
+      "Solo se puede usar en funciones async",
+      "Permite extraer propiedades de un objeto directamente en la firma de la funcion",
+      "Obliga a pasar los argumentos en orden alfabetico"
+    ],
+    "correct": 2,
+    "explanation": "Es util para parametros con nombre y para dejar claro que propiedades usa la funcion."
+  },
+  {
+    "id": 144,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre usar destructuring en parametros es el mas correcto?",
+    "options": [
+      "Solo se puede usar en funciones async",
+      "Permite extraer propiedades de un objeto directamente en la firma de la funcion",
+      "Obliga a pasar los argumentos en orden alfabetico",
+      "Convierte cualquier objeto en array automaticamente"
+    ],
+    "correct": 1,
+    "explanation": "Es util para parametros con nombre y para dejar claro que propiedades usa la funcion."
+  },
+  {
+    "id": 145,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de usar destructuring en parametros?",
+    "options": [
+      "Permite extraer propiedades de un objeto directamente en la firma de la funcion",
+      "Obliga a pasar los argumentos en orden alfabetico",
+      "Convierte cualquier objeto en array automaticamente",
+      "Solo se puede usar en funciones async"
+    ],
+    "correct": 0,
+    "explanation": "Es util para parametros con nombre y para dejar claro que propiedades usa la funcion."
+  },
+  {
+    "id": 146,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor una funcion pura?",
+    "options": [
+      "Siempre devuelve el mismo resultado para los mismos argumentos y no produce efectos laterales",
+      "Es una funcion que solo acepta tipos primitivos",
+      "Es una funcion declarada con function y no con arrow",
+      "Es una funcion que no puede llamar a otras funciones"
+    ],
+    "correct": 0,
+    "explanation": "La pureza facilita pruebas, refactorizacion y razonamiento sobre el comportamiento del codigo."
+  },
+  {
+    "id": 147,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 1,
+    "question": "Si repasas una funcion pura, con que idea basica deberias quedarte?",
+    "options": [
+      "Es una funcion que solo acepta tipos primitivos",
+      "Es una funcion declarada con function y no con arrow",
+      "Es una funcion que no puede llamar a otras funciones",
+      "Siempre devuelve el mismo resultado para los mismos argumentos y no produce efectos laterales"
+    ],
+    "correct": 3,
+    "explanation": "La pureza facilita pruebas, refactorizacion y razonamiento sobre el comportamiento del codigo."
+  },
+  {
+    "id": 148,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre una funcion pura?",
+    "options": [
+      "Es una funcion declarada con function y no con arrow",
+      "Es una funcion que no puede llamar a otras funciones",
+      "Siempre devuelve el mismo resultado para los mismos argumentos y no produce efectos laterales",
+      "Es una funcion que solo acepta tipos primitivos"
+    ],
+    "correct": 2,
+    "explanation": "La pureza facilita pruebas, refactorizacion y razonamiento sobre el comportamiento del codigo."
+  },
+  {
+    "id": 149,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre una funcion pura es el mas correcto?",
+    "options": [
+      "Es una funcion que no puede llamar a otras funciones",
+      "Siempre devuelve el mismo resultado para los mismos argumentos y no produce efectos laterales",
+      "Es una funcion que solo acepta tipos primitivos",
+      "Es una funcion declarada con function y no con arrow"
+    ],
+    "correct": 1,
+    "explanation": "La pureza facilita pruebas, refactorizacion y razonamiento sobre el comportamiento del codigo."
+  },
+  {
+    "id": 150,
+    "category": "funciones-scope",
+    "topic": "funciones",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de una funcion pura?",
+    "options": [
+      "Siempre devuelve el mismo resultado para los mismos argumentos y no produce efectos laterales",
+      "Es una funcion que solo acepta tipos primitivos",
+      "Es una funcion declarada con function y no con arrow",
+      "Es una funcion que no puede llamar a otras funciones"
+    ],
+    "correct": 0,
+    "explanation": "La pureza facilita pruebas, refactorizacion y razonamiento sobre el comportamiento del codigo."
+  },
+  {
+    "id": 151,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor Object.keys?",
+    "options": [
+      "Devuelve un array con las claves propias y enumerables del objeto",
+      "Devuelve un objeto nuevo con las claves ordenadas",
+      "Devuelve solo los valores numericos del objeto",
+      "Devuelve pares [clave, valor] en lugar de claves"
+    ],
+    "correct": 0,
+    "explanation": "Para obtener valores usa Object.values y para pares usa Object.entries."
+  },
+  {
+    "id": 152,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Si repasas Object.keys, con que idea basica deberias quedarte?",
+    "options": [
+      "Devuelve un objeto nuevo con las claves ordenadas",
+      "Devuelve solo los valores numericos del objeto",
+      "Devuelve pares [clave, valor] en lugar de claves",
+      "Devuelve un array con las claves propias y enumerables del objeto"
+    ],
+    "correct": 3,
+    "explanation": "Para obtener valores usa Object.values y para pares usa Object.entries."
+  },
+  {
+    "id": 153,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre Object.keys?",
+    "options": [
+      "Devuelve solo los valores numericos del objeto",
+      "Devuelve pares [clave, valor] en lugar de claves",
+      "Devuelve un array con las claves propias y enumerables del objeto",
+      "Devuelve un objeto nuevo con las claves ordenadas"
+    ],
+    "correct": 2,
+    "explanation": "Para obtener valores usa Object.values y para pares usa Object.entries."
+  },
+  {
+    "id": 154,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre Object.keys es el mas correcto?",
+    "options": [
+      "Devuelve pares [clave, valor] en lugar de claves",
+      "Devuelve un array con las claves propias y enumerables del objeto",
+      "Devuelve un objeto nuevo con las claves ordenadas",
+      "Devuelve solo los valores numericos del objeto"
+    ],
+    "correct": 1,
+    "explanation": "Para obtener valores usa Object.values y para pares usa Object.entries."
+  },
+  {
+    "id": 155,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de Object.keys?",
+    "options": [
+      "Devuelve un array con las claves propias y enumerables del objeto",
+      "Devuelve un objeto nuevo con las claves ordenadas",
+      "Devuelve solo los valores numericos del objeto",
+      "Devuelve pares [clave, valor] en lugar de claves"
+    ],
+    "correct": 0,
+    "explanation": "Para obtener valores usa Object.values y para pares usa Object.entries."
+  },
+  {
+    "id": 156,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el acceso con punto y con corchetes?",
+    "options": [
+      "Los corchetes permiten usar claves dinamicas; el punto requiere un nombre literal valido",
+      "Ambos solo sirven con arrays, no con objetos",
+      "El punto permite claves dinamicas y los corchetes no",
+      "Los corchetes convierten siempre el valor en string"
+    ],
+    "correct": 0,
+    "explanation": "obj[prop] es imprescindible cuando la clave viene en una variable o contiene caracteres especiales."
+  },
+  {
+    "id": 157,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Si repasas el acceso con punto y con corchetes, con que idea basica deberias quedarte?",
+    "options": [
+      "Ambos solo sirven con arrays, no con objetos",
+      "El punto permite claves dinamicas y los corchetes no",
+      "Los corchetes convierten siempre el valor en string",
+      "Los corchetes permiten usar claves dinamicas; el punto requiere un nombre literal valido"
+    ],
+    "correct": 3,
+    "explanation": "obj[prop] es imprescindible cuando la clave viene en una variable o contiene caracteres especiales."
+  },
+  {
+    "id": 158,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el acceso con punto y con corchetes?",
+    "options": [
+      "El punto permite claves dinamicas y los corchetes no",
+      "Los corchetes convierten siempre el valor en string",
+      "Los corchetes permiten usar claves dinamicas; el punto requiere un nombre literal valido",
+      "Ambos solo sirven con arrays, no con objetos"
+    ],
+    "correct": 2,
+    "explanation": "obj[prop] es imprescindible cuando la clave viene en una variable o contiene caracteres especiales."
+  },
+  {
+    "id": 159,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el acceso con punto y con corchetes es el mas correcto?",
+    "options": [
+      "Los corchetes convierten siempre el valor en string",
+      "Los corchetes permiten usar claves dinamicas; el punto requiere un nombre literal valido",
+      "Ambos solo sirven con arrays, no con objetos",
+      "El punto permite claves dinamicas y los corchetes no"
+    ],
+    "correct": 1,
+    "explanation": "obj[prop] es imprescindible cuando la clave viene en una variable o contiene caracteres especiales."
+  },
+  {
+    "id": 160,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el acceso con punto y con corchetes?",
+    "options": [
+      "Los corchetes permiten usar claves dinamicas; el punto requiere un nombre literal valido",
+      "Ambos solo sirven con arrays, no con objetos",
+      "El punto permite claves dinamicas y los corchetes no",
+      "Los corchetes convierten siempre el valor en string"
+    ],
+    "correct": 0,
+    "explanation": "obj[prop] es imprescindible cuando la clave viene en una variable o contiene caracteres especiales."
+  },
+  {
+    "id": 161,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la desestructuracion de objetos?",
+    "options": [
+      "Permite extraer propiedades en variables con una sintaxis declarativa",
+      "Borra del objeto original las propiedades extraidas",
+      "Solo funciona en arrays, no en objetos",
+      "Convierte el objeto a JSON automaticamente"
+    ],
+    "correct": 0,
+    "explanation": "Puedes incluso renombrar propiedades y asignar valores por defecto al desestructurar."
+  },
+  {
+    "id": 162,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 1,
+    "question": "Si repasas la desestructuracion de objetos, con que idea basica deberias quedarte?",
+    "options": [
+      "Borra del objeto original las propiedades extraidas",
+      "Solo funciona en arrays, no en objetos",
+      "Convierte el objeto a JSON automaticamente",
+      "Permite extraer propiedades en variables con una sintaxis declarativa"
+    ],
+    "correct": 3,
+    "explanation": "Puedes incluso renombrar propiedades y asignar valores por defecto al desestructurar."
+  },
+  {
+    "id": 163,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la desestructuracion de objetos?",
+    "options": [
+      "Solo funciona en arrays, no en objetos",
+      "Convierte el objeto a JSON automaticamente",
+      "Permite extraer propiedades en variables con una sintaxis declarativa",
+      "Borra del objeto original las propiedades extraidas"
+    ],
+    "correct": 2,
+    "explanation": "Puedes incluso renombrar propiedades y asignar valores por defecto al desestructurar."
+  },
+  {
+    "id": 164,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la desestructuracion de objetos es el mas correcto?",
+    "options": [
+      "Convierte el objeto a JSON automaticamente",
+      "Permite extraer propiedades en variables con una sintaxis declarativa",
+      "Borra del objeto original las propiedades extraidas",
+      "Solo funciona en arrays, no en objetos"
+    ],
+    "correct": 1,
+    "explanation": "Puedes incluso renombrar propiedades y asignar valores por defecto al desestructurar."
+  },
+  {
+    "id": 165,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la desestructuracion de objetos?",
+    "options": [
+      "Permite extraer propiedades en variables con una sintaxis declarativa",
+      "Borra del objeto original las propiedades extraidas",
+      "Solo funciona en arrays, no en objetos",
+      "Convierte el objeto a JSON automaticamente"
+    ],
+    "correct": 0,
+    "explanation": "Puedes incluso renombrar propiedades y asignar valores por defecto al desestructurar."
+  },
+  {
+    "id": 166,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el spread en objetos?",
+    "options": [
+      "Crea una copia superficial del objeto y permite sobrescribir propiedades",
+      "Realiza una copia profunda de cualquier nivel anidado",
+      "Modifica siempre el objeto original antes de devolverlo",
+      "Solo puede usarse si el objeto tiene menos de 10 propiedades"
+    ],
+    "correct": 0,
+    "explanation": "La copia es superficial. Si hay objetos anidados, sus referencias siguen compartiendose."
+  },
+  {
+    "id": 167,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 1,
+    "question": "Si repasas el spread en objetos, con que idea basica deberias quedarte?",
+    "options": [
+      "Realiza una copia profunda de cualquier nivel anidado",
+      "Modifica siempre el objeto original antes de devolverlo",
+      "Solo puede usarse si el objeto tiene menos de 10 propiedades",
+      "Crea una copia superficial del objeto y permite sobrescribir propiedades"
+    ],
+    "correct": 3,
+    "explanation": "La copia es superficial. Si hay objetos anidados, sus referencias siguen compartiendose."
+  },
+  {
+    "id": 168,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el spread en objetos?",
+    "options": [
+      "Modifica siempre el objeto original antes de devolverlo",
+      "Solo puede usarse si el objeto tiene menos de 10 propiedades",
+      "Crea una copia superficial del objeto y permite sobrescribir propiedades",
+      "Realiza una copia profunda de cualquier nivel anidado"
+    ],
+    "correct": 2,
+    "explanation": "La copia es superficial. Si hay objetos anidados, sus referencias siguen compartiendose."
+  },
+  {
+    "id": 169,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el spread en objetos es el mas correcto?",
+    "options": [
+      "Solo puede usarse si el objeto tiene menos de 10 propiedades",
+      "Crea una copia superficial del objeto y permite sobrescribir propiedades",
+      "Realiza una copia profunda de cualquier nivel anidado",
+      "Modifica siempre el objeto original antes de devolverlo"
+    ],
+    "correct": 1,
+    "explanation": "La copia es superficial. Si hay objetos anidados, sus referencias siguen compartiendose."
+  },
+  {
+    "id": 170,
+    "category": "objetos",
+    "topic": "desestructuracion",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el spread en objetos?",
+    "options": [
+      "Crea una copia superficial del objeto y permite sobrescribir propiedades",
+      "Realiza una copia profunda de cualquier nivel anidado",
+      "Modifica siempre el objeto original antes de devolverlo",
+      "Solo puede usarse si el objeto tiene menos de 10 propiedades"
+    ],
+    "correct": 0,
+    "explanation": "La copia es superficial. Si hay objetos anidados, sus referencias siguen compartiendose."
+  },
+  {
+    "id": 171,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la relacion entre class y prototipos?",
+    "options": [
+      "class es azucar sintactico sobre el sistema de prototipos de JavaScript",
+      "class crea un modelo totalmente distinto y separado de los prototipos",
+      "Los prototipos dejaron de existir al aparecer class",
+      "class solo puede heredar de arrays y strings"
+    ],
+    "correct": 0,
+    "explanation": "Detras de class sigue estando la cadena de prototipos. La sintaxis solo es mas comoda."
+  },
+  {
+    "id": 172,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 1,
+    "question": "Si repasas la relacion entre class y prototipos, con que idea basica deberias quedarte?",
+    "options": [
+      "class crea un modelo totalmente distinto y separado de los prototipos",
+      "Los prototipos dejaron de existir al aparecer class",
+      "class solo puede heredar de arrays y strings",
+      "class es azucar sintactico sobre el sistema de prototipos de JavaScript"
+    ],
+    "correct": 3,
+    "explanation": "Detras de class sigue estando la cadena de prototipos. La sintaxis solo es mas comoda."
+  },
+  {
+    "id": 173,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la relacion entre class y prototipos?",
+    "options": [
+      "Los prototipos dejaron de existir al aparecer class",
+      "class solo puede heredar de arrays y strings",
+      "class es azucar sintactico sobre el sistema de prototipos de JavaScript",
+      "class crea un modelo totalmente distinto y separado de los prototipos"
+    ],
+    "correct": 2,
+    "explanation": "Detras de class sigue estando la cadena de prototipos. La sintaxis solo es mas comoda."
+  },
+  {
+    "id": 174,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la relacion entre class y prototipos es el mas correcto?",
+    "options": [
+      "class solo puede heredar de arrays y strings",
+      "class es azucar sintactico sobre el sistema de prototipos de JavaScript",
+      "class crea un modelo totalmente distinto y separado de los prototipos",
+      "Los prototipos dejaron de existir al aparecer class"
+    ],
+    "correct": 1,
+    "explanation": "Detras de class sigue estando la cadena de prototipos. La sintaxis solo es mas comoda."
+  },
+  {
+    "id": 175,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la relacion entre class y prototipos?",
+    "options": [
+      "class es azucar sintactico sobre el sistema de prototipos de JavaScript",
+      "class crea un modelo totalmente distinto y separado de los prototipos",
+      "Los prototipos dejaron de existir al aparecer class",
+      "class solo puede heredar de arrays y strings"
+    ],
+    "correct": 0,
+    "explanation": "Detras de class sigue estando la cadena de prototipos. La sintaxis solo es mas comoda."
+  },
+  {
+    "id": 176,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor Object.assign?",
+    "options": [
+      "Copia propiedades enumerables de uno o varios objetos fuente a un objeto destino",
+      "Clona funciones con su scope lexico completo",
+      "Copia recursivamente cualquier objeto anidado",
+      "Solo sirve para comparar objetos por referencia"
+    ],
+    "correct": 0,
+    "explanation": "Tambien es una copia superficial. Se usa mucho para merges simples de configuracion."
+  },
+  {
+    "id": 177,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 1,
+    "question": "Si repasas Object.assign, con que idea basica deberias quedarte?",
+    "options": [
+      "Clona funciones con su scope lexico completo",
+      "Copia recursivamente cualquier objeto anidado",
+      "Solo sirve para comparar objetos por referencia",
+      "Copia propiedades enumerables de uno o varios objetos fuente a un objeto destino"
+    ],
+    "correct": 3,
+    "explanation": "Tambien es una copia superficial. Se usa mucho para merges simples de configuracion."
+  },
+  {
+    "id": 178,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre Object.assign?",
+    "options": [
+      "Copia recursivamente cualquier objeto anidado",
+      "Solo sirve para comparar objetos por referencia",
+      "Copia propiedades enumerables de uno o varios objetos fuente a un objeto destino",
+      "Clona funciones con su scope lexico completo"
+    ],
+    "correct": 2,
+    "explanation": "Tambien es una copia superficial. Se usa mucho para merges simples de configuracion."
+  },
+  {
+    "id": 179,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre Object.assign es el mas correcto?",
+    "options": [
+      "Solo sirve para comparar objetos por referencia",
+      "Copia propiedades enumerables de uno o varios objetos fuente a un objeto destino",
+      "Clona funciones con su scope lexico completo",
+      "Copia recursivamente cualquier objeto anidado"
+    ],
+    "correct": 1,
+    "explanation": "Tambien es una copia superficial. Se usa mucho para merges simples de configuracion."
+  },
+  {
+    "id": 180,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de Object.assign?",
+    "options": [
+      "Copia propiedades enumerables de uno o varios objetos fuente a un objeto destino",
+      "Clona funciones con su scope lexico completo",
+      "Copia recursivamente cualquier objeto anidado",
+      "Solo sirve para comparar objetos por referencia"
+    ],
+    "correct": 0,
+    "explanation": "Tambien es una copia superficial. Se usa mucho para merges simples de configuracion."
+  },
+  {
+    "id": 181,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor la cadena de prototipos?",
+    "options": [
+      "Cuando una propiedad no existe en el objeto actual, JavaScript la busca en su prototipo",
+      "Solo se usa para arrays, no para objetos normales",
+      "Se recorre de abajo arriba solo en clases abstractas",
+      "Impide redefinir propiedades en objetos hijos"
+    ],
+    "correct": 0,
+    "explanation": "La herencia prototipica permite compartir comportamiento entre instancias sin duplicar metodos."
+  },
+  {
+    "id": 182,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 1,
+    "question": "Si repasas la cadena de prototipos, con que idea basica deberias quedarte?",
+    "options": [
+      "Solo se usa para arrays, no para objetos normales",
+      "Se recorre de abajo arriba solo en clases abstractas",
+      "Impide redefinir propiedades en objetos hijos",
+      "Cuando una propiedad no existe en el objeto actual, JavaScript la busca en su prototipo"
+    ],
+    "correct": 3,
+    "explanation": "La herencia prototipica permite compartir comportamiento entre instancias sin duplicar metodos."
+  },
+  {
+    "id": 183,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre la cadena de prototipos?",
+    "options": [
+      "Se recorre de abajo arriba solo en clases abstractas",
+      "Impide redefinir propiedades en objetos hijos",
+      "Cuando una propiedad no existe en el objeto actual, JavaScript la busca en su prototipo",
+      "Solo se usa para arrays, no para objetos normales"
+    ],
+    "correct": 2,
+    "explanation": "La herencia prototipica permite compartir comportamiento entre instancias sin duplicar metodos."
+  },
+  {
+    "id": 184,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre la cadena de prototipos es el mas correcto?",
+    "options": [
+      "Impide redefinir propiedades en objetos hijos",
+      "Cuando una propiedad no existe en el objeto actual, JavaScript la busca en su prototipo",
+      "Solo se usa para arrays, no para objetos normales",
+      "Se recorre de abajo arriba solo en clases abstractas"
+    ],
+    "correct": 1,
+    "explanation": "La herencia prototipica permite compartir comportamiento entre instancias sin duplicar metodos."
+  },
+  {
+    "id": 185,
+    "category": "objetos",
+    "topic": "clases-prototipos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de la cadena de prototipos?",
+    "options": [
+      "Cuando una propiedad no existe en el objeto actual, JavaScript la busca en su prototipo",
+      "Solo se usa para arrays, no para objetos normales",
+      "Se recorre de abajo arriba solo en clases abstractas",
+      "Impide redefinir propiedades en objetos hijos"
+    ],
+    "correct": 0,
+    "explanation": "La herencia prototipica permite compartir comportamiento entre instancias sin duplicar metodos."
+  },
+  {
+    "id": 186,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor JSON.stringify y JSON.parse?",
+    "options": [
+      "Sirven para serializar y deserializar datos JSON, pero no preservan funciones ni ciertas estructuras especiales",
+      "Permiten clonar cualquier objeto de forma profunda sin limitaciones",
+      "Guardan referencias y metodos exactamente igual que el objeto original",
+      "Solo funcionan con arrays y no con objetos"
+    ],
+    "correct": 0,
+    "explanation": "Es util para datos simples, pero no para funciones, Map, Set o fechas sin tratamiento adicional."
+  },
+  {
+    "id": 187,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Si repasas JSON.stringify y JSON.parse, con que idea basica deberias quedarte?",
+    "options": [
+      "Permiten clonar cualquier objeto de forma profunda sin limitaciones",
+      "Guardan referencias y metodos exactamente igual que el objeto original",
+      "Solo funcionan con arrays y no con objetos",
+      "Sirven para serializar y deserializar datos JSON, pero no preservan funciones ni ciertas estructuras especiales"
+    ],
+    "correct": 3,
+    "explanation": "Es util para datos simples, pero no para funciones, Map, Set o fechas sin tratamiento adicional."
+  },
+  {
+    "id": 188,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre JSON.stringify y JSON.parse?",
+    "options": [
+      "Guardan referencias y metodos exactamente igual que el objeto original",
+      "Solo funcionan con arrays y no con objetos",
+      "Sirven para serializar y deserializar datos JSON, pero no preservan funciones ni ciertas estructuras especiales",
+      "Permiten clonar cualquier objeto de forma profunda sin limitaciones"
+    ],
+    "correct": 2,
+    "explanation": "Es util para datos simples, pero no para funciones, Map, Set o fechas sin tratamiento adicional."
+  },
+  {
+    "id": 189,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre JSON.stringify y JSON.parse es el mas correcto?",
+    "options": [
+      "Solo funcionan con arrays y no con objetos",
+      "Sirven para serializar y deserializar datos JSON, pero no preservan funciones ni ciertas estructuras especiales",
+      "Permiten clonar cualquier objeto de forma profunda sin limitaciones",
+      "Guardan referencias y metodos exactamente igual que el objeto original"
+    ],
+    "correct": 1,
+    "explanation": "Es util para datos simples, pero no para funciones, Map, Set o fechas sin tratamiento adicional."
+  },
+  {
+    "id": 190,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de JSON.stringify y JSON.parse?",
+    "options": [
+      "Sirven para serializar y deserializar datos JSON, pero no preservan funciones ni ciertas estructuras especiales",
+      "Permiten clonar cualquier objeto de forma profunda sin limitaciones",
+      "Guardan referencias y metodos exactamente igual que el objeto original",
+      "Solo funcionan con arrays y no con objetos"
+    ],
+    "correct": 0,
+    "explanation": "Es util para datos simples, pero no para funciones, Map, Set o fechas sin tratamiento adicional."
+  },
+  {
+    "id": 191,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor optional chaining?",
+    "options": [
+      "Permite acceder a propiedades o llamar metodos de forma segura cuando un valor puede ser null o undefined",
+      "Convierte automaticamente el valor ausente en un objeto vacio",
+      "Reemplaza siempre a ?? para asignar valores por defecto",
+      "Solo funciona dentro de clases"
+    ],
+    "correct": 0,
+    "explanation": "obj?.prop evita errores de acceso a propiedades sobre valores nulos o indefinidos."
+  },
+  {
+    "id": 192,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Si repasas optional chaining, con que idea basica deberias quedarte?",
+    "options": [
+      "Convierte automaticamente el valor ausente en un objeto vacio",
+      "Reemplaza siempre a ?? para asignar valores por defecto",
+      "Solo funciona dentro de clases",
+      "Permite acceder a propiedades o llamar metodos de forma segura cuando un valor puede ser null o undefined"
+    ],
+    "correct": 3,
+    "explanation": "obj?.prop evita errores de acceso a propiedades sobre valores nulos o indefinidos."
+  },
+  {
+    "id": 193,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre optional chaining?",
+    "options": [
+      "Reemplaza siempre a ?? para asignar valores por defecto",
+      "Solo funciona dentro de clases",
+      "Permite acceder a propiedades o llamar metodos de forma segura cuando un valor puede ser null o undefined",
+      "Convierte automaticamente el valor ausente en un objeto vacio"
+    ],
+    "correct": 2,
+    "explanation": "obj?.prop evita errores de acceso a propiedades sobre valores nulos o indefinidos."
+  },
+  {
+    "id": 194,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre optional chaining es el mas correcto?",
+    "options": [
+      "Solo funciona dentro de clases",
+      "Permite acceder a propiedades o llamar metodos de forma segura cuando un valor puede ser null o undefined",
+      "Convierte automaticamente el valor ausente en un objeto vacio",
+      "Reemplaza siempre a ?? para asignar valores por defecto"
+    ],
+    "correct": 1,
+    "explanation": "obj?.prop evita errores de acceso a propiedades sobre valores nulos o indefinidos."
+  },
+  {
+    "id": 195,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de optional chaining?",
+    "options": [
+      "Permite acceder a propiedades o llamar metodos de forma segura cuando un valor puede ser null o undefined",
+      "Convierte automaticamente el valor ausente en un objeto vacio",
+      "Reemplaza siempre a ?? para asignar valores por defecto",
+      "Solo funciona dentro de clases"
+    ],
+    "correct": 0,
+    "explanation": "obj?.prop evita errores de acceso a propiedades sobre valores nulos o indefinidos."
+  },
+  {
+    "id": 196,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor Object.entries?",
+    "options": [
+      "Devuelve pares [clave, valor] de las propiedades propias y enumerables",
+      "Devuelve un objeto nuevo con los valores invertidos",
+      "Devuelve solo las claves del objeto, no los valores",
+      "Convierte el objeto en un Set"
+    ],
+    "correct": 0,
+    "explanation": "Es util para iterar con for...of, transformar objetos o reconstruirlos despues."
+  },
+  {
+    "id": 197,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 1,
+    "question": "Si repasas Object.entries, con que idea basica deberias quedarte?",
+    "options": [
+      "Devuelve un objeto nuevo con los valores invertidos",
+      "Devuelve solo las claves del objeto, no los valores",
+      "Convierte el objeto en un Set",
+      "Devuelve pares [clave, valor] de las propiedades propias y enumerables"
+    ],
+    "correct": 3,
+    "explanation": "Es util para iterar con for...of, transformar objetos o reconstruirlos despues."
+  },
+  {
+    "id": 198,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre Object.entries?",
+    "options": [
+      "Devuelve solo las claves del objeto, no los valores",
+      "Convierte el objeto en un Set",
+      "Devuelve pares [clave, valor] de las propiedades propias y enumerables",
+      "Devuelve un objeto nuevo con los valores invertidos"
+    ],
+    "correct": 2,
+    "explanation": "Es util para iterar con for...of, transformar objetos o reconstruirlos despues."
+  },
+  {
+    "id": 199,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre Object.entries es el mas correcto?",
+    "options": [
+      "Convierte el objeto en un Set",
+      "Devuelve pares [clave, valor] de las propiedades propias y enumerables",
+      "Devuelve un objeto nuevo con los valores invertidos",
+      "Devuelve solo las claves del objeto, no los valores"
+    ],
+    "correct": 1,
+    "explanation": "Es util para iterar con for...of, transformar objetos o reconstruirlos despues."
+  },
+  {
+    "id": 200,
+    "category": "objetos",
+    "topic": "objetos",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de Object.entries?",
+    "options": [
+      "Devuelve pares [clave, valor] de las propiedades propias y enumerables",
+      "Devuelve un objeto nuevo con los valores invertidos",
+      "Devuelve solo las claves del objeto, no los valores",
+      "Convierte el objeto en un Set"
+    ],
+    "correct": 0,
+    "explanation": "Es util para iterar con for...of, transformar objetos o reconstruirlos despues."
+  },
+  {
+    "id": 201,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor los estados de una Promise?",
+    "options": [
+      "Una Promise puede estar pending, fulfilled o rejected",
+      "Solo puede estar en true o false",
+      "Sus estados son created, running y finished",
+      "Una Promise no tiene estados; siempre resuelve al instante"
+    ],
+    "correct": 0,
+    "explanation": "Hasta que no se resuelve o rechaza, la Promise permanece pendiente."
+  },
+  {
+    "id": 202,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 1,
+    "question": "Si repasas los estados de una Promise, con que idea basica deberias quedarte?",
+    "options": [
+      "Solo puede estar en true o false",
+      "Sus estados son created, running y finished",
+      "Una Promise no tiene estados; siempre resuelve al instante",
+      "Una Promise puede estar pending, fulfilled o rejected"
+    ],
+    "correct": 3,
+    "explanation": "Hasta que no se resuelve o rechaza, la Promise permanece pendiente."
+  },
+  {
+    "id": 203,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre los estados de una Promise?",
+    "options": [
+      "Sus estados son created, running y finished",
+      "Una Promise no tiene estados; siempre resuelve al instante",
+      "Una Promise puede estar pending, fulfilled o rejected",
+      "Solo puede estar en true o false"
+    ],
+    "correct": 2,
+    "explanation": "Hasta que no se resuelve o rechaza, la Promise permanece pendiente."
+  },
+  {
+    "id": 204,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre los estados de una Promise es el mas correcto?",
+    "options": [
+      "Una Promise no tiene estados; siempre resuelve al instante",
+      "Una Promise puede estar pending, fulfilled o rejected",
+      "Solo puede estar en true o false",
+      "Sus estados son created, running y finished"
+    ],
+    "correct": 1,
+    "explanation": "Hasta que no se resuelve o rechaza, la Promise permanece pendiente."
+  },
+  {
+    "id": 205,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de los estados de una Promise?",
+    "options": [
+      "Una Promise puede estar pending, fulfilled o rejected",
+      "Solo puede estar en true o false",
+      "Sus estados son created, running y finished",
+      "Una Promise no tiene estados; siempre resuelve al instante"
+    ],
+    "correct": 0,
+    "explanation": "Hasta que no se resuelve o rechaza, la Promise permanece pendiente."
+  },
+  {
+    "id": 206,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor lo que devuelve una funcion async?",
+    "options": [
+      "Siempre devuelve una Promise, incluso si retornas un valor simple",
+      "Devuelve undefined salvo que uses await",
+      "Devuelve un callback interno creado por el motor",
+      "Solo devuelve Promise si dentro hay una llamada fetch"
+    ],
+    "correct": 0,
+    "explanation": "async envuelve automaticamente el valor de retorno en una Promise resuelta."
+  },
+  {
+    "id": 207,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Si repasas lo que devuelve una funcion async, con que idea basica deberias quedarte?",
+    "options": [
+      "Devuelve undefined salvo que uses await",
+      "Devuelve un callback interno creado por el motor",
+      "Solo devuelve Promise si dentro hay una llamada fetch",
+      "Siempre devuelve una Promise, incluso si retornas un valor simple"
+    ],
+    "correct": 3,
+    "explanation": "async envuelve automaticamente el valor de retorno en una Promise resuelta."
+  },
+  {
+    "id": 208,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre lo que devuelve una funcion async?",
+    "options": [
+      "Devuelve un callback interno creado por el motor",
+      "Solo devuelve Promise si dentro hay una llamada fetch",
+      "Siempre devuelve una Promise, incluso si retornas un valor simple",
+      "Devuelve undefined salvo que uses await"
+    ],
+    "correct": 2,
+    "explanation": "async envuelve automaticamente el valor de retorno en una Promise resuelta."
+  },
+  {
+    "id": 209,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre lo que devuelve una funcion async es el mas correcto?",
+    "options": [
+      "Solo devuelve Promise si dentro hay una llamada fetch",
+      "Siempre devuelve una Promise, incluso si retornas un valor simple",
+      "Devuelve undefined salvo que uses await",
+      "Devuelve un callback interno creado por el motor"
+    ],
+    "correct": 1,
+    "explanation": "async envuelve automaticamente el valor de retorno en una Promise resuelta."
+  },
+  {
+    "id": 210,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de lo que devuelve una funcion async?",
+    "options": [
+      "Siempre devuelve una Promise, incluso si retornas un valor simple",
+      "Devuelve undefined salvo que uses await",
+      "Devuelve un callback interno creado por el motor",
+      "Solo devuelve Promise si dentro hay una llamada fetch"
+    ],
+    "correct": 0,
+    "explanation": "async envuelve automaticamente el valor de retorno en una Promise resuelta."
+  },
+  {
+    "id": 211,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor el efecto de await?",
+    "options": [
+      "Pausa la ejecucion de la funcion async actual hasta que la Promise se resuelve o rechaza",
+      "Bloquea todo el hilo de JavaScript y congela la interfaz",
+      "Solo funciona con setTimeout, no con Promises",
+      "Convierte la Promise en un callback"
+    ],
+    "correct": 0,
+    "explanation": "await no bloquea todo el programa; solo suspende esa funcion async."
+  },
+  {
+    "id": 212,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Si repasas el efecto de await, con que idea basica deberias quedarte?",
+    "options": [
+      "Bloquea todo el hilo de JavaScript y congela la interfaz",
+      "Solo funciona con setTimeout, no con Promises",
+      "Convierte la Promise en un callback",
+      "Pausa la ejecucion de la funcion async actual hasta que la Promise se resuelve o rechaza"
+    ],
+    "correct": 3,
+    "explanation": "await no bloquea todo el programa; solo suspende esa funcion async."
+  },
+  {
+    "id": 213,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre el efecto de await?",
+    "options": [
+      "Solo funciona con setTimeout, no con Promises",
+      "Convierte la Promise en un callback",
+      "Pausa la ejecucion de la funcion async actual hasta que la Promise se resuelve o rechaza",
+      "Bloquea todo el hilo de JavaScript y congela la interfaz"
+    ],
+    "correct": 2,
+    "explanation": "await no bloquea todo el programa; solo suspende esa funcion async."
+  },
+  {
+    "id": 214,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre el efecto de await es el mas correcto?",
+    "options": [
+      "Convierte la Promise en un callback",
+      "Pausa la ejecucion de la funcion async actual hasta que la Promise se resuelve o rechaza",
+      "Bloquea todo el hilo de JavaScript y congela la interfaz",
+      "Solo funciona con setTimeout, no con Promises"
+    ],
+    "correct": 1,
+    "explanation": "await no bloquea todo el programa; solo suspende esa funcion async."
+  },
+  {
+    "id": 215,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de el efecto de await?",
+    "options": [
+      "Pausa la ejecucion de la funcion async actual hasta que la Promise se resuelve o rechaza",
+      "Bloquea todo el hilo de JavaScript y congela la interfaz",
+      "Solo funciona con setTimeout, no con Promises",
+      "Convierte la Promise en un callback"
+    ],
+    "correct": 0,
+    "explanation": "await no bloquea todo el programa; solo suspende esa funcion async."
+  },
+  {
+    "id": 216,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor Promise.all?",
+    "options": [
+      "Resuelve cuando todas las Promises resuelven y rechaza en cuanto una falla",
+      "Ejecuta las Promises una por una en secuencia obligatoria",
+      "Ignora los rechazos y devuelve solo las resueltas",
+      "Solo acepta dos Promises como maximo"
+    ],
+    "correct": 0,
+    "explanation": "Promise.all es muy util para tareas paralelas, pero conviene recordar su comportamiento fail-fast."
+  },
+  {
+    "id": 217,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 1,
+    "question": "Si repasas Promise.all, con que idea basica deberias quedarte?",
+    "options": [
+      "Ejecuta las Promises una por una en secuencia obligatoria",
+      "Ignora los rechazos y devuelve solo las resueltas",
+      "Solo acepta dos Promises como maximo",
+      "Resuelve cuando todas las Promises resuelven y rechaza en cuanto una falla"
+    ],
+    "correct": 3,
+    "explanation": "Promise.all es muy util para tareas paralelas, pero conviene recordar su comportamiento fail-fast."
+  },
+  {
+    "id": 218,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre Promise.all?",
+    "options": [
+      "Ignora los rechazos y devuelve solo las resueltas",
+      "Solo acepta dos Promises como maximo",
+      "Resuelve cuando todas las Promises resuelven y rechaza en cuanto una falla",
+      "Ejecuta las Promises una por una en secuencia obligatoria"
+    ],
+    "correct": 2,
+    "explanation": "Promise.all es muy util para tareas paralelas, pero conviene recordar su comportamiento fail-fast."
+  },
+  {
+    "id": 219,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre Promise.all es el mas correcto?",
+    "options": [
+      "Solo acepta dos Promises como maximo",
+      "Resuelve cuando todas las Promises resuelven y rechaza en cuanto una falla",
+      "Ejecuta las Promises una por una en secuencia obligatoria",
+      "Ignora los rechazos y devuelve solo las resueltas"
+    ],
+    "correct": 1,
+    "explanation": "Promise.all es muy util para tareas paralelas, pero conviene recordar su comportamiento fail-fast."
+  },
+  {
+    "id": 220,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de Promise.all?",
+    "options": [
+      "Resuelve cuando todas las Promises resuelven y rechaza en cuanto una falla",
+      "Ejecuta las Promises una por una en secuencia obligatoria",
+      "Ignora los rechazos y devuelve solo las resueltas",
+      "Solo acepta dos Promises como maximo"
+    ],
+    "correct": 0,
+    "explanation": "Promise.all es muy util para tareas paralelas, pero conviene recordar su comportamiento fail-fast."
+  },
+  {
+    "id": 221,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor setTimeout y la cola de tareas?",
+    "options": [
+      "El callback de setTimeout entra en la cola y solo se ejecuta cuando el call stack queda libre",
+      "Interrumpe inmediatamente el codigo actual en cuanto expira el tiempo",
+      "Siempre se ejecuta exactamente al milisegundo indicado",
+      "Se procesa antes que las microtareas de Promise"
+    ],
+    "correct": 0,
+    "explanation": "El tiempo indicado es un minimo, no una garantia exacta de ejecucion inmediata."
+  },
+  {
+    "id": 222,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 1,
+    "question": "Si repasas setTimeout y la cola de tareas, con que idea basica deberias quedarte?",
+    "options": [
+      "Interrumpe inmediatamente el codigo actual en cuanto expira el tiempo",
+      "Siempre se ejecuta exactamente al milisegundo indicado",
+      "Se procesa antes que las microtareas de Promise",
+      "El callback de setTimeout entra en la cola y solo se ejecuta cuando el call stack queda libre"
+    ],
+    "correct": 3,
+    "explanation": "El tiempo indicado es un minimo, no una garantia exacta de ejecucion inmediata."
+  },
+  {
+    "id": 223,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre setTimeout y la cola de tareas?",
+    "options": [
+      "Siempre se ejecuta exactamente al milisegundo indicado",
+      "Se procesa antes que las microtareas de Promise",
+      "El callback de setTimeout entra en la cola y solo se ejecuta cuando el call stack queda libre",
+      "Interrumpe inmediatamente el codigo actual en cuanto expira el tiempo"
+    ],
+    "correct": 2,
+    "explanation": "El tiempo indicado es un minimo, no una garantia exacta de ejecucion inmediata."
+  },
+  {
+    "id": 224,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre setTimeout y la cola de tareas es el mas correcto?",
+    "options": [
+      "Se procesa antes que las microtareas de Promise",
+      "El callback de setTimeout entra en la cola y solo se ejecuta cuando el call stack queda libre",
+      "Interrumpe inmediatamente el codigo actual en cuanto expira el tiempo",
+      "Siempre se ejecuta exactamente al milisegundo indicado"
+    ],
+    "correct": 1,
+    "explanation": "El tiempo indicado es un minimo, no una garantia exacta de ejecucion inmediata."
+  },
+  {
+    "id": 225,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de setTimeout y la cola de tareas?",
+    "options": [
+      "El callback de setTimeout entra en la cola y solo se ejecuta cuando el call stack queda libre",
+      "Interrumpe inmediatamente el codigo actual en cuanto expira el tiempo",
+      "Siempre se ejecuta exactamente al milisegundo indicado",
+      "Se procesa antes que las microtareas de Promise"
+    ],
+    "correct": 0,
+    "explanation": "El tiempo indicado es un minimo, no una garantia exacta de ejecucion inmediata."
+  },
+  {
+    "id": 226,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor fetch y los errores HTTP?",
+    "options": [
+      "fetch rechaza por errores de red; respuestas como 404 o 500 siguen resolviendo y deben comprobarse con response.ok",
+      "fetch rechaza automaticamente cualquier 4xx o 5xx",
+      "fetch nunca puede fallar porque el navegador reintenta siempre",
+      "fetch devuelve directamente el JSON parseado"
+    ],
+    "correct": 0,
+    "explanation": "Con fetch hay que comprobar el estado de la respuesta. Un 404 no entra en catch por si solo."
+  },
+  {
+    "id": 227,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 1,
+    "question": "Si repasas fetch y los errores HTTP, con que idea basica deberias quedarte?",
+    "options": [
+      "fetch rechaza automaticamente cualquier 4xx o 5xx",
+      "fetch nunca puede fallar porque el navegador reintenta siempre",
+      "fetch devuelve directamente el JSON parseado",
+      "fetch rechaza por errores de red; respuestas como 404 o 500 siguen resolviendo y deben comprobarse con response.ok"
+    ],
+    "correct": 3,
+    "explanation": "Con fetch hay que comprobar el estado de la respuesta. Un 404 no entra en catch por si solo."
+  },
+  {
+    "id": 228,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre fetch y los errores HTTP?",
+    "options": [
+      "fetch nunca puede fallar porque el navegador reintenta siempre",
+      "fetch devuelve directamente el JSON parseado",
+      "fetch rechaza por errores de red; respuestas como 404 o 500 siguen resolviendo y deben comprobarse con response.ok",
+      "fetch rechaza automaticamente cualquier 4xx o 5xx"
+    ],
+    "correct": 2,
+    "explanation": "Con fetch hay que comprobar el estado de la respuesta. Un 404 no entra en catch por si solo."
+  },
+  {
+    "id": 229,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre fetch y los errores HTTP es el mas correcto?",
+    "options": [
+      "fetch devuelve directamente el JSON parseado",
+      "fetch rechaza por errores de red; respuestas como 404 o 500 siguen resolviendo y deben comprobarse con response.ok",
+      "fetch rechaza automaticamente cualquier 4xx o 5xx",
+      "fetch nunca puede fallar porque el navegador reintenta siempre"
+    ],
+    "correct": 1,
+    "explanation": "Con fetch hay que comprobar el estado de la respuesta. Un 404 no entra en catch por si solo."
+  },
+  {
+    "id": 230,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de fetch y los errores HTTP?",
+    "options": [
+      "fetch rechaza por errores de red; respuestas como 404 o 500 siguen resolviendo y deben comprobarse con response.ok",
+      "fetch rechaza automaticamente cualquier 4xx o 5xx",
+      "fetch nunca puede fallar porque el navegador reintenta siempre",
+      "fetch devuelve directamente el JSON parseado"
+    ],
+    "correct": 0,
+    "explanation": "Con fetch hay que comprobar el estado de la respuesta. Un 404 no entra en catch por si solo."
+  },
+  {
+    "id": 231,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor microtareas y promesas?",
+    "options": [
+      "Los callbacks de Promise.then se ejecutan en la cola de microtareas y suelen ir antes que setTimeout",
+      "Siempre van despues de cualquier setTimeout",
+      "Se ejecutan en un hilo separado del navegador",
+      "Solo existen cuando usas async/await"
+    ],
+    "correct": 0,
+    "explanation": "Entender microtareas y macrotareas ayuda a explicar el orden real de ejecucion en JS."
+  },
+  {
+    "id": 232,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 1,
+    "question": "Si repasas microtareas y promesas, con que idea basica deberias quedarte?",
+    "options": [
+      "Siempre van despues de cualquier setTimeout",
+      "Se ejecutan en un hilo separado del navegador",
+      "Solo existen cuando usas async/await",
+      "Los callbacks de Promise.then se ejecutan en la cola de microtareas y suelen ir antes que setTimeout"
+    ],
+    "correct": 3,
+    "explanation": "Entender microtareas y macrotareas ayuda a explicar el orden real de ejecucion en JS."
+  },
+  {
+    "id": 233,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre microtareas y promesas?",
+    "options": [
+      "Se ejecutan en un hilo separado del navegador",
+      "Solo existen cuando usas async/await",
+      "Los callbacks de Promise.then se ejecutan en la cola de microtareas y suelen ir antes que setTimeout",
+      "Siempre van despues de cualquier setTimeout"
+    ],
+    "correct": 2,
+    "explanation": "Entender microtareas y macrotareas ayuda a explicar el orden real de ejecucion en JS."
+  },
+  {
+    "id": 234,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre microtareas y promesas es el mas correcto?",
+    "options": [
+      "Solo existen cuando usas async/await",
+      "Los callbacks de Promise.then se ejecutan en la cola de microtareas y suelen ir antes que setTimeout",
+      "Siempre van despues de cualquier setTimeout",
+      "Se ejecutan en un hilo separado del navegador"
+    ],
+    "correct": 1,
+    "explanation": "Entender microtareas y macrotareas ayuda a explicar el orden real de ejecucion en JS."
+  },
+  {
+    "id": 235,
+    "category": "asincronia",
+    "topic": "event-loop-fetch",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de microtareas y promesas?",
+    "options": [
+      "Los callbacks de Promise.then se ejecutan en la cola de microtareas y suelen ir antes que setTimeout",
+      "Siempre van despues de cualquier setTimeout",
+      "Se ejecutan en un hilo separado del navegador",
+      "Solo existen cuando usas async/await"
+    ],
+    "correct": 0,
+    "explanation": "Entender microtareas y macrotareas ayuda a explicar el orden real de ejecucion en JS."
+  },
+  {
+    "id": 236,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor try/catch con await?",
+    "options": [
+      "Permite capturar de forma natural los rechazos de Promises dentro de funciones async",
+      "Solo captura errores de sintaxis, no rechazos de Promise",
+      "Obliga a usar Promise.all internamente",
+      "Deja de funcionar si la funcion retorna un valor simple"
+    ],
+    "correct": 0,
+    "explanation": "Con await, el manejo de errores puede leerse casi igual que el codigo sincrono."
+  },
+  {
+    "id": 237,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Si repasas try/catch con await, con que idea basica deberias quedarte?",
+    "options": [
+      "Solo captura errores de sintaxis, no rechazos de Promise",
+      "Obliga a usar Promise.all internamente",
+      "Deja de funcionar si la funcion retorna un valor simple",
+      "Permite capturar de forma natural los rechazos de Promises dentro de funciones async"
+    ],
+    "correct": 3,
+    "explanation": "Con await, el manejo de errores puede leerse casi igual que el codigo sincrono."
+  },
+  {
+    "id": 238,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre try/catch con await?",
+    "options": [
+      "Obliga a usar Promise.all internamente",
+      "Deja de funcionar si la funcion retorna un valor simple",
+      "Permite capturar de forma natural los rechazos de Promises dentro de funciones async",
+      "Solo captura errores de sintaxis, no rechazos de Promise"
+    ],
+    "correct": 2,
+    "explanation": "Con await, el manejo de errores puede leerse casi igual que el codigo sincrono."
+  },
+  {
+    "id": 239,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre try/catch con await es el mas correcto?",
+    "options": [
+      "Deja de funcionar si la funcion retorna un valor simple",
+      "Permite capturar de forma natural los rechazos de Promises dentro de funciones async",
+      "Solo captura errores de sintaxis, no rechazos de Promise",
+      "Obliga a usar Promise.all internamente"
+    ],
+    "correct": 1,
+    "explanation": "Con await, el manejo de errores puede leerse casi igual que el codigo sincrono."
+  },
+  {
+    "id": 240,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de try/catch con await?",
+    "options": [
+      "Permite capturar de forma natural los rechazos de Promises dentro de funciones async",
+      "Solo captura errores de sintaxis, no rechazos de Promise",
+      "Obliga a usar Promise.all internamente",
+      "Deja de funcionar si la funcion retorna un valor simple"
+    ],
+    "correct": 0,
+    "explanation": "Con await, el manejo de errores puede leerse casi igual que el codigo sincrono."
+  },
+  {
+    "id": 241,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor Promise.prototype.finally?",
+    "options": [
+      "finally se ejecuta tanto si la Promise se resuelve como si se rechaza",
+      "finally solo se ejecuta en caso de exito",
+      "finally reemplaza siempre el valor resuelto por undefined",
+      "finally solo existe en fetch y no en Promises normales"
+    ],
+    "correct": 0,
+    "explanation": "finally es util para limpieza comun, como detener spinners o liberar recursos."
+  },
+  {
+    "id": 242,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 1,
+    "question": "Si repasas Promise.prototype.finally, con que idea basica deberias quedarte?",
+    "options": [
+      "finally solo se ejecuta en caso de exito",
+      "finally reemplaza siempre el valor resuelto por undefined",
+      "finally solo existe en fetch y no en Promises normales",
+      "finally se ejecuta tanto si la Promise se resuelve como si se rechaza"
+    ],
+    "correct": 3,
+    "explanation": "finally es util para limpieza comun, como detener spinners o liberar recursos."
+  },
+  {
+    "id": 243,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre Promise.prototype.finally?",
+    "options": [
+      "finally reemplaza siempre el valor resuelto por undefined",
+      "finally solo existe en fetch y no en Promises normales",
+      "finally se ejecuta tanto si la Promise se resuelve como si se rechaza",
+      "finally solo se ejecuta en caso de exito"
+    ],
+    "correct": 2,
+    "explanation": "finally es util para limpieza comun, como detener spinners o liberar recursos."
+  },
+  {
+    "id": 244,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre Promise.prototype.finally es el mas correcto?",
+    "options": [
+      "finally solo existe en fetch y no en Promises normales",
+      "finally se ejecuta tanto si la Promise se resuelve como si se rechaza",
+      "finally solo se ejecuta en caso de exito",
+      "finally reemplaza siempre el valor resuelto por undefined"
+    ],
+    "correct": 1,
+    "explanation": "finally es util para limpieza comun, como detener spinners o liberar recursos."
+  },
+  {
+    "id": 245,
+    "category": "asincronia",
+    "topic": "promesas",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de Promise.prototype.finally?",
+    "options": [
+      "finally se ejecuta tanto si la Promise se resuelve como si se rechaza",
+      "finally solo se ejecuta en caso de exito",
+      "finally reemplaza siempre el valor resuelto por undefined",
+      "finally solo existe en fetch y no en Promises normales"
+    ],
+    "correct": 0,
+    "explanation": "finally es util para limpieza comun, como detener spinners o liberar recursos."
+  },
+  {
+    "id": 246,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Que afirmacion describe mejor await secuencial frente a Promise.all?",
+    "options": [
+      "Si haces await uno a uno, las tareas se esperan en serie; Promise.all permite esperar varias en paralelo",
+      "await uno a uno y Promise.all siempre tardan lo mismo",
+      "Promise.all obliga a que cada tarea use el mismo endpoint",
+      "await en serie es mas paralelo que Promise.all"
+    ],
+    "correct": 0,
+    "explanation": "La diferencia de rendimiento puede ser notable cuando las tareas no dependen entre si."
+  },
+  {
+    "id": 247,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 1,
+    "question": "Si repasas await secuencial frente a Promise.all, con que idea basica deberias quedarte?",
+    "options": [
+      "await uno a uno y Promise.all siempre tardan lo mismo",
+      "Promise.all obliga a que cada tarea use el mismo endpoint",
+      "await en serie es mas paralelo que Promise.all",
+      "Si haces await uno a uno, las tareas se esperan en serie; Promise.all permite esperar varias en paralelo"
+    ],
+    "correct": 3,
+    "explanation": "La diferencia de rendimiento puede ser notable cuando las tareas no dependen entre si."
+  },
+  {
+    "id": 248,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "En una revision de codigo, que conviene recordar sobre await secuencial frente a Promise.all?",
+    "options": [
+      "Promise.all obliga a que cada tarea use el mismo endpoint",
+      "await en serie es mas paralelo que Promise.all",
+      "Si haces await uno a uno, las tareas se esperan en serie; Promise.all permite esperar varias en paralelo",
+      "await uno a uno y Promise.all siempre tardan lo mismo"
+    ],
+    "correct": 2,
+    "explanation": "La diferencia de rendimiento puede ser notable cuando las tareas no dependen entre si."
+  },
+  {
+    "id": 249,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 2,
+    "question": "Para evitar errores frecuentes, que enunciado sobre await secuencial frente a Promise.all es el mas correcto?",
+    "options": [
+      "await en serie es mas paralelo que Promise.all",
+      "Si haces await uno a uno, las tareas se esperan en serie; Promise.all permite esperar varias en paralelo",
+      "await uno a uno y Promise.all siempre tardan lo mismo",
+      "Promise.all obliga a que cada tarea use el mismo endpoint"
+    ],
+    "correct": 1,
+    "explanation": "La diferencia de rendimiento puede ser notable cuando las tareas no dependen entre si."
+  },
+  {
+    "id": 250,
+    "category": "asincronia",
+    "topic": "async-await",
+    "difficulty": 3,
+    "question": "Cual es la opcion mas precisa cuando se habla de await secuencial frente a Promise.all?",
+    "options": [
+      "Si haces await uno a uno, las tareas se esperan en serie; Promise.all permite esperar varias en paralelo",
+      "await uno a uno y Promise.all siempre tardan lo mismo",
+      "Promise.all obliga a que cada tarea use el mismo endpoint",
+      "await en serie es mas paralelo que Promise.all"
+    ],
+    "correct": 0,
+    "explanation": "La diferencia de rendimiento puede ser notable cuando las tareas no dependen entre si."
   }
 ]

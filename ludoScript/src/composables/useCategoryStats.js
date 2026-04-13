@@ -12,6 +12,7 @@
 import { ref } from "vue";
 import { categoryStatsService } from "@/api/categoryStats.service";
 import { recordAnswer } from "@/composables/useSessionTracker";
+import { trackTutorialQuestionResult } from "@/composables/useAdaptiveSelection";
 
 const LS_LAST_SESSION = "ludoscript_lastSession";
 const LS_WEEKLY = "ludoscript_weeklySessions";
@@ -31,6 +32,7 @@ export function useCategoryStats() {
     isCorrect,
     questionId = null,
     difficulty = null,
+    topic = null,
   ) {
     if (!category) return;
     if (!sessionStats.value[category]) {
@@ -59,6 +61,12 @@ export function useCategoryStats() {
     }
 
     recordAnswer(isCorrect);
+    trackTutorialQuestionResult({
+      category,
+      topic,
+      questionId,
+      isCorrect,
+    });
   }
 
   async function submitSession() {

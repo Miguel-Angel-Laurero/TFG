@@ -51,6 +51,7 @@ export function useQuizController(opts = {}) {
       isCorrect,
       currentItem.value.id,
       currentItem.value.difficulty ?? null,
+      currentItem.value.topic ?? null,
     );
   }
 

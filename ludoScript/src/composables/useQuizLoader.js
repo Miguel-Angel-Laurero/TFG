@@ -1,11 +1,12 @@
 import { ref } from "vue";
-import api from "@/api/axios";
 import { useActivitySession } from "@/composables/useActivitySession";
+import { categoryStatsService } from "@/api/categoryStats.service";
 import {
   pickRandomIds,
   filterByIds,
   hasPdfInStorage,
   loadPdfQuestionsFromStorage,
+  selectAdaptiveQuestions,
 } from "@/composables/useAdaptiveSelection";
 
 /**
@@ -91,15 +92,24 @@ export function useQuizLoader({
   // Modo adaptativo: llama al endpoint y selecciona 15 preguntas aleatorias
   async function loadAdaptiveMode() {
     try {
-      const res = await api.get("/games/adaptive-quiz");
-      if (res.status === 204 || !res.data?.questions?.length) {
+      const [questionsRes, statsRes] = await Promise.all([
+        fetch(jsonUrl),
+        categoryStatsService.getAll(),
+      ]);
+      const allQuestions = await questionsRes.json();
+      const { questions, weakCategories } = selectAdaptiveQuestions(
+        allQuestions,
+        statsRes.data ?? [],
+        15,
+      );
+
+      if (!questions.length) {
         await loadStaticMode();
         return;
       }
-      const { questions, weakCategories } = res.data;
+
       adaptiveWeakCategories.value = weakCategories ?? [];
-      const ids = pickRandomIds(questions, Math.min(15, questions.length));
-      await loadDirect(filterByIds(questions, ids));
+      await loadDirect(questions);
     } catch (e) {
       await loadStaticMode();
     }

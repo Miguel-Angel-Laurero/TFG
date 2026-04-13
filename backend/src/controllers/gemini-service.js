@@ -5,15 +5,33 @@ const path = require("path");
 const os = require("os");
 
 const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) throw new Error("Falta la variable de entorno GEMINI_API_KEY.");
-
-const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
-  model: "gemini-2.5-flash",
-});
-
-const fileManager = new GoogleAIFileManager(apiKey);
+let model = null;
+let fileManager = null;
 const GEMINI_MAX_RETRIES = 3;
 const GEMINI_RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+
+function isGeminiConfigured() {
+  return Boolean(apiKey);
+}
+
+function ensureGeminiClient() {
+  if (!isGeminiConfigured()) {
+    const error = new Error("Gemini no esta configurado en este entorno.");
+    error.code = "GEMINI_UNAVAILABLE";
+    error.status = 503;
+    throw error;
+  }
+
+  if (!model) {
+    model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
+  }
+
+  if (!fileManager) {
+    fileManager = new GoogleAIFileManager(apiKey);
+  }
+}
 
 // ── schemas de salida estructurada ───────────────────────────────────────────
 // Definen el contrato exacto de lo que Gemini debe devolver.
@@ -127,6 +145,7 @@ function isRetryableGeminiError(error) {
 // Sube un buffer a la Gemini Files API y devuelve el objeto file resultante.
 // Escribe el buffer en un fichero temporal, lo sube y elimina el temporal.
 async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
+  ensureGeminiClient();
   const tempPath = path.join(
     os.tmpdir(),
     `gemini-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -149,6 +168,7 @@ async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
 //   Con schema, la API garantiza JSON válido y estructurado: no hace falta
 //   limpiar markdown ni capturar SyntaxError.
 async function callGemini(prompt, fileBuffer, mimeType, responseSchema = null) {
+  ensureGeminiClient();
   const parts = [{ text: prompt }];
   let uploadedFile = null;
 
@@ -290,6 +310,7 @@ Reglas:
 }
 
 module.exports = {
+  isGeminiConfigured,
   processFileWithGemini,
   generateGameContentFromPdf,
   generateAdaptiveReinforcement,

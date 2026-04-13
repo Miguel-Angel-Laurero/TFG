@@ -5,28 +5,39 @@
         <div class="flex items-center justify-between flex-shrink-0">
             <h3 class="text-lg font-semibold text-gray-50">Documentos</h3>
 
-            <!-- Botón de subida compacto: solo visible cuando ya hay PDFs subidos -->
+            <!-- BotÃ³n de subida compacto: solo visible cuando ya hay PDFs subidos -->
             <label v-if="!loading && pdfs.length > 0" :class="[
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer',
                 uploading
                     ? 'bg-indigo-400/60 text-white cursor-not-allowed'
                     : 'bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600'
             ]">
-                <span v-if="uploading" class="animate-spin text-sm">⏳</span>
+                <svg v-if="uploading" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 animate-spin"
+                    viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" class="opacity-25" />
+                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
-                {{ uploading ? 'Procesando…' : 'Subir apuntes' }}
+                {{ uploading ? 'Procesando...' : 'Subir apuntes' }}
                 <input ref="fileInput" type="file" accept=".pdf,application/pdf" class="hidden" :disabled="uploading"
                     @change="handleFileChange" />
             </label>
         </div>
 
         <!-- Error de subida -->
-        <p v-if="uploadError" class="text-xs text-red-400 flex-shrink-0">{{ uploadError }}</p>
-        <div v-else-if="uploading" class="flex-shrink-0 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2">
+        <div v-if="uploadError" class="flex-shrink-0 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2">
+            <p class="text-xs text-red-300">{{ uploadError }}</p>
+            <button v-if="showTutorialFallbackCta" data-testid="tutorial-local-cta" @click="goToTutorialLocalMode"
+                class="mt-2 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-500">
+                Practicar modo tutorial local
+            </button>
+        </div>
+        <div v-else-if="uploading"
+            class="flex-shrink-0 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2">
             <div class="flex items-center justify-between gap-3">
                 <div class="min-w-0">
                     <p class="text-xs font-semibold text-indigo-200">{{ uploadStatusTitle }}</p>
@@ -44,14 +55,14 @@
             </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════
-             SECCIÓN: PREDEFINIDOS
-        ════════════════════════════════════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+             SECCIÃ“N: PREDEFINIDOS
+        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="flex flex-col gap-2 flex-shrink-0">
-            <!-- Cabecera de categoría -->
+            <!-- Cabecera de categorÃ­a -->
             <div class="flex items-center gap-2 cursor-pointer select-none"
                 @click="selectedPredefined = !selectedPredefined">
-                <!-- Checkbox de categoría -->
+                <!-- Checkbox de categorÃ­a -->
                 <div :class="[
                     'w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors',
                     selectedPredefined ? 'bg-indigo-500 border-indigo-500' : 'border-slate-500'
@@ -82,8 +93,8 @@
                     </svg>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="text-gray-100 font-medium text-sm">JavaScript — Contenido base</p>
-                    <p class="text-gray-400 text-xs mt-0.5">Tipos, funciones, scope, asincronía, ES6+ y más</p>
+                    <p class="text-gray-100 font-medium text-sm">Tutorial local de programacion</p>
+                    <p class="text-gray-400 text-xs mt-0.5">Fundamentos JS, arrays, funciones, objetos y asincronia</p>
                 </div>
                 <span
                     class="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -92,15 +103,15 @@
             </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════
-             SECCIÓN: APUNTES SUBIDOS
-        ════════════════════════════════════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+             SECCIÃ“N: APUNTES SUBIDOS
+        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="flex flex-col gap-2 flex-1 min-h-0">
-            <!-- Cabecera de categoría -->
+            <!-- Cabecera de categorÃ­a -->
             <div class="flex items-center gap-2 flex-shrink-0"
                 :class="pdfs.length > 0 ? 'cursor-pointer select-none' : ''"
                 @click="pdfs.length > 0 && toggleAllUploaded()">
-                <!-- Checkbox de categoría (solo activo si hay PDFs) -->
+                <!-- Checkbox de categorÃ­a (solo activo si hay PDFs) -->
                 <div :class="[
                     'w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors',
                     allUploadedSelected
@@ -114,7 +125,7 @@
                         <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
-                    <!-- Algunos seleccionados: guión -->
+                    <!-- Algunos seleccionados: guiÃ³n -->
                     <svg v-else-if="someUploadedSelected" class="w-2.5 h-2.5 text-white" fill="none"
                         viewBox="0 0 10 10">
                         <path d="M2 5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -125,7 +136,7 @@
 
             <!-- Estado: cargando -->
             <div v-if="loading" class="flex justify-center py-4 ml-6">
-                <span class="animate-spin text-indigo-400 text-xl">⏳</span>
+                <span class="animate-spin text-indigo-400 text-xl">â³</span>
             </div>
 
             <!-- Estado: sin archivos subidos -->
@@ -133,9 +144,9 @@
                 <!-- Aviso tipo recordatorio -->
                 <div
                     class="ml-6 flex items-start gap-2 bg-amber-950/60 border border-amber-500/30 rounded-lg px-3 py-2.5">
-                    <span class="text-amber-400 text-sm flex-shrink-0 mt-0.5">💡</span>
+                    <span class="text-amber-400 text-sm flex-shrink-0 mt-0.5">ðŸ’¡</span>
                     <p class="text-xs italic text-amber-300/90 leading-relaxed">
-                        Para repasar con tus propios apuntes, súbelos usando el botón de abajo.
+                        Para repasar con tus propios apuntes, sÃºbelos usando el botÃ³n de abajo.
                     </p>
                 </div>
 
@@ -147,14 +158,14 @@
                         ? 'border-indigo-400/50 bg-indigo-500/5 cursor-not-allowed'
                         : 'border-slate-600/70 hover:border-indigo-500/60 hover:bg-indigo-500/5'
                 ]">
-                    <span v-if="uploading" class="text-2xl animate-spin">⏳</span>
+                    <span v-if="uploading" class="text-2xl animate-spin">â³</span>
                     <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                     </svg>
                     <span class="text-xs font-medium text-slate-400">
-                        {{ uploading ? 'Procesando con Gemini…' : 'Subir apuntes' }}
+                        {{ uploading ? 'Procesando con Gemini...' : 'Subir apuntes' }}
                     </span>
                     <input ref="fileInput" type="file" accept=".pdf,application/pdf" class="hidden"
                         :disabled="uploading" @change="handleFileChange" />
@@ -189,13 +200,21 @@
                         </p>
                         <p class="text-gray-400 text-xs mt-0.5">{{ formatDate(pdf.createdAt) }}</p>
                     </div>
-                    <!-- Botón borrar -->
+                    <!-- BotÃ³n borrar -->
                     <button @click.stop="confirmDelete(pdf)"
-                        class="flex-shrink-0 text-red-400 hover:text-red-300 transition-colors text-xl p-1 leading-none"
+                        class="flex-shrink-0 text-red-400 hover:text-red-300 transition-colors p-1 leading-none"
                         title="Eliminar PDF">
-                        🗑
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4.75A1.75 1.75 0 0 1 9.75 3h4.5A1.75 1.75 0 0 1 16 4.75V6" />
+                            <path d="M6.75 6l.8 11.2A2 2 0 0 0 9.54 19h4.92a2 2 0 0 0 1.99-1.8L17.25 6" />
+                            <path d="M10 10.25v5.5" />
+                            <path d="M14 10.25v5.5" />
+                        </svg>
                     </button>
-                    <!-- Botón guardar en la nube / indicador de guardado -->
+                    <!-- BotÃ³n guardar en la nube / indicador de guardado -->
                     <button v-if="pdfLocalStatus[pdf.id]?.hasLocal && !pdfLocalStatus[pdf.id]?.savedToCloud"
                         @click.stop="handleSaveToCloud(pdf)" :disabled="pdfLocalStatus[pdf.id]?.saving"
                         :title="pdfLocalStatus[pdf.id]?.saving ? 'Guardando...' : 'Guardar en la nube'"
@@ -217,14 +236,19 @@
                         </svg>
                     </button>
                     <span v-else-if="pdfLocalStatus[pdf.id]?.savedToCloud"
-                        class="flex-shrink-0 text-emerald-400 text-sm p-1 leading-none" title="Guardado en la nube">
-                        ✓
+                        class="flex-shrink-0 text-emerald-400 p-1 leading-none" title="Guardado en la nube">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <path
+                                d="M7 18.25h9.5a4.25 4.25 0 0 0 .6-8.46A5.5 5.5 0 0 0 6.44 8a4.75 4.75 0 0 0 .56 9.47Z" />
+                        </svg>
                     </span>
                 </li>
             </ul>
         </div>
 
-        <!-- Modal de confirmación de borrado -->
+        <!-- Modal de confirmaciÃ³n de borrado -->
         <div v-if="pendingDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
             @click.self="pendingDelete = null">
             <div class="bg-slate-800 rounded-xl shadow-2xl p-6 w-80 flex flex-col gap-4">
@@ -252,6 +276,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 import { pdfService } from '@/api/pdf.service'
 import {
     savePdfQuestionsToStorage,
@@ -262,27 +287,29 @@ import {
     markPdfAsSavedToCloud,
 } from '@/composables/useAdaptiveSelection'
 
-// ─── Estado ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Estado â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const pdfs = ref([])
 const loading = ref(true)
 const uploading = ref(false)
 const uploadError = ref(null)
+const uploadFallbackMode = ref(null)
 const uploadStage = ref('idle')
 const uploadProgress = ref(0)
 const uploadAbortController = ref(null)
 const pendingDelete = ref(null)
 const fileInput = ref(null)
+const router = useRouter()
 // Estado local por PDF: { [id]: { hasLocal, savedToCloud, saving, saveError } }
 const pdfLocalStatus = ref({})
 
-// IDs de PDFs seleccionados — compartido con el padre via v-model
+// IDs de PDFs seleccionados â€” compartido con el padre via v-model
 const selectedFiles = defineModel('selectedFiles', { default: () => [] })
-// Número total de PDFs — para que GameGrid pueda mostrar el tooltip
+// NÃºmero total de PDFs â€” para que GameGrid pueda mostrar el tooltip
 const pdfCount = defineModel('pdfCount', { default: 0 })
-// Si el contenido predefinido está seleccionado — compartido con el padre via v-model
+// Si el contenido predefinido estÃ¡ seleccionado â€” compartido con el padre via v-model
 const selectedPredefined = defineModel('selectedPredefined', { default: true })
 
-// ─── Estado del checkbox de categoría "Apuntes" ───────────────────────────────
+// â”€â”€â”€ Estado del checkbox de categorÃ­a "Apuntes" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const allUploadedSelected = computed(() =>
     pdfs.value.length > 0 && pdfs.value.every(p => selectedFiles.value.includes(p.id))
 )
@@ -293,7 +320,7 @@ const someUploadedSelected = computed(() =>
 
 const uploadStatusTitle = computed(() => {
     if (uploadStage.value === 'uploading') {
-        return `Subiendo archivo${uploadProgress.value ? ` (${uploadProgress.value}%)` : '…'}`
+        return `Subiendo archivo${uploadProgress.value ? ` (${uploadProgress.value}%)` : '...'}`
     }
     if (uploadStage.value === 'processing') {
         return 'Archivo enviado. Procesando con Gemini'
@@ -303,10 +330,10 @@ const uploadStatusTitle = computed(() => {
 
 const uploadStatusDescription = computed(() => {
     if (uploadStage.value === 'uploading') {
-        return 'Todavía se está transfiriendo el PDF al backend.'
+        return 'Todavia se esta transfiriendo el PDF al backend.'
     }
     if (uploadStage.value === 'processing') {
-        return 'La subida ya terminó; ahora el servidor está generando las preguntas y flashcards.'
+        return 'La subida ya termino; ahora el servidor esta generando las preguntas y flashcards.'
     }
     return ''
 })
@@ -316,6 +343,8 @@ const uploadProgressBar = computed(() => {
     return Math.max(6, uploadProgress.value || 0)
 })
 
+const showTutorialFallbackCta = computed(() => uploadFallbackMode.value === 'tutorial-local')
+
 function toggleAllUploaded() {
     if (allUploadedSelected.value) {
         selectedFiles.value = []
@@ -324,7 +353,7 @@ function toggleAllUploaded() {
     }
 }
 
-// ─── Carga inicial ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Carga inicial â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 onMounted(fetchPdfs)
 
 async function fetchPdfs() {
@@ -350,7 +379,7 @@ async function fetchPdfs() {
     }
 }
 
-// ─── Selección múltiple ───────────────────────────────────────────────────────
+// â”€â”€â”€ SelecciÃ³n mÃºltiple â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toggleSelect(id) {
     if (selectedFiles.value.includes(id)) {
         selectedFiles.value = selectedFiles.value.filter(x => x !== id)
@@ -359,12 +388,13 @@ function toggleSelect(id) {
     }
 }
 
-// ─── Subida de PDF ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Subida de PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function handleFileChange(event) {
     const file = event.target.files?.[0]
     if (!file) return
 
     uploadError.value = null
+    uploadFallbackMode.value = null
     uploading.value = true
     uploadStage.value = 'uploading'
     uploadProgress.value = 0
@@ -388,8 +418,8 @@ async function handleFileChange(event) {
         // Guardar las 50 preguntas y 20 flashcards en localStorage
         // y calcular 15 IDs activos aleatorios
         savePdfQuestionsToStorage(id, quizQuestions, flashCards)
-        // La primera subida ya se guarda automáticamente en la nube (BD);
-        // marcar el flag local para que no aparezca el icono de sincronización.
+        // La primera subida ya se guarda automÃ¡ticamente en la nube (BD);
+        // marcar el flag local para que no aparezca el icono de sincronizaciÃ³n.
         markPdfAsSavedToCloud(id)
 
         pdfs.value.unshift({ id, originalName, createdAt })
@@ -403,18 +433,21 @@ async function handleFileChange(event) {
             saveError: null,
         }
 
-        // Auto-seleccionar el PDF recién subido
+        // Auto-seleccionar el PDF reciÃ©n subido
         selectedFiles.value = [id, ...selectedFiles.value]
     } catch (err) {
         if (axios.isCancel(err) || err.code === 'ERR_CANCELED') {
-            uploadError.value = 'La subida se canceló antes de terminar.'
+            uploadError.value = 'La subida se cancelÃ³ antes de terminar.'
         } else if (err.code === 'ECONNABORTED') {
-            uploadError.value = 'La petición tardó demasiado. El archivo puede haberse enviado, pero el procesado no terminó a tiempo.'
+            uploadError.value = 'La peticiÃ³n tardÃ³ demasiado. El archivo puede haberse enviado, pero el procesado no terminÃ³ a tiempo.'
         } else if (!err.response) {
-            uploadError.value = 'No se pudo completar la conexión con el servidor durante la subida.'
+            uploadError.value = 'No se pudo completar la conexiÃ³n con el servidor durante la subida.'
+        } else if (err.response?.data?.code === 'GEMINI_UNAVAILABLE') {
+            uploadFallbackMode.value = err.response?.data?.fallbackMode ?? null
+            uploadError.value = 'Ahora mismo no se pueden generar preguntas desde PDF. Puedes seguir practicando con el modo tutorial local.'
         } else {
             uploadError.value =
-                err.response?.data?.error ?? 'Error al subir el PDF. Inténtalo de nuevo.'
+                err.response?.data?.error ?? 'Error al subir el PDF. Intentalo de nuevo.'
         }
     } finally {
         uploading.value = false
@@ -429,7 +462,14 @@ function cancelUpload() {
     uploadAbortController.value?.abort()
 }
 
-// ─── Borrado ──────────────────────────────────────────────────────────────────
+function goToTutorialLocalMode() {
+    router.push({
+        name: 'inGame',
+        query: { game: 'Quiz', adaptive: 'true' },
+    })
+}
+
+// â”€â”€â”€ Borrado â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function confirmDelete(pdf) {
     pendingDelete.value = pdf
 }
@@ -452,7 +492,7 @@ async function handleDelete() {
     }
 }
 
-// ─── Guardar en la nube ───────────────────────────────────────────────────────
+// â”€â”€â”€ Guardar en la nube â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function handleSaveToCloud(pdf) {
     const status = pdfLocalStatus.value[pdf.id]
     if (!status?.hasLocal || status.saving) return
@@ -470,13 +510,13 @@ async function handleSaveToCloud(pdf) {
         markPdfAsSavedToCloud(pdf.id)
         status.savedToCloud = true
     } catch {
-        status.saveError = 'Error al guardar. Inténtalo de nuevo.'
+        status.saveError = 'Error al guardar. Intentalo de nuevo.'
     } finally {
         status.saving = false
     }
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function formatDate(isoDate) {
     return new Date(isoDate).toLocaleDateString('es-ES', {
         day: '2-digit', month: 'short', year: 'numeric',

@@ -1,14 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// vi.hoisted eleva esta declaración al mismo nivel que vi.mock,
-// evitando el error de "Cannot access before initialization".
-const { apiGet } = vi.hoisted(() => ({ apiGet: vi.fn() }));
+const { apiGet, categoryStatsGet } = vi.hoisted(() => ({
+  apiGet: vi.fn(),
+  categoryStatsGet: vi.fn(),
+}));
 
-// ─── Mock: axios (usado por useActivitySession y loadAdaptiveMode) ─────────────
 vi.mock("@/api/axios", () => ({ default: { get: apiGet } }));
+vi.mock("@/api/categoryStats.service", () => ({
+  categoryStatsService: { getAll: categoryStatsGet },
+}));
 
-// ─── Mock: useAdaptiveSelection ───────────────────────────────────────────────
-// Funciones puras sin aleatoriedad para resultados deterministas en los tests.
 let mockStorage = {};
 vi.mock("@/composables/useAdaptiveSelection", () => ({
   pickRandomIds: (questions, n) => questions.slice(0, n).map((q) => q.id),
@@ -16,29 +17,32 @@ vi.mock("@/composables/useAdaptiveSelection", () => ({
     const set = new Set(ids);
     return questions.filter((q) => set.has(q.id));
   },
+  selectAdaptiveQuestions: (questions) => ({
+    questions: questions.slice(0, 15),
+    weakCategories: [{ category: "fundamentos-js", errorRate: 0.6 }],
+  }),
   hasPdfInStorage: (id) => !!mockStorage[id],
   loadPdfQuestionsFromStorage: (id) => mockStorage[id] ?? null,
 }));
 
 import { useQuizLoader } from "@/composables/useQuizLoader";
 
-// Helper: array de N preguntas con IDs secuenciales desde `start`
 const makeQuestions = (n, start = 1) =>
   Array.from({ length: n }, (_, i) => ({ id: i + start }));
 
 describe("useQuizLoader", () => {
   beforeEach(() => {
-    vi.clearAllMocks(); // limpia call history pero respeta implementaciones
+    vi.clearAllMocks();
     mockStorage = {};
+    categoryStatsGet.mockResolvedValue({ data: [] });
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals(); // restaura fetch nativo tras cada test
+    vi.unstubAllGlobals();
   });
 
-  // ─── loadStaticMode ─────────────────────────────────────────────────────────
   describe("loadStaticMode", () => {
-    it("carga hasta 15 preguntas del banco estático", async () => {
+    it("carga hasta 15 preguntas del banco estatico", async () => {
       vi.stubGlobal(
         "fetch",
         vi.fn().mockResolvedValue({ json: async () => makeQuestions(20) }),
@@ -74,7 +78,6 @@ describe("useQuizLoader", () => {
     });
   });
 
-  // ─── loadPdfLocalMode ────────────────────────────────────────────────────────
   describe("loadPdfLocalMode", () => {
     it("activa loadError si no hay datos en storage", async () => {
       const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
@@ -117,10 +120,8 @@ describe("useQuizLoader", () => {
     });
   });
 
-  // ─── loadMixedMode ───────────────────────────────────────────────────────────
   describe("loadMixedMode", () => {
-    it("combina hasta 10 del PDF con 5 del banco estático (total 15)", async () => {
-      // 12 preguntas PDF con IDs 100-111
+    it("combina hasta 10 del PDF con 5 del banco estatico", async () => {
       const pdfQuestions = makeQuestions(12, 100);
       mockStorage = {
         pdf1: {
@@ -129,7 +130,6 @@ describe("useQuizLoader", () => {
           flashCards: [],
         },
       };
-      // 10 preguntas estáticas con IDs 1-10
       vi.stubGlobal(
         "fetch",
         vi.fn().mockResolvedValue({ json: async () => makeQuestions(10) }),
@@ -138,10 +138,10 @@ describe("useQuizLoader", () => {
       const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
       await loader.loadMixedMode("pdf1");
 
-      expect(loader.totalItems.value).toBe(15); // 10 pdf + 5 static
+      expect(loader.totalItems.value).toBe(15);
     });
 
-    it("usa solo las preguntas PDF si falla el fetch estático", async () => {
+    it("usa solo las preguntas PDF si falla el fetch estatico", async () => {
       const pdfQuestions = makeQuestions(8, 100);
       mockStorage = {
         pdf1: {
@@ -167,50 +167,33 @@ describe("useQuizLoader", () => {
     });
   });
 
-  // ─── loadAdaptiveMode ────────────────────────────────────────────────────────
   describe("loadAdaptiveMode", () => {
-    it("carga como máximo 15 preguntas de la API y guarda categorías débiles", async () => {
-      const questions = makeQuestions(20, 200);
-      apiGet.mockResolvedValueOnce({
-        status: 200,
-        data: {
-          questions,
-          weakCategories: [{ category: "algebra", errorRate: 0.6 }],
-        },
-      });
+    it("carga hasta 15 preguntas del banco local y guarda categorias debiles", async () => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({ json: async () => makeQuestions(20, 200) }),
+      );
 
       const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
       await loader.loadAdaptiveMode();
 
       expect(loader.totalItems.value).toBe(15);
-      expect([...loader.items.value.map((q) => q.id)].sort((a, b) => a - b)).toEqual(
-        Array.from({ length: 15 }, (_, i) => i + 200),
-      );
-      expect(loader.adaptiveWeakCategories.value).toHaveLength(1);
-      expect(loader.adaptiveWeakCategories.value[0].category).toBe("algebra");
+      expect(
+        [...loader.items.value.map((q) => q.id)].sort((a, b) => a - b),
+      ).toEqual(Array.from({ length: 15 }, (_, i) => i + 200));
+      expect(loader.adaptiveWeakCategories.value).toEqual([
+        { category: "fundamentos-js", errorRate: 0.6 },
+      ]);
+      expect(categoryStatsGet).toHaveBeenCalledTimes(1);
     });
 
-    it("cae al modo estático si la API responde 204", async () => {
-      apiGet.mockResolvedValueOnce({ status: 204, data: {} });
+    it("cae al modo estatico si falla la carga adaptativa", async () => {
+      categoryStatsGet.mockRejectedValueOnce(new Error("auth"));
       vi.stubGlobal(
         "fetch",
-        vi.fn().mockResolvedValue({ json: async () => makeQuestions(5) }),
-      );
-
-      const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
-      await loader.loadAdaptiveMode();
-
-      expect(loader.totalItems.value).toBe(5);
-    });
-
-    it("cae al modo estático si la API responde sin preguntas", async () => {
-      apiGet.mockResolvedValueOnce({
-        status: 200,
-        data: { questions: [], weakCategories: [{ category: "scope" }] },
-      });
-      vi.stubGlobal(
-        "fetch",
-        vi.fn().mockResolvedValue({ json: async () => makeQuestions(4) }),
+        vi.fn()
+          .mockResolvedValueOnce({ json: async () => makeQuestions(6, 20) })
+          .mockResolvedValueOnce({ json: async () => makeQuestions(4) }),
       );
 
       const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
@@ -219,41 +202,25 @@ describe("useQuizLoader", () => {
       expect(loader.totalItems.value).toBe(4);
       expect(loader.adaptiveWeakCategories.value).toEqual([]);
     });
-
-    it("cae al modo estático si la API lanza un error de red", async () => {
-      apiGet.mockRejectedValueOnce(new Error("network"));
-      vi.stubGlobal(
-        "fetch",
-        vi.fn().mockResolvedValue({ json: async () => makeQuestions(5) }),
-      );
-
-      const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
-      await loader.loadAdaptiveMode();
-
-      expect(loader.totalItems.value).toBe(5);
-    });
   });
 
   describe("initFromRoute", () => {
     it("prioriza el modo adaptativo cuando route.query.adaptive es true", async () => {
-      apiGet.mockResolvedValueOnce({
-        status: 200,
-        data: {
-          questions: makeQuestions(3, 300),
-          weakCategories: [{ category: "arrays", errorRate: 0.7 }],
-        },
-      });
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({ json: async () => makeQuestions(3, 300) }),
+      );
 
       const loader = useQuizLoader({ jsonUrl: "/quizQuestions.json" });
       await loader.initFromRoute({
         query: { adaptive: "true", pdfId: "pdf1", includePredefined: "true" },
       });
 
-      expect([...loader.items.value.map((q) => q.id)].sort((a, b) => a - b)).toEqual([
-        300, 301, 302,
-      ]);
+      expect(
+        [...loader.items.value.map((q) => q.id)].sort((a, b) => a - b),
+      ).toEqual([300, 301, 302]);
       expect(loader.adaptiveWeakCategories.value).toEqual([
-        { category: "arrays", errorRate: 0.7 },
+        { category: "fundamentos-js", errorRate: 0.6 },
       ]);
       expect(loader.loadError.value).toBe(false);
     });

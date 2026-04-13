@@ -47,7 +47,7 @@
             <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
                 <span class="text-2xl"></span>
                 <div>
-                    <p class="text-lg font-bold">{{ categoriesPlayed }} / 7</p>
+                    <p class="text-lg font-bold">{{ categoriesPlayed }} / {{ totalCategoryCount }}</p>
                     <p class="text-sm text-gray-600">Categorias practicadas</p>
                 </div>
             </div>
@@ -66,10 +66,12 @@ import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
 import { gameService } from '@/api/game.service'
 import { categoryStatsService } from '@/api/categoryStats.service'
+import { QUIZ_CATEGORIES } from '@/utils/quizCategories'
 
 const auth = useAuthStore()
 const totalGames = ref(0)
 const categoriesPlayed = ref(0)
+const totalCategoryCount = QUIZ_CATEGORIES.length
 
 const profileBannerStyle = computed(() => ({
     backgroundImage: auth.user?.banner ? `url('${auth.user.banner}')` : undefined,

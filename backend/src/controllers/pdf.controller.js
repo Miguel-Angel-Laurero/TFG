@@ -1,5 +1,17 @@
 const { UserPdf, Game } = require("../models");
-const { generateGameContentFromPdf } = require("./gemini-service");
+const {
+  generateGameContentFromPdf,
+  isGeminiConfigured,
+} = require("./gemini-service");
+
+function respondGeminiUnavailable(res) {
+  return res.status(503).json({
+    code: "GEMINI_UNAVAILABLE",
+    fallbackMode: "tutorial-local",
+    error:
+      "La generacion desde PDF no esta disponible ahora mismo. Puedes seguir practicando con el modo tutorial local.",
+  });
+}
 
 // ── fixFilenameEncoding ───────────────────────────────────────────────────────
 // El parser HTTP de Node.js trata las cabeceras HTTP/1.1 como binary/Latin-1,
@@ -36,6 +48,10 @@ function fixFilenameEncoding(str) {
 // ─────────────────────────────────────────────────────────────────────────────
 const uploadPdf = async (req, res, next) => {
   try {
+    if (!isGeminiConfigured()) {
+      return respondGeminiUnavailable(res);
+    }
+
     // multer ya validó el tipo MIME y guardó el archivo en req.file
     if (!req.file) {
       return res
@@ -265,6 +281,10 @@ const savePdfQuestions = async (req, res, next) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const createPdfGame = async (req, res, next) => {
   try {
+    if (!isGeminiConfigured()) {
+      return respondGeminiUnavailable(res);
+    }
+
     if (!req.file) {
       return res
         .status(400)
