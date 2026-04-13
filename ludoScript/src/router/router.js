@@ -49,12 +49,6 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/preview-home/",
-      name: "previewHome",
-      component: () => import("../views/PreviewHomeView.vue"),
-      meta: { requiresAuth: true },
-    },
-    {
       path: "/multiplayer/",
       name: "multiplayer",
       component: () => import("../views/MultiplayerView.vue"),
