@@ -439,7 +439,9 @@ Nota técnica — Multijugador: flujo del nombre de usuario en sockets
   - Para ver los nombres correctamente en multijugador, hay que cerrar sesión y volver a iniciar sesión para obtener un JWT nuevo.
 
 ```
+
 ```
+
 Nota técnica — Multijugador: botón "Volver" al terminar o al cerrar la sala
 
 - Flujo esperado:
@@ -709,6 +711,209 @@ Para ello se añadió a cada ítem de `categoryRings` el campo `slug` (la clave 
 
 ---
 
+## Juego de Flashcards con preguntas del Quiz + botones ✓/✗ + tracking — 13/04
+
+### Objetivo
+
+Adaptar el juego de Flashcards para que muestre preguntas del mismo banco que el Quiz (`quizQuestions.json`), aleatorizadas en cada sesión. Al voltear la carta, el usuario marca si conocía la respuesta con un botón ✓ o ✗. Ese progreso se registra con el mismo sistema de estadísticas que el Quiz, por lo que aparece automáticamente en el resumen semanal, el calendario de 14 días y el mapa de calor de la última sesión en el perfil.
+
+---
+
+### Archivos creados
+
+| Archivo                                                               | Rol                                                                                                                                                                         |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ludoScript/src/composables/useFlashCardLoader.js`                    | Exporta las funciones puras `toFlashCard`, `pickRandom` y las constantes `QUIZ_URL` / `FLASH_CARDS_PER_SESSION` extraídas del componente para facilitar los tests unitarios |
+| `ludoScript/src/composables/__tests__/useFlashCardLoader.spec.js`     | 23 tests unitarios de las funciones puras                                                                                                                                   |
+| `ludoScript/src/components/minigames/__tests__/FlashCardDeck.spec.js` | 24 tests del componente presentacional                                                                                                                                      |
+| `ludoScript/src/components/minigames/__tests__/FlashCard.spec.js`     | 33 tests del componente contenedor                                                                                                                                          |
+
+### Archivos modificados
+
+| Archivo                                                 | Cambio                                                                                                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `ludoScript/src/components/minigames/FlashCard.vue`     | Carga preguntas de `quizQuestions.json` (transformadas a flashcard), integra `useCategoryStats` y `submitSession` al finalizar |
+| `ludoScript/src/components/minigames/FlashCardDeck.vue` | Sustituye el botón "Siguiente →" por dos botones ✓/✗ que solo aparecen en el reverso                                           |
+| `ludoScript/src/components/profile/WeeklyResume.vue`    | Texto descriptivo actualizado a "Quiz y Flashcards"                                                                            |
+
+---
+
+### Cómo funciona el flujo
+
+1. Al montar `FlashCard.vue`, se hace `fetch('/quizQuestions.json')` y se seleccionan 15 preguntas aleatorias.
+2. Cada pregunta se transforma a `{ question, answer: options[correct], id, category, topic, difficulty }`.
+3. Si la ruta tiene `?pdfId=X` o `?pdfIds=X,Y`, se cargan esas fuentes vía `api.get` (con JWT). Con `?includePredefined=true` se combinan ambas fuentes.
+4. El usuario ve la pregunta en el anverso. Al tocar la carta, aparece la respuesta en el reverso y se muestran los botones ✓ y ✗.
+5. Al pulsar ✓ o ✗ se llama a `trackAnswer(category, isCorrect, id, difficulty, topic)` de `useCategoryStats` y se avanza a la siguiente carta.
+6. Al llegar a la última carta: `submitSession()` escribe en `ludoscript_lastSession` y `ludoscript_weeklySessions` (localStorage), luego se otorga la recompensa.
+7. Los componentes de perfil (`CategoryHeatMap`, `WeeklyResume`, `FortnightResume`) leen ese localStorage sin cambios, por lo que las sesiones de Flashcards aparecen automáticamente junto a las del Quiz.
+
+---
+
+### Tests — suite completa (80 tests nuevos, 117 en total tras el cambio)
+
+#### `useFlashCardLoader.spec.js` — 23 tests
+
+**Constantes**
+
+| Test                                             | Qué comprueba                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------- |
+| `QUIZ_URL` apunta al banco de preguntas correcto | El valor de la constante es exactamente `/quizQuestions.json` |
+| `FLASH_CARDS_PER_SESSION` vale 15                | El número de cartas por sesión es 15                          |
+
+**`toFlashCard` — transformación de pregunta del Quiz a flashcard**
+
+| Test                                                               | Qué comprueba                                                                                         |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Transforma correctamente una pregunta completa del Quiz            | Los 6 campos (`question`, `answer`, `id`, `category`, `topic`, `difficulty`) tienen el valor esperado |
+| Usa `options[correct]` cuando `correct=0` (primer índice)          | La respuesta es la primera opción cuando `correct` vale 0                                             |
+| Usa `options[correct]` cuando `correct` es el último índice        | La respuesta es la última opción del array                                                            |
+| Rellena con `null` los campos opcionales ausentes                  | `id`, `category`, `topic` y `difficulty` son `null` si no existen en la pregunta                      |
+| Conserva `id=0` (valor falsy pero válido) sin convertirlo a `null` | El operador `??` no confunde `0` con ausencia de valor                                                |
+| Preserva `category`, `topic` y `difficulty` cuando están presentes | Los campos opcionales se mapean correctamente                                                         |
+| El resultado solo tiene los 6 campos esperados                     | No se filtran campos extra del input ni se añaden nuevos                                              |
+| Funciona con un array de dos opciones y `correct=1`                | El mínimo viable de opciones funciona sin errores                                                     |
+
+**`pickRandom` — selección aleatoria sin repetición**
+
+| Test                                                                       | Qué comprueba                                               |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Devuelve exactamente `n` elementos cuando `n < arr.length`                 | Tamaño correcto en el caso normal                           |
+| Devuelve todos los elementos cuando `n === arr.length`                     | Sin truncado innecesario                                    |
+| Devuelve todos los elementos cuando `n > arr.length`                       | No lanza error si se piden más elementos de los disponibles |
+| Solo contiene elementos presentes en el array original                     | No inventa elementos                                        |
+| No repite elementos                                                        | El shuffle no genera duplicados                             |
+| No modifica el array original                                              | La función es pura (sin efectos secundarios)                |
+| Devuelve array vacío para `n=0`                                            | Caso límite de cero elementos                               |
+| Funciona con array de 1 elemento y `n=1`                                   | Mínimo viable                                               |
+| Funciona con array de 1 elemento y `n` mayor                               | Sin errores al pedir más de lo disponible                   |
+| Devuelve array vacío si el input es vacío                                  | No lanza error con array vacío                              |
+| Con banco de 20 preguntas y `FLASH_CARDS_PER_SESSION` devuelve 15          | Integración de la constante con la función                  |
+| Con banco menor a `FLASH_CARDS_PER_SESSION` devuelve todas las disponibles | Adapta el tamaño al banco real                              |
+| La distribución es aleatoria                                               | Documenta la propiedad de aleatoriedad del shuffle          |
+
+---
+
+#### `FlashCardDeck.spec.js` — 24 tests
+
+**Renderizado**
+
+| Test                                              | Qué comprueba                               |
+| ------------------------------------------------- | ------------------------------------------- |
+| Muestra el texto de la pregunta                   | El contenido del anverso es visible         |
+| Muestra el texto de la respuesta                  | El contenido del reverso es visible         |
+| Muestra el contador "currentIndex+1 / totalItems" | El contador refleja el índice 1-based       |
+| Muestra "1 / 1" para la carta única               | El formato es correcto con un solo elemento |
+| Muestra "1 / 5" en el primer item por defecto     | El formato es correcto al inicio            |
+
+**Hint de volteo**
+
+| Test                                                                   | Qué comprueba                                                    |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| El hint tiene `opacity-100` cuando la carta no está volteada           | El texto "Toca la carta" es visible en el anverso                |
+| El hint tiene `opacity-0` y `pointer-events-none` cuando está volteada | El texto desaparece visualmente y no es interactuable al voltear |
+
+**Visibilidad de botones ✓/✗**
+
+| Test                                                                                       | Qué comprueba                                           |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| El contenedor de botones tiene `opacity-0` y `pointer-events-none` cuando no está volteada | Los botones son invisibles e inaccesibles en el anverso |
+| El contenedor de botones tiene `opacity-100` cuando está volteada                          | Los botones son visibles en el reverso                  |
+| El `aria-label` menciona "Siguiente" cuando no es el último item                           | Accesibilidad correcta para pantallas intermedias       |
+| El `aria-label` menciona "Finalizar" cuando es el último item                              | Accesibilidad correcta para la última carta             |
+| Hay exactamente 2 botones de marcado                                                       | Solo existen los botones ✓ y ✗, sin botones extra       |
+
+**Emisión de eventos**
+
+| Test                                                               | Qué comprueba                                |
+| ------------------------------------------------------------------ | -------------------------------------------- |
+| Emite `flip` al hacer click en la carta                            | El evento de volteo se dispara correctamente |
+| Emite exactamente un `flip` por click (no se duplica)              | No hay propagación de eventos doble          |
+| Emite `mark-correct` al pulsar el primer botón (✓)                 | El botón verde emite el evento correcto      |
+| Emite `mark-wrong` al pulsar el segundo botón (✗)                  | El botón rojo emite el evento correcto       |
+| No emite `mark-correct` ni `mark-wrong` al hacer click en la carta | El click en la carta solo voltea, no marca   |
+| El contenedor tiene `pointer-events-none` cuando no está volteada  | Protección CSS contra clics accidentales     |
+
+**Edge cases**
+
+| Test                                                         | Qué comprueba                                    |
+| ------------------------------------------------------------ | ------------------------------------------------ |
+| Renderiza sin errores con pregunta y respuesta vacías        | Texto vacío no rompe el componente               |
+| Renderiza sin errores con texto muy largo (600 caracteres)   | Textos extremadamente largos no rompen el layout |
+| Renderiza sin errores con `currentIndex=0` y `totalItems=0`  | El componente tolera estados de carga vacíos     |
+| Renderiza sin errores con `totalItems=1` e `isLastItem=true` | El caso de carta única y última funciona         |
+| El botón ✗ no emite `mark-correct` por error                 | Los eventos no se cruzan entre botones           |
+| El botón ✓ no emite `mark-wrong` por error                   | Los eventos no se cruzan entre botones           |
+
+---
+
+#### `FlashCard.spec.js` — 33 tests
+
+**Estado de carga**
+
+| Test                                                         | Qué comprueba                                           |
+| ------------------------------------------------------------ | ------------------------------------------------------- |
+| Muestra `FlashCardDeck` una vez completada la carga          | El componente correcto se renderiza tras cargar         |
+| No muestra `ActivityFinished` al inicio (`finished=false`)   | La pantalla de fin no aparece prematuramente            |
+| Muestra `ActivityFinished` cuando `finished` cambia a `true` | La pantalla de fin aparece al terminar y oculta el deck |
+
+**Carga de preguntas sin query params**
+
+| Test                                                                | Qué comprueba                                            |
+| ------------------------------------------------------------------- | -------------------------------------------------------- |
+| Hace `fetch` a `quizQuestions.json`                                 | La fuente de datos correcta es consultada                |
+| Llama a `loadDirect` con exactamente 15 cards (banco de 20)         | Se seleccionan exactamente 15 preguntas                  |
+| Las cards transformadas tienen `answer=options[correct]`            | La transformación de pregunta a flashcard es correcta    |
+| Las cards tienen los campos `id`, `category`, `topic`, `difficulty` | La transformación incluye todos los metadatos necesarios |
+| No llama a `api.get` cuando no hay `pdfIds` en la ruta              | Sin PDF, no se hace ninguna llamada autenticada          |
+| Carga todas las preguntas si el banco tiene menos de 15             | Se adapta al tamaño real del banco                       |
+| Llama a `loadDirect` con array vacío si `fetch` lanza error         | El error de red se captura sin propagar                  |
+| No propaga el error si `fetch` falla                                | La app no se rompe ante fallos de red                    |
+
+**Carga con `pdfId` / `pdfIds` en query params**
+
+| Test                                                             | Qué comprueba                                        |
+| ---------------------------------------------------------------- | ---------------------------------------------------- |
+| `?pdfId=42` llama a `api.get` con la ruta correcta               | La URL de la API del PDF es correcta                 |
+| `?pdfId=42` NO incluye el banco de `quizQuestions`               | Con PDF, no se mezclan fuentes salvo que se pida     |
+| `?pdfId=42` carga las cards del PDF en `loadDirect`              | Las cards del PDF se entregan al session manager     |
+| `?pdfId=42&includePredefined=true` incluye ambas fuentes         | La combinación de PDF + banco funciona (2 + 15 = 17) |
+| `?pdfIds=1,2` hace dos llamadas a la API                         | Múltiples PDFs generan múltiples peticiones          |
+| La API del PDF devuelve `data` no-array → trata como array vacío | Respuesta malformada del backend no rompe la app     |
+| La API del PDF falla (401) → continúa sin propagar error         | Error de autenticación no bloquea la carga           |
+
+**Interacción: mark-correct y mark-wrong**
+
+| Test                                                                           | Qué comprueba                                                             |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `mark-correct` llama a `trackAnswer` con `isCorrect=true` y los datos del item | El tracking de categoría recibe el dato correcto al marcar como sabido    |
+| `mark-wrong` llama a `trackAnswer` con `isCorrect=false` y los datos del item  | El tracking de categoría recibe el dato correcto al marcar como no sabido |
+| `mark-correct` llama a `next` para avanzar                                     | Marcar correcto avanza la sesión                                          |
+| `mark-wrong` también llama a `next` para avanzar                               | Marcar incorrecto también avanza la sesión                                |
+| `flip` alterna `isFlipped` de `false` a `true`                                 | El estado de volteo se gestiona correctamente                             |
+| `isFlipped` se resetea a `false` al avanzar a la siguiente carta               | La nueva carta siempre empieza por el anverso                             |
+| `trackAnswer` no es llamado antes de marcar                                    | No se registran respuestas antes de la interacción del usuario            |
+
+**Último item: `submitSession` y `grantReward`**
+
+| Test                                                                           | Qué comprueba                                                                |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| En el último item, llama a `submitSession` y `grantReward`                     | Al terminar la sesión se guardan stats y se otorga recompensa                |
+| `submitSession` se llama antes que `grantReward`                               | El orden correcto: primero guardar, luego recompensar                        |
+| En items intermedios, `submitSession` y `grantReward` NO se llaman             | No se finaliza la sesión prematuramente                                      |
+| `mark-wrong` también dispara `submitSession` y `grantReward` en el último item | El comportamiento al finalizar es igual independientemente del botón pulsado |
+| Con banco de una pregunta, la primera carta ya es la última                    | `isLastItem=true` desde el inicio funciona correctamente                     |
+
+**Reinicio**
+
+| Test                                                  | Qué comprueba                                                           |
+| ----------------------------------------------------- | ----------------------------------------------------------------------- |
+| `restart` llama a `resetSession` y reinicia la sesión | Al reiniciar se limpia el tracking de la sesión anterior                |
+| Después del reinicio, `isFlipped` vuelve a `false`    | La carta reiniciada empieza por el anverso                              |
+| `resetSession` se llama antes que `restart`           | El orden correcto: primero limpiar stats, luego reiniciar la navegación |
+
+---
+
 ## Correcciones de errores — 08/04
 
 ### Pantalla en blanco al entrar al Quiz con PDFs
@@ -800,7 +1005,6 @@ Recomendaciones futuras
 
 - Añadir pruebas de integración que cubran la interacción completa entre `Quiz.vue` y el backend (endpoints `/api/pdfs/:id/quiz` y `/games/adaptive-quiz`).
 - Integrar un pipeline CI que ejecute `npm test` para evitar regresiones automáticas.
-
 
 ---
 

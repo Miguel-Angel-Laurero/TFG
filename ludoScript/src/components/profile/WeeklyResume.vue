@@ -2,35 +2,23 @@
     <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
         <h2 class="text-white font-semibold text-base mb-1">Resumen semanal</h2>
         <p class="text-white/50 text-xs mb-4">
-            Progreso acumulado de las ultimas 7 sesiones de Quiz.
+            Progreso acumulado de las ultimas 7 sesiones de Quiz y Flashcards.
         </p>
         <div v-if="!hasWeekly" class="text-center py-6 text-white/40 text-sm">
             Sin actividad esta semana. Completa un Quiz para ver tu progreso.
         </div>
         <div v-else class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <button
-                v-for="cat in weeklyCategories"
-                :key="cat.key"
+            <button v-for="cat in weeklyCategories" :key="cat.key"
                 class="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/25 hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                 :title="`${cat.label}: ${cat.percent}% esta semana (${cat.total} preguntas)`"
-                :aria-label="`${cat.label}: ${cat.percent}% de aciertos esta semana.`"
-                @click="goToReview(cat.key)"
-            >
+                :aria-label="`${cat.label}: ${cat.percent}% de aciertos esta semana.`" @click="goToReview(cat.key)">
                 <div class="relative w-14 h-14">
                     <svg viewBox="0 0 44 44" class="w-full h-full -rotate-90">
                         <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4" />
-                        <circle
-                            cx="22"
-                            cy="22"
-                            r="18"
-                            fill="none"
-                            :stroke="cat.color"
-                            stroke-width="4"
-                            stroke-linecap="round"
-                            :stroke-dasharray="CIRCUMFERENCE"
+                        <circle cx="22" cy="22" r="18" fill="none" :stroke="cat.color" stroke-width="4"
+                            stroke-linecap="round" :stroke-dasharray="CIRCUMFERENCE"
                             :stroke-dashoffset="cat.total > 0 ? CIRCUMFERENCE * (1 - cat.percent / 100) : CIRCUMFERENCE"
-                            class="transition-all duration-700"
-                        />
+                            class="transition-all duration-700" />
                     </svg>
                     <div class="absolute inset-0 flex items-center justify-center">
                         <span class="text-[10px] font-bold text-white">

@@ -5,7 +5,8 @@
       message="Has terminado todas las preguntas del temario. Sigue practicando para afianzar el contenido."
       restart-label="Volver al principio" @restart="handleRestart" />
     <FlashCardDeck v-else :card="currentItem" :current-index="currentIndex" :total-items="totalItems"
-      :is-flipped="isFlipped" :is-last-item="isLastItem" @flip="toggleFlip" @next="handleNext" />
+      :is-flipped="isFlipped" :is-last-item="isLastItem" @flip="toggleFlip" @mark-correct="handleMarkCorrect"
+      @mark-wrong="handleMarkWrong" />
   </div>
 </template>
 
@@ -14,58 +15,108 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useActivitySession } from '@/composables/useActivitySession'
 import { useActivityReward } from '@/composables/useActivityReward'
+import { useCategoryStats } from '@/composables/useCategoryStats'
+import api from '@/api/axios'
 import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import FlashCardDeck from './FlashCardDeck.vue'
 import { useLoadingTimer } from '@/composables/useLoadingTimer'
-
+import { toFlashCard, pickRandom, QUIZ_URL, FLASH_CARDS_PER_SESSION } from '@/composables/useFlashCardLoader'
 
 const route = useRoute()
 
-// Construir la lista de URLs de flashcards según los query params.
-// - ?pdfIds=1,2,3  → una URL por PDF (autenticada)
-// - ?pdfId=1       → un único PDF
-// - ?includePredefined=true → añadir el JSON estático del sistema
-// Si no hay ningún PDF, usar directamente el JSON estático.
-const _fcUrls = route.query.pdfIds
-? route.query.pdfIds.split(',').map(id => `/api/pdfs/${id}/flashcards`)
-: route.query.pdfId
-? [`/api/pdfs/${route.query.pdfId}/flashcards`]
-: []
-if (route.query.includePredefined === 'true') {
-  _fcUrls.push('/flashCards.json')
-}
-const flashCardsUrl = _fcUrls.length > 0 ? _fcUrls : '/flashCards.json'
-
 const {
-  loading, finished, currentIndex, currentItem, totalItems, isLastItem,
-  load, next, restart,
-} = useActivitySession(flashCardsUrl)
+  finished, currentIndex, currentItem, totalItems, isLastItem,
+  loadDirect, next, restart,
+} = useActivitySession(QUIZ_URL)
+
 const loadingManual = ref(true)
 const { withMinTime } = useLoadingTimer(loadingManual, 3000)
 
-onMounted(async() => {
-  await withMinTime(load) // Pasa la función directamente
+async function loadFlashCards() {
+  const cards = []
+
+  // Cards de PDFs autenticados
+  const pdfIds = route.query.pdfIds
+    ? route.query.pdfIds.split(',')
+    : route.query.pdfId
+      ? [route.query.pdfId]
+      : []
+
+  for (const id of pdfIds) {
+    try {
+      const res = await api.get(`/pdfs/${id}/flashcards`)
+      const data = Array.isArray(res.data) ? res.data : []
+      cards.push(...data.map(fc => ({
+        question: fc.question,
+        answer: fc.answer,
+        id: fc.id ?? null,
+        category: fc.category ?? null,
+        topic: fc.topic ?? null,
+        difficulty: fc.difficulty ?? null,
+      })))
+    } catch (e) {
+      console.error(`[FlashCard] Error cargando PDF ${id}:`, e)
+    }
+  }
+
+  // Cards del banco de preguntas del Quiz (incluidas si no hay PDFs o si se pide explícitamente)
+  const includeQuiz = pdfIds.length === 0 || route.query.includePredefined === 'true'
+  if (includeQuiz) {
+    try {
+      const res = await fetch(QUIZ_URL)
+      const allQ = await res.json()
+      const selected = pickRandom(allQ, Math.min(FLASH_CARDS_PER_SESSION, allQ.length))
+      cards.push(...selected.map(toFlashCard))
+    } catch (e) {
+      console.error('[FlashCard] Error cargando banco de preguntas:', e)
+    }
+  }
+
+  await loadDirect(cards)
+}
+
+onMounted(async () => {
+  await withMinTime(loadFlashCards)
 })
 
-const { earnedReward, grantReward } = useActivityReward({ base: 25 })
+// — Recompensas —
+const { grantReward } = useActivityReward({ base: 25 })
 
+// — Tracking de progreso por categoría —
+const { trackAnswer, submitSession, resetSession } = useCategoryStats()
+
+// — Estado local —
 const isFlipped = ref(false)
 
 function toggleFlip() {
   isFlipped.value = !isFlipped.value
 }
 
-async function handleNext() {        // 👈 async
+async function handleNext() {
   if (isLastItem.value) {
-    await grantReward()              // 👈 otorga la recompensa en el último item
+    await submitSession()
+    await grantReward()
   }
   next(() => {
     isFlipped.value = false
   })
 }
 
+function handleMarkCorrect() {
+  const item = currentItem.value
+  trackAnswer(item.category, true, item.id, item.difficulty, item.topic)
+  handleNext()
+}
+
+function handleMarkWrong() {
+  const item = currentItem.value
+  trackAnswer(item.category, false, item.id, item.difficulty, item.topic)
+  handleNext()
+}
+
 function handleRestart() {
+  resetSession()
   restart(() => {
     isFlipped.value = false
   })

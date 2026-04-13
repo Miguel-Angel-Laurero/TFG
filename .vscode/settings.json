@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd \"D:\\\\FP\\\\2º DAW\\\\TFG\\\\ludoScript\" ; npx vitest run --reporter=verbose 2>&1$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
