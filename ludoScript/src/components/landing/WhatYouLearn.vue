@@ -76,7 +76,7 @@
       <div class="flex flex-col md:flex-row-reverse items-center gap-12">
         <div class="flex-1">
           <img
-            src=""
+            src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/landing/retos_ejercicios.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbGFuZGluZy9yZXRvc19lamVyY2ljaW9zLnBuZyIsImlhdCI6MTc3NjA5MzgyNiwiZXhwIjoxODA3NjI5ODI2fQ.SX3oGOn1C4d6bLsbkPfq8gvN8IQM9AQjlG8cLQXeciE"
             alt="Retos y ejercicios"
             class="w-full rounded-2xl object-contain mask-l-from-60% mask-l-to-100% mask-r-from-95% mask-r-to-100% mask-y-from-95% mask-y-to-100%"
           >

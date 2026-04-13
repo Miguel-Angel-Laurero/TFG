@@ -25,3 +25,7 @@ En la pestaña de editar perfil avatar debe mostrar el icono de perfil y el bann
 editProfileView --> carga editProfileContent (avatar, nombre usuario etc) --> selector de avatar --> listado iconos
 
 Debe salir una ventana para poder cambiar los iconos
+
+Varias imagenes de la aplicacion se cargan con la ruta del storage de supabase en vez de pedirse a la base de datos
+
+Hay que hacer responsive el menu de selectores de la tienda y tambien el componente de AvatarProfile

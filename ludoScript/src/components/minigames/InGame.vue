@@ -1,43 +1,47 @@
 <template>
-  <div class="relative w-full h-full">
+  <div class="relative w-full min-h-screen overflow-x-hidden">
 
-    <!-- Confeti ocupa todo el contenedor padre -->
     <ConfettiBackground v-if="gameFinished" style="position: absolute; inset: 0; z-index: 0; pointer-events: none;" />
 
-    <!-- Contenido encima del confeti -->
-    <div style="position: relative; z-index: 1;">
+    <div class="relative z-10 flex flex-col min-h-screen">
 
-      <div class="w-full flex items-center p-4">
-        <div class="flex-1 flex justify-start">
-          <!-- During intro or game: exit with confirmation -->
+      <header class="w-full flex flex-col md:flex-row items-center gap-4 p-4">
+        <div class="flex-1 w-full flex justify-center md:justify-start order-2 md:order-1">
           <button v-if="!gameFinished" @click="confirmExit"
-            class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors">
-            Salir del minijuego
+            class="w-full md:w-auto bg-red-500 text-white px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-bold hover:bg-red-600 transition-colors text-sm md:text-base shadow-lg">
+            Salir del juego
           </button>
-          <!-- After game: go home without confirmation -->
           <button v-if="gameFinished" @click="$router.push('/')"
-            class="px-6 py-3 rounded-xl font-bold transition-colors text-blue-300 bg-blue-900/40 border border-blue-700/50 hover:bg-blue-800/50">
+            class="w-full md:w-auto px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-bold transition-colors text-blue-300 bg-blue-900/40 border border-blue-700/50 hover:bg-blue-800/50 text-sm md:text-base">
             Volver al inicio
           </button>
         </div>
-        <div class="flex-1 flex justify-center">
-          <ProgressBar v-if="!showIntro" :value="progress" :show-value="false" class="h-4 w-full max-w-2xl" />
-        </div>
-        <div class="flex-1" />
-      </div>
 
-      <div class="w-full p-4 flex flex-col items-center">
-        <div class="w-full flex justify-center">
+        <div class="flex-1 w-full flex justify-center order-1 md:order-2">
+          <ProgressBar v-if="!showIntro" :value="progress" :show-value="false" class="h-3 md:h-4 w-full max-w-lg" />
+        </div>
+
+        <div class="hidden md:flex flex-1 order-3" />
+      </header>
+
+      <main class="w-full p-2 md:p-6 flex flex-col items-center flex-1">
+        <div class="w-full max-w-5xl flex justify-center">
           <QuizIntro v-if="showIntro" @start="handleQuizStart" />
           <template v-else>
-            <component v-if="selectedGame" :is="selectedGame" v-bind="quizProps"
-              :key="`${route.query.game}-${route.query.pdfIds ?? route.query.pdfId ?? ''}`" />
-            <div v-else class="text-gray-400 mt-10">
-              No se ha encontrado el juego: {{ route.query.game }}
+            <component 
+              v-if="selectedGame" 
+              :is="selectedGame" 
+              v-bind="quizProps"
+              class="w-full"
+              :key="`${route.query.game}-${route.query.pdfIds ?? route.query.pdfId ?? ''}`" 
+            />
+            <div v-else class="text-gray-400 mt-10 flex flex-col items-center">
+              <i class="pi pi-exclamation-triangle text-4xl mb-2"></i>
+              <p>No se ha encontrado el juego: {{ route.query.game }}</p>
             </div>
           </template>
         </div>
-      </div>
+      </main>
 
     </div>
   </div>
@@ -58,11 +62,8 @@ const route = useRoute()
 const { progress, gameFinished, resetProgress } = useGameProgress()
 const { confirmExit } = useGameExit()
 
-// Show rules intro only for Quiz
 const showIntro = ref(route.query.game === 'Quiz')
 
-// Reset progress on every mount so stale gameFinished from a previous session
-// does not bleed into the intro screen (confetti bug).
 onMounted(() => resetProgress())
 
 const games = {
@@ -71,7 +72,6 @@ const games = {
 }
 
 const selectedGame = computed(() => games[route.query.game] ?? null)
-
 const quizProps = computed(() => ({}))
 
 function handleQuizStart() {

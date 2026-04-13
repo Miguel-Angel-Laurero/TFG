@@ -40,5 +40,13 @@ const { slotSize, cardWidth, cardHeight } = useAvatarSize(containerRef, {
     feet:     { w: 70,   h: 60  },
 })
 
-onMounted(() => store.fetchItems())
+onMounted(async () => {
+    // Si la página se recarga, el store se vacía. 
+    // Llamamos a fetch siempre para asegurar que la data esté fresca.
+    try {
+        await store.fetchItems()
+    } catch (error) {
+        console.error("Error cargando inventario al recargar:", error)
+    }
+})
 </script>
