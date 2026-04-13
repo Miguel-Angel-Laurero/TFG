@@ -20,11 +20,11 @@
         </div>
 
         <button @click="handleCreate" :disabled="loading"
-            class="w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-xl hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            class="w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-xl cursor-pointer hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all ">
             {{ loading ? 'Creando…' : 'Crear sala' }}
         </button>
 
-        <button @click="emit('cancel')" class="text-white/50 hover:text-white text-sm transition-colors">
+        <button @click="emit('cancel')" class="text-white/50 cursor-pointer hover:text-white text-sm transition-colors">
             Cancelar
         </button>
     </div>

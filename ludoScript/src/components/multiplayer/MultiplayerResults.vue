@@ -63,7 +63,7 @@
         </div>
 
         <button @click="handleBack"
-            class="w-full bg-white text-gray-900 font-bold py-3 rounded-xl hover:bg-gray-100 transition-all mt-2">
+            class="w-full bg-white text-gray-900 font-bold py-3 rounded-xl hover:bg-gray-100 transition-all mt-2 cursor-pointer">
             Volver al inicio
         </button>
     </div>

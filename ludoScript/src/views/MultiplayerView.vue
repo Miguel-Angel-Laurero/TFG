@@ -24,15 +24,15 @@
                         </div>
                         <div class="flex flex-col gap-4 w-full">
                             <button @click="subView = 'create'"
-                                class="w-full bg-yellow-400 text-gray-900 font-bold py-4 rounded-2xl text-lg hover:bg-yellow-300 transition-all">
+                                class="w-full bg-yellow-400 text-gray-900 font-bold py-4 rounded-2xl text-lg cursor-pointer hover:bg-yellow-300 transition-all">
                                 🏠 Crear sala
                             </button>
                             <button @click="subView = 'join'"
-                                class="w-full bg-white/10 border border-white/20 text-white font-bold py-4 rounded-2xl text-lg hover:bg-white/20 transition-all">
+                                class="w-full bg-white/10 border border-white/20 text-white font-bold py-4 rounded-2xl text-lg cursor-pointer hover:bg-white/20 transition-all">
                                 🚪 Unirse con código
                             </button>
                             <button @click="router.push('/')"
-                                class="text-white/40 hover:text-white/60 text-sm text-center mt-2 transition-colors">
+                                class="text-white/40 cursor-pointer hover:text-white/60 text-sm text-center mt-2 transition-colors">
                                 ← Volver al inicio
                             </button>
                         </div>
