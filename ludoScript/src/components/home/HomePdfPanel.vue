@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between flex-shrink-0">
             <h3 class="text-lg font-semibold text-gray-50">Documentos</h3>
 
-            <!-- BotÃ³n de subida compacto: solo visible cuando ya hay PDFs subidos -->
+            <!-- Botón de subida compacto: solo visible cuando ya hay PDFs subidos -->
             <label v-if="!loading && pdfs.length > 0" :class="[
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer',
                 uploading
@@ -55,14 +55,14 @@
             </div>
         </div>
 
-        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-             SECCIÃ“N: PREDEFINIDOS
-        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <!-- ═══════════════════════════════════════════════
+             SECCIÓN: PREDEFINIDOS
+        ════════════════════════════════════════════════ -->
         <div class="flex flex-col gap-2 flex-shrink-0">
-            <!-- Cabecera de categorÃ­a -->
+            <!-- Cabecera de categoría -->
             <div class="flex items-center gap-2 cursor-pointer select-none"
                 @click="selectedPredefined = !selectedPredefined">
-                <!-- Checkbox de categorÃ­a -->
+                <!-- Checkbox de categoría -->
                 <div :class="[
                     'w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors',
                     selectedPredefined ? 'bg-indigo-500 border-indigo-500' : 'border-slate-500'
@@ -103,15 +103,15 @@
             </div>
         </div>
 
-        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-             SECCIÃ“N: APUNTES SUBIDOS
-        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <!-- ═══════════════════════════════════════════════
+             SECCIÓN: APUNTES SUBIDOS
+        ════════════════════════════════════════════════ -->
         <div class="flex flex-col gap-2 flex-1 min-h-0">
-            <!-- Cabecera de categorÃ­a -->
+            <!-- Cabecera de categoría -->
             <div class="flex items-center gap-2 flex-shrink-0"
                 :class="pdfs.length > 0 ? 'cursor-pointer select-none' : ''"
                 @click="pdfs.length > 0 && toggleAllUploaded()">
-                <!-- Checkbox de categorÃ­a (solo activo si hay PDFs) -->
+                <!-- Checkbox de categoría (solo activo si hay PDFs) -->
                 <div :class="[
                     'w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors',
                     allUploadedSelected
@@ -125,7 +125,7 @@
                         <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
-                    <!-- Algunos seleccionados: guiÃ³n -->
+                    <!-- Algunos seleccionados: guión -->
                     <svg v-else-if="someUploadedSelected" class="w-2.5 h-2.5 text-white" fill="none"
                         viewBox="0 0 10 10">
                         <path d="M2 5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -136,7 +136,7 @@
 
             <!-- Estado: cargando -->
             <div v-if="loading" class="flex justify-center py-4 ml-6">
-                <span class="animate-spin text-indigo-400 text-xl">â³</span>
+                <span class="animate-spin text-indigo-400 text-xl">⏳</span>
             </div>
 
             <!-- Estado: sin archivos subidos -->
@@ -144,9 +144,9 @@
                 <!-- Aviso tipo recordatorio -->
                 <div
                     class="ml-6 flex items-start gap-2 bg-amber-950/60 border border-amber-500/30 rounded-lg px-3 py-2.5">
-                    <span class="text-amber-400 text-sm flex-shrink-0 mt-0.5">ðŸ’¡</span>
+                    <span class="text-amber-400 text-sm flex-shrink-0 mt-0.5">💡</span>
                     <p class="text-xs italic text-amber-300/90 leading-relaxed">
-                        Para repasar con tus propios apuntes, sÃºbelos usando el botÃ³n de abajo.
+                        Para repasar con tus propios apuntes, súbelos usando el botón de abajo.
                     </p>
                 </div>
 
@@ -158,7 +158,7 @@
                         ? 'border-indigo-400/50 bg-indigo-500/5 cursor-not-allowed'
                         : 'border-slate-600/70 hover:border-indigo-500/60 hover:bg-indigo-500/5'
                 ]">
-                    <span v-if="uploading" class="text-2xl animate-spin">â³</span>
+                    <span v-if="uploading" class="text-2xl animate-spin">⏳</span>
                     <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -200,7 +200,7 @@
                         </p>
                         <p class="text-gray-400 text-xs mt-0.5">{{ formatDate(pdf.createdAt) }}</p>
                     </div>
-                    <!-- BotÃ³n borrar -->
+                    <!-- Botón borrar -->
                     <button @click.stop="confirmDelete(pdf)"
                         class="flex-shrink-0 text-red-400 hover:text-red-300 transition-colors p-1 leading-none"
                         title="Eliminar PDF">
@@ -214,7 +214,7 @@
                             <path d="M14 10.25v5.5" />
                         </svg>
                     </button>
-                    <!-- BotÃ³n guardar en la nube / indicador de guardado -->
+                    <!-- Botón guardar en la nube / indicador de guardado -->
                     <button v-if="pdfLocalStatus[pdf.id]?.hasLocal && !pdfLocalStatus[pdf.id]?.savedToCloud"
                         @click.stop="handleSaveToCloud(pdf)" :disabled="pdfLocalStatus[pdf.id]?.saving"
                         :title="pdfLocalStatus[pdf.id]?.saving ? 'Guardando...' : 'Guardar en la nube'"
@@ -248,7 +248,7 @@
             </ul>
         </div>
 
-        <!-- Modal de confirmaciÃ³n de borrado -->
+        <!-- Modal de confirmación de borrado -->
         <div v-if="pendingDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
             @click.self="pendingDelete = null">
             <div class="bg-slate-800 rounded-xl shadow-2xl p-6 w-80 flex flex-col gap-4">
@@ -287,7 +287,7 @@ import {
     markPdfAsSavedToCloud,
 } from '@/composables/useAdaptiveSelection'
 
-// â”€â”€â”€ Estado â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Estado ──────────────────────────────────────────────────────────────────
 const pdfs = ref([])
 const loading = ref(true)
 const uploading = ref(false)
@@ -302,14 +302,14 @@ const router = useRouter()
 // Estado local por PDF: { [id]: { hasLocal, savedToCloud, saving, saveError } }
 const pdfLocalStatus = ref({})
 
-// IDs de PDFs seleccionados â€” compartido con el padre via v-model
+// IDs de PDFs seleccionados — compartido con el padre via v-model
 const selectedFiles = defineModel('selectedFiles', { default: () => [] })
-// NÃºmero total de PDFs â€” para que GameGrid pueda mostrar el tooltip
+// Número total de PDFs — para que GameGrid pueda mostrar el tooltip
 const pdfCount = defineModel('pdfCount', { default: 0 })
-// Si el contenido predefinido estÃ¡ seleccionado â€” compartido con el padre via v-model
+// Si el contenido predefinido está seleccionado — compartido con el padre via v-model
 const selectedPredefined = defineModel('selectedPredefined', { default: true })
 
-// â”€â”€â”€ Estado del checkbox de categorÃ­a "Apuntes" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Estado del checkbox de categoría "Apuntes" ───────────────────────────────
 const allUploadedSelected = computed(() =>
     pdfs.value.length > 0 && pdfs.value.every(p => selectedFiles.value.includes(p.id))
 )
@@ -353,7 +353,7 @@ function toggleAllUploaded() {
     }
 }
 
-// â”€â”€â”€ Carga inicial â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Carga inicial ────────────────────────────────────────────────────────────
 onMounted(fetchPdfs)
 
 async function fetchPdfs() {
@@ -379,7 +379,7 @@ async function fetchPdfs() {
     }
 }
 
-// â”€â”€â”€ SelecciÃ³n mÃºltiple â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Selección múltiple ───────────────────────────────────────────────────────
 function toggleSelect(id) {
     if (selectedFiles.value.includes(id)) {
         selectedFiles.value = selectedFiles.value.filter(x => x !== id)
@@ -388,7 +388,7 @@ function toggleSelect(id) {
     }
 }
 
-// â”€â”€â”€ Subida de PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Subida de PDF ────────────────────────────────────────────────────────────
 async function handleFileChange(event) {
     const file = event.target.files?.[0]
     if (!file) return
@@ -418,8 +418,8 @@ async function handleFileChange(event) {
         // Guardar las 50 preguntas y 20 flashcards en localStorage
         // y calcular 15 IDs activos aleatorios
         savePdfQuestionsToStorage(id, quizQuestions, flashCards)
-        // La primera subida ya se guarda automÃ¡ticamente en la nube (BD);
-        // marcar el flag local para que no aparezca el icono de sincronizaciÃ³n.
+        // La primera subida ya se guarda automáticamente en la nube (BD);
+        // marcar el flag local para que no aparezca el icono de sincronización.
         markPdfAsSavedToCloud(id)
 
         pdfs.value.unshift({ id, originalName, createdAt })
@@ -433,15 +433,15 @@ async function handleFileChange(event) {
             saveError: null,
         }
 
-        // Auto-seleccionar el PDF reciÃ©n subido
+        // Auto-seleccionar el PDF recién subido
         selectedFiles.value = [id, ...selectedFiles.value]
     } catch (err) {
         if (axios.isCancel(err) || err.code === 'ERR_CANCELED') {
-            uploadError.value = 'La subida se cancelÃ³ antes de terminar.'
+            uploadError.value = 'La subida se canceló antes de terminar.'
         } else if (err.code === 'ECONNABORTED') {
-            uploadError.value = 'La peticiÃ³n tardÃ³ demasiado. El archivo puede haberse enviado, pero el procesado no terminÃ³ a tiempo.'
+            uploadError.value = 'La petición tardó demasiado. El archivo puede haberse enviado, pero el procesado no terminó a tiempo.'
         } else if (!err.response) {
-            uploadError.value = 'No se pudo completar la conexiÃ³n con el servidor durante la subida.'
+            uploadError.value = 'No se pudo completar la conexión con el servidor durante la subida.'
         } else if (err.response?.data?.code === 'GEMINI_UNAVAILABLE') {
             uploadFallbackMode.value = err.response?.data?.fallbackMode ?? null
             uploadError.value = 'Ahora mismo no se pueden generar preguntas desde PDF. Puedes seguir practicando con el modo tutorial local.'
@@ -469,7 +469,7 @@ function goToTutorialLocalMode() {
     })
 }
 
-// â”€â”€â”€ Borrado â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Borrado ──────────────────────────────────────────────────────────────────
 function confirmDelete(pdf) {
     pendingDelete.value = pdf
 }
@@ -492,7 +492,7 @@ async function handleDelete() {
     }
 }
 
-// â”€â”€â”€ Guardar en la nube â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Guardar en la nube ───────────────────────────────────────────────────────
 async function handleSaveToCloud(pdf) {
     const status = pdfLocalStatus.value[pdf.id]
     if (!status?.hasLocal || status.saving) return
@@ -516,7 +516,7 @@ async function handleSaveToCloud(pdf) {
     }
 }
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatDate(isoDate) {
     return new Date(isoDate).toLocaleDateString('es-ES', {
         day: '2-digit', month: 'short', year: 'numeric',
