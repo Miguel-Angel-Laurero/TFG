@@ -4,46 +4,59 @@
   <!-- Calculando puntuación tras la última respuesta -->
   <div v-else-if="calculating"
     class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-slate-900/95">
-    <ProgressSpinner
-      style="width: 80px; height: 80px"
-      strokeWidth="6"
-      fill="transparent"
-      animationDuration=".8s"
-      aria-label="Calculando puntuación"
-    />
+    <ProgressSpinner style="width: 80px; height: 80px" strokeWidth="6" fill="transparent" animationDuration=".8s"
+      aria-label="Calculando puntuación" />
     <p class="text-white/80 text-lg font-semibold tracking-wide animate-pulse">
       Calculando puntuación…
     </p>
   </div>
 
   <ActivityFinished v-else-if="finished" title="Resultado final" restart-label="Volver a intentarlo"
-    :earned-reward="earnedReward" :rank-label="rankLabel" :rank-color="rankColor" @restart="handleRestart">
+    :earned-reward="earnedReward" :rank-label="rankLabel" :rank-color="rankColor" :hero-score="scoreFormatted"
+    @restart="handleRestart">
     <template #extra>
-      <div class="grid grid-cols-3 gap-4 text-white">
-        <div class="bg-emerald-500/30 rounded-2xl p-4">
-          <p class="text-3xl font-bold">{{ correctCount }}</p>
-          <p class="text-sm mt-1 text-emerald-200">Correctas</p>
+      <!-- Stats: cajas glassmorphism con colores intensos -->
+      <div class="grid grid-cols-3 gap-3 text-white">
+        <div class="bg-emerald-500/20 border border-emerald-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
+          <p class="text-3xl font-black text-emerald-300 tracking-tight">{{ correctCount }}</p>
+          <p class="text-[0.6rem] uppercase tracking-widest text-emerald-400/70">Correctas</p>
         </div>
-        <div class="bg-red-500/30 rounded-2xl p-4">
-          <p class="text-3xl font-bold">{{ wrongCount }}</p>
-          <p class="text-sm mt-1 text-red-200">Incorrectas</p>
+        <div class="bg-red-500/20 border border-red-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
+          <p class="text-3xl font-black text-red-300 tracking-tight">{{ wrongCount }}</p>
+          <p class="text-[0.6rem] uppercase tracking-widest text-red-400/70">Incorrectas</p>
         </div>
-        <div class="bg-gray-500/30 rounded-2xl p-4">
-          <p class="text-3xl font-bold">{{ unansweredCount }}</p>
-          <p class="text-sm mt-1 text-gray-300">Sin responder</p>
+        <div class="bg-white/[0.06] border border-white/[0.08] rounded-2xl p-4 flex flex-col items-center gap-1">
+          <p class="text-3xl font-black text-white/50 tracking-tight">{{ unansweredCount }}</p>
+          <p class="text-[0.6rem] uppercase tracking-widest text-white/25">Sin resp.</p>
         </div>
       </div>
 
-      <div class="bg-white/20 rounded-2xl p-6">
-        <p class="text-white/70 text-sm mb-1">Puntuación (cada 3 errores descuestan 1 acierto)</p>
-        <p class="text-6xl font-extrabold" :class="scoreColor">{{ scoreFormatted }}</p>
-        <p class="text-white/60 text-xs mt-2">sobre {{ totalItems }} puntos máximos</p>
-      </div>
+      <!-- Botón adaptativo: visible siempre, desbloqueado tras 3 partidas desde el último uso -->
+      <div class="flex flex-col gap-2">
+        <!-- Progreso hacia el desbloqueo -->
+        <div v-if="!canUseAdaptive" class="bg-white/10 rounded-xl px-4 py-3">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-white/70 text-xs font-medium">Desbloquear modo adaptativo</span>
+            <span class="text-white font-bold text-sm">
+              {{ historyLoading ? '…' : gamesSinceLastAdaptive }}<span class="text-white/50 font-normal">/3
+                partidas</span>
+            </span>
+          </div>
+          <div class="w-full bg-white/10 rounded-full h-2">
+            <div class="bg-indigo-400 h-2 rounded-full transition-all duration-500"
+              :style="{ width: historyLoading ? '0%' : `${Math.min(100, (gamesSinceLastAdaptive / 3) * 100)}%` }" />
+          </div>
+        </div>
 
-      <button v-if="weakCategoriesAfterQuiz.length" @click="goToAdaptiveQuizFromResults"
-        class="w-full py-3 px-8 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all">
-        🎯 Generar nuevas preguntas
-      </button>
+        <button @click="handleAdaptiveClick" :disabled="!canUseAdaptive" :class="[
+          'w-full py-3 px-8 rounded-xl font-bold transition-all',
+          canUseAdaptive
+            ? 'bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer'
+            : 'bg-white/10 text-white/40 cursor-not-allowed'
+        ]">
+          🎯 Practicar categorías débiles
+        </button>
+      </div>
     </template>
   </ActivityFinished>
 
@@ -79,11 +92,19 @@
     <QuizQuestion v-else :question="currentItem" :current-index="currentIndex" :total-items="totalItems"
       :selected-answer="selectedAnswer" :answered="answered" :is-last-item="isLastItem" @select="selectAnswer"
       @next="handleNext" />
+
+    <!-- DEV ONLY: eliminar antes de la presentación -->
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
+      <button @click="devSkipToResults"
+        class="flex items-center gap-2 bg-orange-500/90 hover:bg-orange-400 text-white text-xs font-mono font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur border border-orange-300/30 transition-all">
+        ⚡ DEV — Saltar a resultados
+      </button>
+    </div>
   </template>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // ─── Props de dificultad (pasados desde InGame.vue vía QuizIntro)
@@ -102,6 +123,7 @@ import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import QuizQuestion from './QuizQuestion.vue'
 import { useLoadingTimer } from '@/composables/useLoadingTimer'
+import { useAdaptiveHistory } from '@/composables/useAdaptiveHistory'
 import ProgressSpinner from 'primevue/progressspinner'
 
 const route = useRoute()
@@ -170,6 +192,16 @@ const { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor } 
 
 const score = computed(() => Math.max(0, correctCount.value - wrongCount.value / 3))
 
+// Historial y desbloqueo adaptativo
+const { history: quizHistory, canUseAdaptive, remainingGames, gamesSinceLastAdaptive, historyLoading, loadHistory, markAdaptiveUsed, timeAgo } = useAdaptiveHistory('Quiz')
+
+watch(finished, (v) => { if (v) loadHistory() })
+
+function handleAdaptiveClick() {
+  markAdaptiveUsed()
+  goToAdaptiveQuizFromResults()
+}
+
 // Inicialización: respetamos el timer de carga mínimo
 onMounted(async () => {
   await withMinTime(async () => {
@@ -177,4 +209,17 @@ onMounted(async () => {
     initResults(totalItems.value)
   })
 })
+
+// ─── DEV ONLY — eliminar antes de la presentación ────────────────────────────
+async function devSkipToResults() {
+  const total = totalItems.value
+  if (!total) return
+  // Simular una partida con ~60% de aciertos
+  results.value = Array.from({ length: total }, (_, i) => i % 5 !== 0)
+  currentIndex.value = total - 1
+  selectedAnswer.value = 1
+  answered.value = true
+  await handleNext()
+}
+// ─────────────────────────────────────────────────────────────────────────────
 </script>

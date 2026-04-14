@@ -1,31 +1,52 @@
 <template>
-  <div class="flex flex-col items-center gap-6 p-10 w-full max-w-2xl mx-auto">
-    <div class="bg-white/10 backdrop-blur rounded-3xl p-10 w-full text-center flex flex-col gap-6 shadow-2xl">
+  <div class="flex flex-col items-center p-6 w-full max-w-xl mx-auto">
+    <div
+      class="results-card bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-2xl border border-white/[0.12] rounded-[2rem] w-full overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)]">
 
-      <h1 class="text-4xl font-bold text-white">{{ title }}</h1>
-      <p v-if="message" class="text-white/70 text-sm">{{ message }}</p>
-
-      <!-- Contenido específico de la actividad (ej. puntuación del Quiz) -->
-      <slot name="extra cursor-pointer" />
-
-      <!-- Recompensa obtenida -->
-      <div v-if="earnedReward > 0" class="bg-yellow-400/20 rounded-2xl p-5 flex flex-col items-center gap-1">
-        <p class="text-white/70 text-sm">Recompensa obtenida</p>
-        <p class="text-4xl font-extrabold text-yellow-300">+{{ earnedReward }} 🪙</p>
-        <p v-if="rankLabel" class="text-sm font-semibold mt-1" :class="rankColor">
-          {{ rankLabel }}
-        </p>
+      <!-- Cabecera con título -->
+      <div class="px-10 pt-10 pb-2 text-center">
+        <h1 class="text-2xl font-extrabold text-white tracking-tight"
+          style="font-family: 'Playfair Display', Georgia, serif;">{{ title }}</h1>
+        <p v-if="message" class="text-white/35 text-xs mt-2 leading-relaxed">{{ message }}</p>
       </div>
 
-      <button @click="emit('restart')"
-        class="bg-white text-gray-800 font-bold py-3 px-8 rounded-xl hover:bg-gray-100 transition-all cursor-pointer">
-        {{ restartLabel }}
-      </button>
+      <!-- Hero Score -->
+      <div v-if="heroScore" class="px-10 pt-5 pb-2 text-center">
+        <p class="hero-number leading-none select-none text-white">
+          {{ heroScore }}
+        </p>
+        <p class="text-[0.6rem] uppercase tracking-[0.28em] text-white/25 mt-3 font-medium">puntuación final</p>
+      </div>
 
-      <button @click="$router.push('/')"
-        class="font-bold py-3 px-8 rounded-xl transition-all text-blue-300 bg-blue-900/40 border border-blue-700/50 hover:bg-blue-800/50 cursor-pointer">
-        Volver al inicio
-      </button>
+      <!-- Divisor sutil -->
+      <div class="mx-10 border-t border-white/[0.08] mt-7 mb-6" />
+
+      <!-- Stats + adaptativo (slot) -->
+      <div class="px-10 flex flex-col gap-5">
+        <slot name="extra" />
+      </div>
+
+      <!-- Recompensa: badge con glow dorado -->
+      <div v-if="earnedReward > 0" class="px-10 mt-7 flex flex-col items-center gap-2">
+        <div
+          class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
+          <span class="text-2xl font-black">+{{ earnedReward }}</span>
+          <span>🪙</span>
+        </div>
+        <p v-if="rankLabel" class="text-xs font-semibold mt-1" :class="rankColor">{{ rankLabel }}</p>
+      </div>
+
+      <!-- Acciones -->
+      <div class="px-10 pt-8 pb-10 flex flex-col gap-3">
+        <button @click="emit('restart')"
+          class="bg-white text-gray-950 font-bold py-3.5 px-8 rounded-2xl shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_32px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer w-full text-sm tracking-tight">
+          {{ restartLabel }}
+        </button>
+        <button @click="$router.push('/')"
+          class="border border-white/[0.1] text-white/40 font-medium py-3 px-8 rounded-2xl hover:bg-white/[0.05] hover:text-white/60 transition-all cursor-pointer w-full text-sm">
+          Volver al inicio
+        </button>
+      </div>
 
     </div>
   </div>
@@ -41,8 +62,39 @@ defineProps({
   earnedReward: { type: Number, default: 0 },
   rankLabel: { type: String, default: null },
   rankColor: { type: String, default: null },
+  heroScore: { type: String, default: null },
 })
 
 const emit = defineEmits(['restart'])
 const $router = useRouter()
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.results-card {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-number {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(5rem, 22vw, 9.5rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.reward-chip {
+  box-shadow: 0 0 28px 0 rgba(251, 191, 36, 0.18);
+}
+</style>

@@ -69,11 +69,16 @@ export function useQuizController(opts = {}) {
       await submitSession?.();
       await grantQuizReward?.(score.value, totalItems.value);
       try {
+        const rank = rankLabelRef?.value?.toLowerCase() ?? "suspenso";
+        const resultEnum =
+          rank === "sobresaliente" || rank === "notable" || rank === "aprobado"
+            ? "win"
+            : "loss";
         await gameSvc.createGame({
           gameName: "Quiz",
-          score: score.value,
+          score: Math.round(score.value),
           duration: summary?.elapsedMin ?? 0,
-          result: rankLabelRef?.value?.toLowerCase() ?? "suspenso",
+          result: resultEnum,
         });
       } catch (_) {
         /* no bloquear si falla la red */

@@ -58,7 +58,7 @@
                                 </svg>
                                 <div class="absolute inset-0 flex items-center justify-center">
                                     <span class="text-[10px] font-bold text-white leading-none">{{ cat.accuracy
-                                        }}%</span>
+                                    }}%</span>
                                 </div>
                             </div>
                             <span class="text-[10px] text-slate-400 text-center leading-tight">{{ cat.label }}</span>
@@ -76,9 +76,12 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getSessionSummary } from '@/composables/useSessionTracker'
 import { formatCategoryLabel } from '@/composables/useAdaptiveSelection'
+import { gameService } from '@/api/game.service'
+import { timeAgo } from '@/composables/useAdaptiveHistory'
 
 const router = useRouter()
 
@@ -127,4 +130,22 @@ try {
 } catch (_) {
     categoryRings = []
 }
+
+// Historial de partidas (Quiz + FlashCards)
+const historyLoading = ref(true)
+const recentGames = ref([])
+
+onMounted(async () => {
+    try {
+        const res = await gameService.getMine()
+        recentGames.value = (res.data ?? [])
+            .filter((g) => g.gameName === 'Quiz' || g.gameName === 'FlashCards')
+            .sort((a, b) => new Date(b.playedAt) - new Date(a.playedAt))
+            .slice(0, 8)
+    } catch (_) {
+        recentGames.value = []
+    } finally {
+        historyLoading.value = false
+    }
+})
 </script>
