@@ -18,7 +18,7 @@
 
                 <span class="bg-yellow-400 text-black font-extrabold text-[10px] sm:text-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full flex items-center gap-1 sm:gap-2">
                     <span>{{ auth.userData?.coins ?? 0 }}</span>
-                    <img src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+                    <img :src="IMAGES.coin"
                         alt="coin" class="w-4 h-4 sm:w-6 sm:h-6 object-contain">
                 </span>
             </RouterLink>
@@ -49,6 +49,8 @@ import { ref, computed } from 'vue';
 import Menu from 'primevue/menu';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.store';
+
+import { IMAGES } from '@/utils/imgBucketStorage';
 
 const auth = useAuthStore();
 const router = useRouter();

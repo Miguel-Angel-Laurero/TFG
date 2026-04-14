@@ -3,7 +3,7 @@
         
         <div class="flex items-center min-w-0 flex-1">
             <Avatar
-                :image="'https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/logo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9nby5wbmciLCJpYXQiOjE3NzM4MjM0MTQsImV4cCI6MTgwNTM1OTQxNH0.WY6B0Rp-ojvGR_WDYJF3BnDOyTRJJjAVSYpY_UpF9jg'"
+                :image="IMAGES.logo"
                 class="flex-shrink-0 mr-2 sm:mx-4" 
                 size="medium" 
                 shape="circle" 
@@ -32,4 +32,5 @@
 <script setup>
 import Menu from './Menu.vue';
 import Avatar from 'primevue/avatar';
+import { IMAGES } from '@/utils/imgBucketStorage';
 </script>

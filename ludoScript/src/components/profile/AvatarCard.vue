@@ -6,7 +6,7 @@
         <template #content>
             <div class="relative w-full h-full">
                 <img 
-                    src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/customizable_pj.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvY3VzdG9taXphYmxlX3BqLnBuZyIsImlhdCI6MTc3NTA0Mzg5NywiZXhwIjoxODA2NTc5ODk3fQ._r4u-lZWe5F5YWDsvOxBXYv7_gaqduK7Fwy1ApxIlKM" 
+                    :src="IMAGES.pj" 
                     alt="plantilla-pj"
                     class="relative w-[calc(100%-4px)] h-[calc(100%-96px)] object-contain"
                 >
@@ -17,6 +17,8 @@
 
 <script setup>
 import Card from 'primevue/card'
+
+import { IMAGES } from '@/utils/imgBucketStorage';
 
 defineProps({
     width:  { type: Number, default: 160 },

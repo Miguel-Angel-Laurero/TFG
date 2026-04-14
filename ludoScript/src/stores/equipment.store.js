@@ -33,7 +33,7 @@ const CATEGORY_TO_SLOT = {
     trinkets:  'trinkets',
     lowerbody: 'legs',
     feets: 'feet', 
-    icons:      'icon',    // ← ajusta al nombre real que devuelve tu API
+    icons:      'icon',  
     banners:    'banner',
 }
 

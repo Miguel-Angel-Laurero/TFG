@@ -1,11 +1,14 @@
 <template>
   <div class="loading-overlay">
     <div class="character-container">
-      <div class="loader-sprite"></div>
+      <div class="loader-sprite" :style="{ backgroundImage: `url(${IMAGES.sprite})` }"></div>
     </div>
     <p class="loading-text">Cargando<span>...</span></p>
   </div>
 </template>
+<script setup>
+  import { IMAGES } from '@/utils/imgBucketStorage';
+</script>
 
 <style scoped>
 /* Variables para controlar el tamaño del personaje fácilmente */
@@ -47,7 +50,6 @@
 .loader-sprite {
   width: 100%;
   height: 100%;
-  background-image: url('https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/loading_spriteSheet.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9hZGluZ19zcHJpdGVTaGVldC5wbmciLCJpYXQiOjE3NzU3MjYwNDIsImV4cCI6MTgwNzI2MjA0Mn0.v2vS0MIQUgt-d-0g36nlkxHThUK3gghDTWYgC07B-rU');
   background-repeat: no-repeat;
   background-size: var(--sprite-total-width) var(--char-height);
   image-rendering: pixelated;
@@ -57,8 +59,6 @@
 }
 
 @keyframes run-anim {
-  /* Mantenemos el offset de -15px original pero escalado sería ideal, 
-     aunque si el sprite está centrado, 0px suele funcionar mejor */
   from { background-position: -10px 0px; }
   to { background-position: calc(var(--sprite-total-width) * -1) 0px; }
 }
