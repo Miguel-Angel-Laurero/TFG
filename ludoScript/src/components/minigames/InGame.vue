@@ -68,7 +68,7 @@ onMounted(() => resetProgress())
 
 const games = {
   Quiz,
-  Flashcards: FlashCard,
+  FlashCards: FlashCard,
 }
 
 const selectedGame = computed(() => games[route.query.game] ?? null)
