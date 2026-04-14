@@ -86,6 +86,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '@/api/axios'
 
 const props = defineProps({
   selectedFiles: {
@@ -125,8 +126,9 @@ function gameButtonText(name) {
 
 onMounted(async () => {
   try {
-    const res = await fetch('/games.json')
-    minigames.value = await res.json()
+    const res = await api.get("/activities")
+    // Axios ya parsea el JSON, los datos están en res.data
+    minigames.value = res.data 
   } catch (err) {
     console.error('Error al cargar los minijuegos', err)
   } finally {

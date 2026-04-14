@@ -31,3 +31,5 @@ Varias imagenes de la aplicacion se cargan con la ruta del storage de supabase e
 Hay que hacer responsive el menu de selectores de la tienda y tambien el componente de AvatarProfile
 
 Terminar de arreglar filtros de categorias que no muestra los objetos correspondientes al filtrar
+
+Revisar que datos se cargan aun desde archivos json

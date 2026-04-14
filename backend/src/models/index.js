@@ -7,6 +7,7 @@ const Item = require("./Item.model");
 const ItemCategory = require("./ItemCategory.model");
 const UserPdf = require("./UserPdf.model");
 const CategoryStat = require("./CategoryStat.model");
+const Activities = require("./Activities.model")
 
 // ── Asociaciones ────────────────────────────────────────────────────────────
 User.hasMany(Game, { foreignKey: "userId", as: "games", onDelete: "CASCADE" });
@@ -41,4 +42,5 @@ module.exports = {
   ItemCategory,
   UserPdf,
   CategoryStat,
+  Activities,
 };
