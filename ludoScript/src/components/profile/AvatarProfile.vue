@@ -2,11 +2,27 @@
     <section ref="containerRef"
         class="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 flex flex-col items-center justify-center gap-3 h-full w-full overflow-hidden"
     >
-        <div class="flex gap-3 items-center justify-center shrink-0">
-            <SlotColumn :slots="LEFT_SLOTS" :equipped="store.equipped" :selected="store.selectedSlot" :size="slotSize" @pick="store.openPicker"/>
-            <AvatarCard :width="cardWidth" :height="cardHeight"/>
-            <SlotColumn :slots="RIGHT_SLOTS" :equipped="store.equipped" :selected="store.selectedSlot" :size="slotSize" @pick="store.openPicker"/>
-        </div>
+        <div class="flex gap-2 sm:gap-4 items-center justify-center w-full max-w-2xl mx-auto p-2">
+    
+    <SlotColumn 
+        class="flex-1 max-w-[64px] sm:max-w-[80px]"
+        :slots="LEFT_SLOTS" 
+        :equipped="store.equipped" 
+        :selected="store.selectedSlot" 
+        @pick="store.openPicker"
+    />
+
+    <AvatarCard class="flex-[2] max-w-[200px] sm:max-w-[280px]" />
+
+    <SlotColumn 
+        class="flex-1 max-w-[64px] sm:max-w-[80px]"
+        :slots="RIGHT_SLOTS" 
+        :equipped="store.equipped" 
+        :selected="store.selectedSlot" 
+        @pick="store.openPicker"
+    />
+
+</div>
 
         <ItemPicker
             :slot-id="store.selectedSlot"  :open="!!store.selectedSlot"   :equipped="store.equipped"

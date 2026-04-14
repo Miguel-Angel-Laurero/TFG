@@ -1,14 +1,13 @@
 <template>
     <Card
-        class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl !text-gray-50"
-        :style="{ width: width + 'px', height: height + 'px' }"
+        class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl !text-gray-50 w-full h-full max-w-[300px] mx-auto"
     >
         <template #content>
-            <div class="relative w-full h-full">
+            <div class="relative w-full aspect-[2/3] flex items-center justify-center">
                 <img 
                     :src="IMAGES.pj" 
                     alt="plantilla-pj"
-                    class="relative w-[calc(100%-4px)] h-[calc(100%-96px)] object-contain"
+                    class="w-[90%] h-auto object-contain"
                 >
             </div>
         </template>
