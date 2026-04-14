@@ -1,15 +1,15 @@
 <template>
     <transition name="slide-up">
-        <div v-if="slot" class="w-1/2 h-1/2 z-50 absolute bg-slate-700/80 rounded-xl p-3 border border-white/10 flex-shrink-0">
+        <div v-if="open && slotId" class="w-1/2 h-1/2 z-50 absolute bg-slate-700/80 rounded-xl p-3 border border-white/10 flex-shrink-0">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-white font-semibold text-sm">Elige {{ slotNames[slot] }}</span>
+                <span class="text-white font-semibold text-sm">Elige {{ slotNames[slotId] }}</span>
                 <button class="text-white/40 hover:text-white text-xs" @click="$emit('close')">✕ cerrar</button>
             </div>
             <div class="flex gap-2 flex-wrap">
                 <div
-                    v-for="item in itemPool[slot]" :key="item.id"
+                    v-for="item in itemPool[slotId]" :key="item.id"
                     class="flex flex-col items-center gap-1 cursor-pointer p-2 rounded-lg border transition-colors w-16"
-                    :class="equipped[slot]?.id === item.id
+                    :class="equipped[slotId]?.id === item.id
                         ? 'border-indigo-400 bg-indigo-900/60'
                         : 'border-white/20 hover:border-white/50'"
                     @click="$emit('select', item)"
@@ -17,23 +17,20 @@
                     <img :src="item.img" :alt="item.name" class="w-8 h-8 object-contain">
                     <span class="text-white/70 text-xs text-center leading-tight">{{ item.name }}</span>
                 </div>
+                <p v-if="!itemPool[slotId]?.length" class="text-xs text-slate-400 py-2">
+                    No tienes objetos para este slot.
+                </p>
             </div>
         </div>
     </transition>
 </template>
 
 <script setup>
-const SLOT_TO_CATEGORY = {
-    head:     'headwear',
-    torso:    'upperbody',
-    hands:    'hands',
-    trinkets: 'trinkets',
-    legs:     'lowerbody',
-    feet:     'feets',
-}
-
 defineProps({
-    slot:      { type: String, default: null },
+    // Renombrado de "slot" (reservado en Vue) a "slotId"
+    slotId:    { type: String, default: null },
+    // open controla la visibilidad; antes se usaba v-if="slot" directamente
+    open:      { type: Boolean, default: false },
     equipped:  { type: Object, required: true },
     itemPool:  { type: Object, required: true },
     slotNames: { type: Object, required: true },

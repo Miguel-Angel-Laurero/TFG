@@ -22,7 +22,7 @@ export const SLOT_NAMES = {
     hands:    'Manos',
     trinkets: 'Accesorio',
     legs:     'Piernas',
-    feet:     'Pies',
+    feet: 'Pies',
 }
 
 // CRÍTICO: Verifica que estos nombres sean los que devuelve tu API en item.category.name
@@ -33,8 +33,8 @@ const CATEGORY_TO_SLOT = {
     trinkets:  'trinkets',
     lowerbody: 'legs',
     feets: 'feet', 
-    icon:      'icon',    // ← ajusta al nombre real que devuelve tu API
-    banner:    'banner',
+    icons:      'icon',    // ← ajusta al nombre real que devuelve tu API
+    banners:    'banner',
 }
 
 const EMPTY_SLOTS = {
@@ -59,11 +59,9 @@ export const useEquipmentStore = defineStore('equipment', () => {
         error.value   = null
         try {
             const { data } = await api.get(`/users/${authStore.user.id}/items`)
-            
             // Limpiar estado antes de llenar
             Object.assign(equipped, EMPTY_SLOTS)
             Object.keys(itemPool).forEach(k => itemPool[k] = [])
-            
             data.forEach(({ id: items_user_id, is_equipped, item }) => {
                 if (!item?.category?.name) return
                 

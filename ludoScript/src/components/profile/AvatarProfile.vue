@@ -9,8 +9,7 @@
         </div>
 
         <ItemPicker
-            :slot="store.selectedSlot"
-            :equipped="store.equipped"
+            :slot-id="store.selectedSlot"  :open="!!store.selectedSlot"   :equipped="store.equipped"
             :item-pool="store.itemPool"
             :slot-names="SLOT_NAMES"
             @close="store.openPicker(null)"

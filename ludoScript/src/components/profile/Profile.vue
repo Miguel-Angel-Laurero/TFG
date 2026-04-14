@@ -9,16 +9,14 @@
                 <AvatarProfile class="flex-1 min-h-[400px] md:min-h-0" />
             </div>
 
-            <div class="lg:col-span-5 flex flex-col gap-4 lg:overflow-y-auto lg:h-full pr-0 lg:pr-2 pb-10 lg:pb-0">
-                
+            <div class="lg:col-span-5 flex flex-col gap-4 lg:overflow-y-auto lg:h-full pr-0 lg:pr-2 pb-10 lg:pb-0">       
                 <div class="bg-indigo-900/20 rounded-3xl p-1 border border-white/5">
                     <UserStats />
                 </div>
 
                 <div class="bg-indigo-900/20 rounded-3xl p-1 border border-white/5">
                     <FortnightResume />
-                </div>
-                
+                </div>        
             </div>
         </div>
     </div>
