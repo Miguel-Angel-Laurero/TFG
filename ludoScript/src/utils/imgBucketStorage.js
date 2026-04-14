@@ -6,7 +6,7 @@ export const IMAGES = {
   progreso: `${BUCKET_URL}/landing/progreso.png`, 
   retos: `${BUCKET_URL}/landing/retos_ejercicios.png`,
   sprite: `${BUCKET_URL}/loading_spriteSheet.png`,
-  hero: `${BUCKET_URL}/knowledge.png`,
+  hero: `${BUCKET_URL}/landing/knowledge.png`,
   logo:`${BUCKET_URL}/logo.png`,
   coin:`${BUCKET_URL}/memoryCoin.png`,
   pj:`${BUCKET_URL}/customizable_pj.png`,

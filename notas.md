@@ -29,3 +29,5 @@ Debe salir una ventana para poder cambiar los iconos
 Varias imagenes de la aplicacion se cargan con la ruta del storage de supabase en vez de pedirse a la base de datos
 
 Hay que hacer responsive el menu de selectores de la tienda y tambien el componente de AvatarProfile
+
+Terminar de arreglar filtros de categorias que no muestra los objetos correspondientes al filtrar
