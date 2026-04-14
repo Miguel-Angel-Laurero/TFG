@@ -35,6 +35,7 @@ export function useQuizController(opts = {}) {
   const answered = ref(false);
   const results = ref([]);
   const weakCategoriesAfterQuiz = ref([]);
+  const calculating = ref(false);
 
   function initResults(len) {
     results.value = new Array(len).fill(null);
@@ -63,6 +64,7 @@ export function useQuizController(opts = {}) {
 
   async function handleNext() {
     if (isLastItem.value) {
+      calculating.value = true;
       const summary = getSessionSummaryFn?.();
       await submitSession?.();
       await grantQuizReward?.(score.value, totalItems.value);
@@ -83,6 +85,7 @@ export function useQuizController(opts = {}) {
       } catch (_) {
         weakCategoriesAfterQuiz.value = [];
       }
+      calculating.value = false;
     }
 
     next(() => {
@@ -120,5 +123,6 @@ export function useQuizController(opts = {}) {
     goToAdaptiveQuizFromResults,
     weakCategoriesAfterQuiz,
     score,
+    calculating,
   };
 }

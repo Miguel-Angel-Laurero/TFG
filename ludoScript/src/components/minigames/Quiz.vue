@@ -1,6 +1,21 @@
 <template>
   <Loading v-if="loadingManual" />
 
+  <!-- Calculando puntuación tras la última respuesta -->
+  <div v-else-if="calculating"
+    class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-slate-900/95">
+    <ProgressSpinner
+      style="width: 80px; height: 80px"
+      strokeWidth="6"
+      fill="transparent"
+      animationDuration=".8s"
+      aria-label="Calculando puntuación"
+    />
+    <p class="text-white/80 text-lg font-semibold tracking-wide animate-pulse">
+      Calculando puntuación…
+    </p>
+  </div>
+
   <ActivityFinished v-else-if="finished" title="Resultado final" restart-label="Volver a intentarlo"
     :earned-reward="earnedReward" :rank-label="rankLabel" :rank-color="rankColor" @restart="handleRestart">
     <template #extra>
@@ -87,6 +102,7 @@ import Loading from '../shared/Loading.vue'
 import ActivityFinished from './ActivityFinished.vue'
 import QuizQuestion from './QuizQuestion.vue'
 import { useLoadingTimer } from '@/composables/useLoadingTimer'
+import ProgressSpinner from 'primevue/progressspinner'
 
 const route = useRoute()
 const router = useRouter()
@@ -145,6 +161,7 @@ const {
   handleRestart,
   goToAdaptiveQuizFromResults,
   weakCategoriesAfterQuiz,
+  calculating,
 } = controller
 
 // Estadísticas de UI
