@@ -55,7 +55,7 @@
       v-model:visible="drawerVisible" 
       header="Filtros de Búsqueda" 
       position="right" 
-      class="md:hidden !h-auto !rounded-b-3xl"
+      class="md:hidden !h-full !rounded-b-3xl"
     >
       <div class="flex flex-col gap-5 pb-6">
         
