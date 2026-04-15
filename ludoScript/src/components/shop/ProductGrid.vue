@@ -24,7 +24,7 @@
             <p class="flex items-center gap-2">
               {{ product.price }}
               <img
-                src="https://qdksdglsicumxhuozvxb.supabase.co/storage/v1/object/sign/images/memoryCoin.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mNGM2YmEzOS0yNzhhLTQxZDMtYjMwMy0xOGQ4NmEwMDdiYjUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbWVtb3J5Q29pbi5wbmciLCJpYXQiOjE3NzQzNjI5NjAsImV4cCI6MTgwNTg5ODk2MH0.2UYhJNH_6lZtHJoGTDAUlr-5cZAJIZZG9qAzFDFrUK8"
+                :src="IMAGES.coin"
                 alt="Moneda de RAM"
                 class="w-6 h-6 object-contain"
               >
@@ -57,6 +57,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useShopStore } from '@/stores/shop.store';
 import { useTransaction } from '@/composables/useTransaction';
 import api from '@/api/axios';
+import { IMAGES } from '@/utils/imgBucketStorage';
 
 const { buyItem } = useTransaction();
 const shopStore = useShopStore();
