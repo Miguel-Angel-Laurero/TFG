@@ -1,66 +1,64 @@
 <template>
-  <div class="grid grid-cols-[1fr_3fr_1fr] items-center px-6 w-full max-w-6xl mx-auto">
+  <div class="grid grid-cols-[2fr_3fr_2fr] items-center px-6 w-full max-w-6xl mx-auto">
     <div class="w-full">
-      <img :src="IMAGES.celebracion" alt="personaje celebrando">
-    </div>
-    <div
-      class="results-card  w-full overflow-hidden">
-
-      <!-- Cabecera con título -->
-      <div class="px-10 pt-2 pb-2 text-center">
-        <h1 class="text-2xl font-extrabold text-white tracking-tight"
-          style="font-family: 'Righteous', Georgia, serif;">{{ title }}</h1>
-        <p v-if="message" class="text-white/35 text-xs mt-2 leading-relaxed">{{ message }}</p>
-      </div>
-
-      <!-- Hero Score -->
-      <div v-if="heroScore" class="px-10 pt-5 pb-2 text-center">
-        <p class="hero-number leading-none select-none text-white">
-          {{ heroScore }}
-        </p>
-        <p class="text-[0.6rem] uppercase tracking-[0.28em] text-white/25 mt-3 font-medium">puntuación final</p>
-      </div>
+      <img :src="characterImage" alt="estado personaje" class="w-full h-auto">
       
-      <!-- Divisor sutil -->
-      <div class="mx-10 border-t border-white/8 mt-7 mb-6" />
-             <div class="px-10 pt-8 pb-10 flex flex-col gap-3">
-        <button @click="emit('restart')"
-          class="bg-white text-gray-950 font-bold py-3.5 px-8 rounded-2xl shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_32px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer w-full text-sm tracking-tight">
-          {{ restartLabel }}
-        </button>
-        <button @click="$router.push('/')"
-          class="border border-white/[0.1] text-white/40 font-medium py-3 px-8 rounded-2xl hover:bg-white/[0.05] hover:text-white/60 transition-all cursor-pointer w-full text-sm">
-          Volver al inicio
-        </button>
-      </div>
-    </div>
-    <div>
-      <div class="px-10 flex flex-col gap-5">
-        <!-- Stats + adaptativo (slot) -->
-        <slot name="extra" />
-      </div>
-      <!-- Recompensa: badge con glow dorado -->
+      <Bonus/>
 
       <div v-if="earnedReward > 0" class="px-10 mt-7 flex flex-col items-center gap-2">
-        <div
-          class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
+        <div class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
           <span class="text-2xl font-black">+{{ earnedReward }}</span>
           <img :src="IMAGES.coin" alt="moneda" class="w-8"/>
         </div>
         <p v-if="rankLabel" class="text-xs font-semibold mt-1" :class="rankColor">{{ rankLabel }}</p>
       </div>
-      <!-- Acciones -->
+    </div>
+
+    <div class="results-card w-full overflow-hidden">
+      <div class="px-10 pt-2 pb-2 text-center">
+        <h1 class="text-2xl font-extrabold text-white tracking-tight" style="font-family: 'Righteous', sans-serif;">
+          {{ title }}
+        </h1>
+        <p v-if="message" class="text-white/35 text-xs mt-2 leading-relaxed">{{ message }}</p>
+      </div>
+
+      <div v-if="heroScore" class="px-10 pt-5 pb-2 text-center">
+        <p class="hero-number leading-none select-none text-white">
+          {{ heroScore }}
+        </p>
+        <p class="text-[0.6rem] uppercase tracking-[0.28em] text-white/25 mt-3 font-medium">
+          puntuación final
+        </p>
+      </div>
+      
+      <div class="mx-10 border-t border-white/8 mt-7 mb-6" />
+
+      <div class="px-10 pt-8 pb-10 flex flex-col gap-3">
+        <button @click="emit('restart')" class="bg-white text-gray-950 font-bold py-3.5 px-8 rounded-2xl shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_32px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer w-full text-sm tracking-tight">
+          {{ restartLabel }}
+        </button>
+        <button @click="$router.push('/')" class="border border-white/[0.1] text-white/40 font-medium py-3 px-8 rounded-2xl hover:bg-white/[0.05] hover:text-white/60 transition-all cursor-pointer w-full text-sm">
+          Volver al inicio
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <div class="px-4 flex flex-col gap-5">
+        <slot name="extra" />
+      </div>
     </div>
   </div>
- 
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { IMAGES } from '@/utils/imgBucketStorage'
 import Bonus from '../shared/Bonus.vue'
 
-defineProps({
+// ASIGNAR A UNA CONSTANTE 'props'
+const props = defineProps({
   title: { type: String, default: '¡Actividad completada!' },
   message: { type: String, default: '' },
   restartLabel: { type: String, default: 'Volver a intentarlo' },
@@ -72,6 +70,20 @@ defineProps({
 
 const emit = defineEmits(['restart'])
 const $router = useRouter()
+
+// Ahora props.heroScore ya no dará error
+const characterImage = computed(() => {
+  // Limpiamos el score por si viene con % u otros caracteres
+  const cleanScore = typeof props.heroScore === 'string' 
+    ? props.heroScore.replace(/[^0-9.]/g, '') 
+    : props.heroScore
+
+  const score = parseFloat(cleanScore) || 0
+  
+  if (score >= 7) return IMAGES.celebracion 
+  if (score >= 5) return IMAGES.aprobado 
+  return IMAGES.suspenso 
+})
 </script>
 
 <style scoped>

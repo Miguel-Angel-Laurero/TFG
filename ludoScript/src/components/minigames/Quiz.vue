@@ -17,11 +17,11 @@
     <template #extra>
       <!-- Stats: cajas glassmorphism con colores intensos -->
       <div class="grid grid-cols-2 gap-3 text-white">
-        <div class="bg-emerald-500/20 border border-emerald-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
+        <div class="bg-emerald-500/20 border border-emerald-400/25 rounded-2xl p-8 flex flex-col items-center gap-3">
           <p class="text-3xl font-black text-emerald-300 tracking-tight">{{ correctCount }}</p>
           <p class="text-[0.6rem] uppercase tracking-widest text-emerald-400/70">Correctas</p>
         </div>
-        <div class="bg-red-500/20 border border-red-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
+        <div class="bg-red-500/20 border border-red-400/25 rounded-2xl p-8 flex flex-col items-center gap-3">
           <p class="text-3xl font-black text-red-300 tracking-tight">{{ wrongCount }}</p>
           <p class="text-[0.6rem] uppercase tracking-widest text-red-400/70">Incorrectas</p>
         </div>
@@ -51,7 +51,7 @@
         <button @click="handleAdaptiveClick" :disabled="!canUseAdaptive" :class="[
           'w-full py-3 px-8 rounded-xl font-bold transition-all',
           canUseAdaptive
-            ? 'bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer'
+            ? 'bg-indigo-800 hover:bg-indigo-500 text-white cursor-pointer'
             : 'bg-white/10 text-white/40 cursor-not-allowed'
         ]">
           🎯 Practicar categorías débiles

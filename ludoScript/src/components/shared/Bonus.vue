@@ -5,7 +5,7 @@
             <p class="text-3xl font-black text-emerald-300">x{{ currentMultiplier }}</p>
         </div>
         
-        <div v-else class="text-white/20 text-[0.65rem] uppercase tracking-widest">
+        <div v-else class="text-white/60 text-[0.65rem] uppercase tracking-widest">
             Próximo bonus en aumento: {{ actualPercentage }}%
         </div>
     </div>
@@ -15,7 +15,7 @@
 import { ref, onMounted } from 'vue';
 
 // --- Estado ---
-const basePercentage = 95;
+const basePercentage = 5;
 const increment = 5;
 const multipliers = [1.2, 1.5, 2, 4, 8];
 

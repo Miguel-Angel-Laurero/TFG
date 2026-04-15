@@ -11,4 +11,6 @@ export const IMAGES = {
   coin:`${BUCKET_URL}/memoryCoin.png`,
   pj: `${BUCKET_URL}/customizable_pj.png`,
   celebracion: `${BUCKET_URL}/celebracion.png`,
+  aprobado: `${BUCKET_URL}/aprobado.png`,
+  suspenso: `${BUCKET_URL}/suspenso.png`,
 }
