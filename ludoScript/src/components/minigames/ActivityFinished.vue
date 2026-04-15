@@ -31,7 +31,7 @@
         <div
           class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
           <span class="text-2xl font-black">+{{ earnedReward }}</span>
-          <span>🪙</span>
+          <img :src="IMAGES.coin" alt="moneda" class="w-8"/>
         </div>
         <p v-if="rankLabel" class="text-xs font-semibold mt-1" :class="rankColor">{{ rankLabel }}</p>
       </div>
@@ -54,6 +54,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { IMAGES } from '@/utils/imgBucketStorage'
 
 defineProps({
   title: { type: String, default: '¡Actividad completada!' },

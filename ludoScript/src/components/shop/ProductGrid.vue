@@ -96,7 +96,14 @@ const filteredProducts = computed(() => {
   return products.value.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(shopStore.searchQuery?.toLowerCase() || '');
     const matchesCategory = shopStore.selectedCategories.length === 0 ||
-                            shopStore.selectedCategories.some(cat => cat.name === product.category);
+      shopStore.selectedCategories.some(cat => Number(cat.id) === Number(product.type_id));
+
+    console.log({
+  productCategory: product.category,
+  productCategoryType: typeof product.category,
+  selectedCategories: shopStore.selectedCategories,
+  firstCatName: shopStore.selectedCategories[0]?.name,
+});
     const matchesAcquisition =
       shopStore.acquisitionFilter === 'todos' ||
       (shopStore.acquisitionFilter === 'adquirido' && product.is_adquired) ||
