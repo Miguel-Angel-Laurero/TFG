@@ -7,6 +7,7 @@ export const useGroupStore = defineStore("group", () => {
   const group = ref(null); // Objeto del grupo con su lista de members
   const stats = ref([]); // Array de stats del ranking
   const loading = ref(false);
+  const loadingStats = ref(false);
   const error = ref(null);
 
   const isMember = computed(() => !!group.value);
@@ -27,6 +28,7 @@ export const useGroupStore = defineStore("group", () => {
     try {
       const { data } = await groupService.getMyGroup();
       group.value = data.group;
+      if (data.group) loadingStats.value = true; // stats se cargarán justo después
     } catch (e) {
       if (e.response?.status === 404) {
         group.value = null; // No pertenece a ningún grupo — estado normal
@@ -78,6 +80,7 @@ export const useGroupStore = defineStore("group", () => {
       await groupService.leave();
       group.value = null;
       stats.value = [];
+      loadingStats.value = false;
       return true;
     } catch (e) {
       error.value = e.response?.data?.message ?? "Error al salir de la clase.";
@@ -129,6 +132,7 @@ export const useGroupStore = defineStore("group", () => {
       await groupService.dissolve(group.value.id);
       group.value = null;
       stats.value = [];
+      loadingStats.value = false;
       return true;
     } catch (e) {
       error.value = e.response?.data?.message ?? "Error al disolver la clase.";
@@ -142,6 +146,7 @@ export const useGroupStore = defineStore("group", () => {
   async function fetchStats() {
     if (!group.value) return;
     loading.value = true;
+    loadingStats.value = true;
     error.value = null;
     try {
       const { data } = await groupService.getStats(group.value.id);
@@ -151,6 +156,7 @@ export const useGroupStore = defineStore("group", () => {
         e.response?.data?.message ?? "Error al cargar las estadísticas.";
     } finally {
       loading.value = false;
+      loadingStats.value = false;
     }
   }
 
@@ -158,6 +164,7 @@ export const useGroupStore = defineStore("group", () => {
     group,
     stats,
     loading,
+    loadingStats,
     error,
     isMember,
     isOwner,
