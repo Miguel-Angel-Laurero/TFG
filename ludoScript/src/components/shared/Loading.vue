@@ -81,6 +81,7 @@
 @media (min-width: 640px) {
   .loading-text {
     font-size: 18px;
+    font-family: 'Righteous', Georgia, serif;
     letter-spacing: 4px;
     margin-top: 30px;
   }

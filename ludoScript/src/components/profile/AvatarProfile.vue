@@ -12,7 +12,7 @@
         @pick="store.openPicker"
     />
 
-    <AvatarCard class="flex-[2] max-w-[200px] sm:max-w-[280px]" />
+    <AvatarCard class="flex-2 max-w-50 sm:max-w-70" />
 
     <SlotColumn 
         class="flex-1 max-w-[64px] sm:max-w-[80px]"

@@ -1,12 +1,15 @@
 <template>
-  <div class="flex flex-col items-center p-6 w-full max-w-xl mx-auto">
+  <div class="grid grid-cols-[1fr_3fr_1fr] items-center px-6 w-full max-w-6xl mx-auto">
+    <div class="w-full">
+      <img :src="IMAGES.celebracion" alt="personaje celebrando">
+    </div>
     <div
-      class="results-card bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-2xl border border-white/[0.12] rounded-[2rem] w-full overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)]">
+      class="results-card  w-full overflow-hidden">
 
       <!-- Cabecera con título -->
-      <div class="px-10 pt-10 pb-2 text-center">
+      <div class="px-10 pt-2 pb-2 text-center">
         <h1 class="text-2xl font-extrabold text-white tracking-tight"
-          style="font-family: 'Playfair Display', Georgia, serif;">{{ title }}</h1>
+          style="font-family: 'Righteous', Georgia, serif;">{{ title }}</h1>
         <p v-if="message" class="text-white/35 text-xs mt-2 leading-relaxed">{{ message }}</p>
       </div>
 
@@ -17,27 +20,10 @@
         </p>
         <p class="text-[0.6rem] uppercase tracking-[0.28em] text-white/25 mt-3 font-medium">puntuación final</p>
       </div>
-
+      
       <!-- Divisor sutil -->
-      <div class="mx-10 border-t border-white/[0.08] mt-7 mb-6" />
-
-      <!-- Stats + adaptativo (slot) -->
-      <div class="px-10 flex flex-col gap-5">
-        <slot name="extra" />
-      </div>
-
-      <!-- Recompensa: badge con glow dorado -->
-      <div v-if="earnedReward > 0" class="px-10 mt-7 flex flex-col items-center gap-2">
-        <div
-          class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
-          <span class="text-2xl font-black">+{{ earnedReward }}</span>
-          <img :src="IMAGES.coin" alt="moneda" class="w-8"/>
-        </div>
-        <p v-if="rankLabel" class="text-xs font-semibold mt-1" :class="rankColor">{{ rankLabel }}</p>
-      </div>
-
-      <!-- Acciones -->
-      <div class="px-10 pt-8 pb-10 flex flex-col gap-3">
+      <div class="mx-10 border-t border-white/8 mt-7 mb-6" />
+             <div class="px-10 pt-8 pb-10 flex flex-col gap-3">
         <button @click="emit('restart')"
           class="bg-white text-gray-950 font-bold py-3.5 px-8 rounded-2xl shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_32px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer w-full text-sm tracking-tight">
           {{ restartLabel }}
@@ -47,7 +33,23 @@
           Volver al inicio
         </button>
       </div>
+    </div>
+    <div>
+      <div class="px-10 flex flex-col gap-5">
+        <!-- Stats + adaptativo (slot) -->
+        <slot name="extra" />
+      </div>
+      <!-- Recompensa: badge con glow dorado -->
 
+      <div v-if="earnedReward > 0" class="px-10 mt-7 flex flex-col items-center gap-2">
+        <div
+          class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
+          <span class="text-2xl font-black">+{{ earnedReward }}</span>
+          <img :src="IMAGES.coin" alt="moneda" class="w-8"/>
+        </div>
+        <p v-if="rankLabel" class="text-xs font-semibold mt-1" :class="rankColor">{{ rankLabel }}</p>
+      </div>
+      <!-- Acciones -->
     </div>
   </div>
 </template>
@@ -88,7 +90,7 @@ const $router = useRouter()
 }
 
 .hero-number {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Righteous', Georgia, serif;
   font-weight: 700;
   font-size: clamp(5rem, 22vw, 9.5rem);
   letter-spacing: 0.05em;

@@ -16,7 +16,7 @@
     @restart="handleRestart">
     <template #extra>
       <!-- Stats: cajas glassmorphism con colores intensos -->
-      <div class="grid grid-cols-3 gap-3 text-white">
+      <div class="grid grid-cols-2 gap-3 text-white">
         <div class="bg-emerald-500/20 border border-emerald-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
           <p class="text-3xl font-black text-emerald-300 tracking-tight">{{ correctCount }}</p>
           <p class="text-[0.6rem] uppercase tracking-widest text-emerald-400/70">Correctas</p>
@@ -25,10 +25,10 @@
           <p class="text-3xl font-black text-red-300 tracking-tight">{{ wrongCount }}</p>
           <p class="text-[0.6rem] uppercase tracking-widest text-red-400/70">Incorrectas</p>
         </div>
-        <div class="bg-white/[0.06] border border-white/[0.08] rounded-2xl p-4 flex flex-col items-center gap-1">
+        <!-- <div class="bg-white/[0.06] border border-white/[0.08] rounded-2xl p-4 flex flex-col items-center gap-1">
           <p class="text-3xl font-black text-white/50 tracking-tight">{{ unansweredCount }}</p>
           <p class="text-[0.6rem] uppercase tracking-widest text-white/25">Sin resp.</p>
-        </div>
+        </div> -->
       </div>
 
       <!-- Botón adaptativo: visible siempre, desbloqueado tras 3 partidas desde el último uso -->

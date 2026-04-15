@@ -1,17 +1,18 @@
 <template>
-    <Card
-        class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl !text-gray-50 w-full h-full max-w-[300px] mx-auto"
-    >
-        <template #content>
-            <div class="relative w-full aspect-[2/3] flex items-center justify-center">
-                <img 
-                    :src="IMAGES.pj" 
-                    alt="plantilla-pj"
-                    class="w-[90%] h-auto object-contain"
-                >
-            </div>
-        </template>
-    </Card>
+  <Card
+    :style="{ height: height + 'px' }"
+    class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl !text-gray-50 w-full max-w-[300px] mx-auto overflow-hidden flex flex-col"
+  >
+    <template #content>
+      <div class="relative w-full h-full flex items-center justify-center p-2">
+        <img
+          :src="IMAGES.pj"
+          alt="plantilla-pj"
+          class="max-w-full max-h-full object-contain block mx-auto"
+        />
+      </div>
+    </template>
+  </Card>
 </template>
 
 <script setup>
@@ -21,7 +22,7 @@ import { IMAGES } from '@/utils/imgBucketStorage';
 
 defineProps({
     width:  { type: Number, default: 160 },
-    height: { type: Number, default: 256 },
+    height: { type: Number, default: 350 },
 })
 </script>
 

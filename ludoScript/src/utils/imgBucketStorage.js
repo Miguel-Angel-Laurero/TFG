@@ -9,5 +9,6 @@ export const IMAGES = {
   hero: `${BUCKET_URL}/landing/knowledge.png`,
   logo:`${BUCKET_URL}/logo.png`,
   coin:`${BUCKET_URL}/memoryCoin.png`,
-  pj:`${BUCKET_URL}/customizable_pj.png`,
+  pj: `${BUCKET_URL}/customizable_pj.png`,
+  celebracion: `${BUCKET_URL}/celebracion.png`,
 }
