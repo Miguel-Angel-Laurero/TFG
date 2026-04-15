@@ -1143,3 +1143,144 @@ Se actualiza la documentacion de testing porque la seccion anterior habia quedad
 ### Nota de mantenimiento
 
 La documentacion anterior mencionaba 23 pruebas. Ese dato ya no es correcto: el estado actual consolidado del frontend es de 31 pruebas pasando.
+
+---
+
+## Sistema de Clases — 15/04
+
+### Objetivo
+
+Permitir que un usuario cree una clase virtual, comparta un código de invitación con otros jugadores y visualice el rendimiento de todos los miembros en un ranking. El modelo está inspirado en la mecánica de clanes de juegos sociales: acceso mediante código, liderazgo transferible y estadísticas comparativas.
+
+### Restricciones de diseño
+
+- Un usuario solo puede pertenecer a una clase a la vez.
+- El límite máximo de miembros por clase es 30.
+- El líder (creador) no puede abandonar la clase sin transferir el liderazgo o disolverla previamente.
+- Las estadísticas del ranking son visibles únicamente para los miembros de esa clase.
+
+---
+
+### Archivos creados
+
+**Backend:**
+
+| Archivo                                       | Rol                                                                                                                                                                                                                                                 |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backend/src/models/Group.model.js`           | Modelo Sequelize de la tabla `groups`. Campos: `id`, `name`, `description`, `inviteCode` (8 caracteres, único), `ownerId` (FK a Users), `createdAt`, `updatedAt`.                                                                                   |
+| `backend/src/models/GroupMember.model.js`     | Modelo de la tabla `group_members`. Campos: `id`, `groupId` (FK), `userId` (FK con índice único), `joinedAt`. El índice único en `userId` garantiza a nivel de base de datos que un usuario no puede pertenecer a más de una clase al mismo tiempo. |
+| `backend/src/controllers/group.controller.js` | Controlador con 8 funciones: `createGroup`, `joinGroup`, `getMyGroup`, `getGroupStats`, `leaveGroup`, `transferLeadership`, `kickMember`, `dissolveGroup`.                                                                                          |
+| `backend/src/routes/group.routes.js`          | Define las rutas REST del recurso grupo, todas protegidas con `authMiddleware`.                                                                                                                                                                     |
+
+**Frontend:**
+
+| Archivo                                               | Rol                                                                                                                                                                                                             |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ludoScript/src/api/group.service.js`                 | Capa HTTP del frontend: wrapper sobre Axios para los 8 endpoints del recurso grupo.                                                                                                                             |
+| `ludoScript/src/stores/group.store.js`                | Pinia store con estado `group`, `stats`, `loading`, `error` y acciones que llaman al servicio y actualizan el estado reactivo.                                                                                  |
+| `ludoScript/src/views/ClaseView.vue`                  | Vista principal de la funcionalidad. Muestra `NoClasePanel` si el usuario no tiene clase o el panel de gestión si la tiene. Gestiona los modales de confirmación.                                               |
+| `ludoScript/src/components/clase/ClaseHeader.vue`     | Cabecera de la clase: nombre, contador de miembros con indicador de color según ocupación, código de invitación copiable al portapapeles y botones de acción (salir, transferir, disolver).                     |
+| `ludoScript/src/components/clase/ClaseMemberCard.vue` | Tarjeta de un miembro en el ranking: posición, avatar, nombre, precisión, racha y tiempo jugado. Si el usuario autenticado es el líder, aparecen botones para expulsar o transferir el liderazgo a ese miembro. |
+| `ludoScript/src/components/clase/ClaseStatsTable.vue` | Tabla de ranking con selector de métrica de ordenación (precisión, racha, tiempo). Cada fila puede desplegarse para ver el desglose de rendimiento por categoría temática del Quiz.                             |
+| `ludoScript/src/components/clase/NoClasePanel.vue`    | Panel de entrada: formulario para crear una clase nueva (nombre y descripción opcional) y campo para unirse con código de invitación.                                                                           |
+| `ludoScript/src/components/clase/ConfirmModal.vue`    | Modal de confirmación reutilizable para acciones destructivas (salir, disolver, expulsar). Siempre permite cancelar.                                                                                            |
+| `ludoScript/src/components/clase/TransferModal.vue`   | Modal con lista de miembros seleccionables para transferir el liderazgo. Muestra avatar y nombre para que el líder reconozca al destinatario sin necesidad de recordar IDs.                                     |
+
+---
+
+### Archivos modificados
+
+| Archivo                                     | Cambio                                                                                                                                                                                                                                    |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backend/src/models/index.js`               | Importa `Group` y `GroupMember`; declara 4 asociaciones nuevas (`Group.belongsTo(User)`, `Group.hasMany(GroupMember)`, `GroupMember.belongsTo(Group)`, `GroupMember.belongsTo(User)`, `User.hasOne(GroupMember)`); exporta ambos modelos. |
+| `backend/src/routes/index.js`               | Añade `router.use("/groups", require("./group.routes"))`.                                                                                                                                                                                 |
+| `ludoScript/src/router/router.js`           | Añade la ruta `/clase/` con `meta: { requiresAuth: true }` apuntando a `ClaseView.vue`.                                                                                                                                                   |
+| `ludoScript/src/components/shared/Menu.vue` | Añade la entrada "Mi Clase" con icono `pi pi-users` en el menú desplegable del usuario autenticado.                                                                                                                                       |
+
+---
+
+### Rutas REST del recurso grupo
+
+Todas las rutas están protegidas con `authMiddleware` (JWT).
+
+| Método   | Ruta                              | Descripción                                                                                                                                                                |
+| -------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST`   | `/api/groups`                     | Crea una clase. El creador se une automáticamente como primer miembro. Genera un `inviteCode` de 8 caracteres con `crypto.randomBytes`.                                    |
+| `POST`   | `/api/groups/join`                | Unirse a una clase con código de invitación. Valida que el usuario no tenga ya una clase activa y que la clase no supere los 30 miembros.                                  |
+| `GET`    | `/api/groups/me`                  | Devuelve la clase del usuario autenticado con la lista de miembros y sus datos básicos (`UserData`).                                                                       |
+| `GET`    | `/api/groups/:id/stats`           | Ranking de miembros con `accuracy`, `streak`, `timeSpent`, `coins` y `categoryStats`. Solo accesible si el usuario pertenece a esa clase (devuelve 403 en caso contrario). |
+| `DELETE` | `/api/groups/me/leave`            | Salir de la clase. Si el usuario es el líder, devuelve 403 con mensaje explicativo.                                                                                        |
+| `POST`   | `/api/groups/:id/transfer`        | Transfiere el liderazgo a otro miembro. Solo puede ejecutarlo el líder actual. Verifica que el destinatario sea miembro de la clase.                                       |
+| `DELETE` | `/api/groups/:id/members/:userId` | Expulsa a un miembro. Solo el líder puede hacerlo. No es posible autoexpulsarse.                                                                                           |
+| `DELETE` | `/api/groups/:id`                 | Disuelve la clase. Solo el líder puede hacerlo. La eliminación en cascada borra todos los registros de `group_members`.                                                    |
+
+---
+
+### Esquema de base de datos
+
+**Tabla `groups`**
+
+| Columna                   | Tipo             | Descripción                                                                             |
+| ------------------------- | ---------------- | --------------------------------------------------------------------------------------- |
+| `id`                      | INTEGER PK       | Identificador autoincremental                                                           |
+| `name`                    | STRING(80)       | Nombre de la clase (3–80 caracteres)                                                    |
+| `description`             | STRING(255)      | Descripción opcional                                                                    |
+| `inviteCode`              | STRING(8) UNIQUE | Código de invitación generado con `crypto.randomBytes(4).toString('hex').toUpperCase()` |
+| `ownerId`                 | INTEGER FK       | Referencia al usuario líder (tabla `Users`)                                             |
+| `createdAt` / `updatedAt` | DATE             | Gestionados automáticamente por Sequelize                                               |
+
+**Tabla `group_members`**
+
+| Columna    | Tipo              | Descripción                                                                                  |
+| ---------- | ----------------- | -------------------------------------------------------------------------------------------- |
+| `id`       | INTEGER PK        | Identificador autoincremental                                                                |
+| `groupId`  | INTEGER FK        | Referencia a la clase (`groups.id`)                                                          |
+| `userId`   | INTEGER FK UNIQUE | Referencia al usuario (`Users.id`). El índice único impide que un usuario esté en dos clases |
+| `joinedAt` | DATE              | Fecha de entrada en la clase                                                                 |
+
+Las tablas se crean automáticamente al arrancar el servidor en desarrollo, igual que el resto de modelos del proyecto, gracias a `sequelize.sync({ alter: true })`.
+
+---
+
+### Cómo funciona el flujo principal
+
+**Crear una clase:**
+
+1. El usuario accede a `/clase/` sin pertenecer a ninguna clase y ve `NoClasePanel`.
+2. Rellena el nombre (obligatorio) y la descripción (opcional) y envía el formulario.
+3. El frontend llama a `POST /api/groups`. El backend verifica que el usuario no tenga membresía activa, genera el `inviteCode` y crea la clase. Auto-añade al creador como primer miembro.
+4. El store llama a `fetchMyGroup()` para obtener los datos completos y después a `fetchStats()` para cargar el ranking.
+5. La vista pasa a mostrar la cabecera de la clase con el código de invitación copiable.
+
+**Unirse con código:**
+
+1. El segundo usuario accede a `/clase/`, ve `NoClasePanel` e introduce el código.
+2. El frontend llama a `POST /api/groups/join { inviteCode }`.
+3. El backend busca la clase por el código, comprueba que el usuario no tenga ya un grupo activo y que la clase no supere los 30 miembros, y crea la membresía.
+4. El nuevo miembro aparece en el ranking de la clase.
+
+**Transferir liderazgo:**
+
+1. El líder pulsa "Transferir liderazgo" en la cabecera o en la tarjeta de un miembro.
+2. Se abre `TransferModal`, que lista los demás miembros con avatar y nombre.
+3. El líder selecciona el destinatario y confirma.
+4. El frontend llama a `POST /api/groups/:id/transfer { newOwnerId }`.
+5. El backend verifica que el solicitante sea el dueño actual y que el destinatario sea miembro.
+6. `ownerId` se actualiza en la tabla `groups`. El antiguo líder pasa a ser miembro normal.
+
+**Disolver la clase:**
+
+1. El líder pulsa "Disolver clase" y confirma en `ConfirmModal`.
+2. El frontend llama a `DELETE /api/groups/:id`.
+3. El backend verifica que el solicitante sea el dueño. Elimina el registro de `groups`, lo que activa la eliminación en cascada de todos los registros de `group_members`.
+4. El store limpia `group` y `stats` y la vista vuelve a mostrar `NoClasePanel`.
+
+---
+
+### Seguridad
+
+- Todas las rutas comprueban el JWT mediante `authMiddleware` antes de ejecutar cualquier lógica.
+- Las rutas que requieren ser el líder verifican explícitamente `group.ownerId === req.user.id` en el controlador.
+- El endpoint de stats (`GET /:id/stats`) comprueba que el usuario sea miembro del grupo antes de devolver los datos, evitando que usuarios externos consulten el rendimiento de otros.
+- El ownership check en lectura y escritura se hace directamente en controlador, nunca solo en frontend.
+- La generación del `inviteCode` usa `crypto.randomBytes`, que produce aleatoriedad criptográficamente segura.

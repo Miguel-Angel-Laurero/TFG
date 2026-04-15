@@ -7,7 +7,9 @@ const Item = require("./Item.model");
 const ItemCategory = require("./ItemCategory.model");
 const UserPdf = require("./UserPdf.model");
 const CategoryStat = require("./CategoryStat.model");
-const Activities = require("./Activities.model")
+const Activities = require("./Activities.model");
+const Group = require("./Group.model");
+const GroupMember = require("./GroupMember.model");
 
 // ── Asociaciones ────────────────────────────────────────────────────────────
 User.hasMany(Game, { foreignKey: "userId", as: "games", onDelete: "CASCADE" });
@@ -26,11 +28,33 @@ ItemsUser.belongsTo(Item, { foreignKey: "item_id", as: "item" });
 ItemCategory.hasMany(Item, { foreignKey: "type_id", as: "items" });
 Item.belongsTo(ItemCategory, { foreignKey: "type_id", as: "category" });
 
-User.hasMany(UserPdf, { foreignKey: "userId", as: "pdfs", onDelete: "CASCADE" });
+User.hasMany(UserPdf, {
+  foreignKey: "userId",
+  as: "pdfs",
+  onDelete: "CASCADE",
+});
 UserPdf.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-User.hasMany(CategoryStat, { foreignKey: "userId", as: "categoryStats", onDelete: "CASCADE" });
+User.hasMany(CategoryStat, {
+  foreignKey: "userId",
+  as: "categoryStats",
+  onDelete: "CASCADE",
+});
 CategoryStat.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+// ── Grupos / Clases ──────────────────────────────────────────────────────────
+Group.belongsTo(User, { foreignKey: "ownerId", as: "owner" });
+User.hasMany(Group, { foreignKey: "ownerId", as: "ownedGroups" });
+
+Group.hasMany(GroupMember, {
+  foreignKey: "groupId",
+  as: "members",
+  onDelete: "CASCADE",
+});
+GroupMember.belongsTo(Group, { foreignKey: "groupId", as: "group" });
+
+GroupMember.belongsTo(User, { foreignKey: "userId", as: "member" });
+User.hasOne(GroupMember, { foreignKey: "userId", as: "groupMembership" });
 
 module.exports = {
   sequelize,
@@ -43,4 +67,6 @@ module.exports = {
   UserPdf,
   CategoryStat,
   Activities,
+  Group,
+  GroupMember,
 };

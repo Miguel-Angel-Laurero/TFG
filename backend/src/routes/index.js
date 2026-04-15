@@ -7,10 +7,12 @@ router.use("/rewards", require("./rewards.routes"));
 router.use("/upload", require("./upload.routes"));
 router.use("/shop", require("./shop.routes"));
 router.use("/categories", require("./category.routes"));
-router.use("/activities", require("./activities.routes"))
+router.use("/activities", require("./activities.routes"));
 // Rutas para la gestión de PDFs subidos por los usuarios
 router.use("/pdfs", require("./pdf.routes"));
 // Estadísticas por categoría temática del Quiz
 router.use("/category-stats", require("./categoryStats.routes"));
+// Sistema de clases (grupos)
+router.use("/groups", require("./group.routes"));
 
 module.exports = router;

@@ -55,6 +55,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/clase/",
+      name: "clase",
+      component: () => import("../views/ClaseView.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "NotFound",
       component: () => import("../views/NotFoundView.vue"),
