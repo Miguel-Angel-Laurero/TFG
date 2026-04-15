@@ -28,6 +28,7 @@
 
       <!-- Recompensa: badge con glow dorado -->
       <div v-if="earnedReward > 0" class="px-10 mt-7 flex flex-col items-center gap-2">
+        <Bonus />
         <div
           class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
           <span class="text-2xl font-black">+{{ earnedReward }}</span>
@@ -47,14 +48,15 @@
           Volver al inicio
         </button>
       </div>
-
     </div>
   </div>
+ 
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
 import { IMAGES } from '@/utils/imgBucketStorage'
+import Bonus from '../shared/Bonus.vue'
 
 defineProps({
   title: { type: String, default: '¡Actividad completada!' },
