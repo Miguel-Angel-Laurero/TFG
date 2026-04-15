@@ -1,331 +1,320 @@
 <template>
-    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
-        <div class="flex flex-col gap-1 mb-5">
-            <h2 class="text-white font-semibold text-base">Vista general de progreso</h2>
-            <p class="text-white/50 text-xs">
-                Calendario de los ultimos 14 dias para ver de un vistazo tu ritmo y porcentaje de acierto.
-            </p>
+    <div class="flex flex-col gap-5 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
+
+        <!-- Header -->
+        <div>
+            <h2 class="text-base font-semibold text-white">Vista general de progreso</h2>
+            <p class="text-xs text-white/40 mt-1">Últimos 14 días · porcentaje de acierto por sesión</p>
         </div>
 
-        <div v-if="!hasActivity" class="text-center py-6 text-white/40 text-sm">
-            Sin actividad en los ultimos 14 dias. Completa un Quiz para empezar a llenar el calendario.
+        <!-- Sin actividad -->
+        <div v-if="!hasActivity" class="flex flex-col items-center gap-1.5 py-10 text-white/35 text-sm text-center">
+            <span class="text-3xl">📅</span>
+            <p>Sin actividad en los últimos 14 días.</p>
+            <p class="text-xs text-white/20">Completa un quiz para empezar a llenar el calendario.</p>
         </div>
 
-        <div v-else class="space-y-5">
-            <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <template v-else>
+            <!-- Métricas -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <article
                     v-for="metric in summaryMetrics"
                     :key="metric.label"
-                    class="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+                    class="bg-white/[0.04] border border-white/[0.08] rounded-[14px] p-3.5"
                 >
-                    <p class="text-[11px] uppercase tracking-wide text-white/45">{{ metric.label }}</p>
-                    <p class="mt-2 text-2xl font-semibold text-white">{{ metric.value }}</p>
-                    <p class="mt-1 text-xs text-white/45">{{ metric.helper }}</p>
+                    <p class="text-[0.65rem] uppercase tracking-[0.08em] text-white/40">{{ metric.label }}</p>
+                    <p class="text-[1.6rem] font-bold text-white leading-none mt-2 mb-1">{{ metric.value }}</p>
+                    <p class="text-[0.68rem] text-white/35">{{ metric.helper }}</p>
                 </article>
             </div>
 
-            <section class="rounded-2xl border border-white/10 bg-slate-950/35 overflow-hidden">
-                <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3">
-                    <div>
-                        <p class="text-sm font-medium text-white">Calendario de rendimiento</p>
-                        <p class="text-xs text-white/45">{{ rangeLabel }}</p>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px] text-white/45">
-                        <span class="inline-flex items-center gap-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-700"></span>Sin datos
-                        </span>
-                        <span class="inline-flex items-center gap-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Bajo
-                        </span>
-                        <span class="inline-flex items-center gap-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>Medio
-                        </span>
-                        <span class="inline-flex items-center gap-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>Alto
+            <!-- Calendario -->
+            <div class="bg-slate-950/40 border border-white/[0.08] rounded-2xl overflow-hidden">
+
+                <!-- Cabecera -->
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3.5 border-b border-white/[0.07]">
+                    <p class="flex-1 min-w-[120px] text-sm font-medium text-white">Calendario de rendimiento</p>
+                    <p class="text-[0.72rem] text-white/35">{{ rangeLabel }}</p>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <span
+                            v-for="item in LEGEND"
+                            :key="item.label"
+                            class="flex items-center gap-1.5 text-[0.65rem] text-white/40"
+                        >
+                            <span class="w-2 h-2 rounded-full inline-block" :class="item.dotClass" />
+                            {{ item.label }}
                         </span>
                     </div>
                 </div>
 
-                <div class="p-4 overflow-x-auto">
-                    <div class="min-w-[520px]">
-                        <div class="grid grid-cols-[88px_repeat(2,minmax(0,1fr))] gap-2 mb-2">
-                            <div></div>
-                            <div
-                                v-for="column in weekColumns"
-                                :key="column.key"
-                                class="rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-center"
-                            >
-                                <p class="text-[11px] uppercase tracking-wide text-white/40">
-                                    {{ column.label }}
-                                </p>
-                                <p class="text-xs text-white/70 mt-1">{{ column.range }}</p>
-                            </div>
+                <!-- v-calendar -->
+                <VCalendar
+                    :attributes="calendarAttributes"
+                    :min-date="rangeStart"
+                    :max-date="rangeEnd"
+                    :first-day-of-week="2"
+                    :masks="{ weekdays: 'WWW' }"
+                    expanded
+                    borderless
+                    @dayclick="onDayClick"
+                />
+
+                <!-- Detalle del día seleccionado -->
+                <transition
+                    enter-active-class="transition-all duration-200 ease-out"
+                    enter-from-class="opacity-0 -translate-y-1"
+                    leave-active-class="transition-all duration-150 ease-in"
+                    leave-to-class="opacity-0 -translate-y-1"
+                >
+                    <div v-if="selectedDay" class="mx-4 mb-4 bg-white/[0.05] border border-white/10 rounded-[14px] p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-semibold text-white">{{ selectedDay.dateLabel }}</span>
+                            <button
+                                class="text-white/35 hover:text-white/70 text-xs px-1.5 py-0.5 rounded-md transition-colors cursor-pointer"
+                                @click="selectedDay = null"
+                            >✕</button>
                         </div>
 
-                        <div class="space-y-2">
-                            <div
-                                v-for="row in calendarRows"
-                                :key="row.label"
-                                class="grid grid-cols-[88px_repeat(2,minmax(0,1fr))] gap-2 items-stretch"
-                            >
-                                <div class="flex items-center px-2">
-                                    <span class="text-sm font-medium text-white/80">{{ row.label }}</span>
+                        <template v-if="selectedDay.total > 0">
+                            <div class="flex flex-col gap-2.5">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-[2rem] font-extrabold leading-none" :class="accuracyColorClass(selectedDay.percent)">
+                                        {{ selectedDay.percent }}%
+                                    </span>
+                                    <span class="text-[0.72rem] text-white/40">precisión</span>
                                 </div>
-
-                                <article
-                                    v-for="cell in row.cells"
-                                    :key="cell.dateKey"
-                                    :class="cell.cardClass"
-                                    :title="cell.tooltip"
-                                    class="rounded-xl border px-3 py-3 transition-colors"
-                                >
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div>
-                                            <p class="text-[11px] uppercase tracking-wide text-white/45">
-                                                {{ cell.monthLabel }}
-                                            </p>
-                                            <p class="text-lg font-semibold text-white">
-                                                {{ cell.dayNumber }}
-                                            </p>
-                                        </div>
-                                        <span class="text-[11px] text-white/45">
-                                            {{ cell.sessions }} ses.
-                                        </span>
-                                    </div>
-
-                                    <div v-if="cell.total > 0" class="mt-3">
-                                        <div class="flex items-end justify-between gap-3">
-                                            <span class="text-2xl font-bold text-white">{{ cell.percent }}%</span>
-                                            <span class="text-xs text-white/55">{{ cell.correct }}/{{ cell.total }}</span>
-                                        </div>
-                                        <div class="mt-3 h-1.5 rounded-full bg-black/20 overflow-hidden">
-                                            <div
-                                                class="h-full rounded-full bg-white/80"
-                                                :style="{ width: `${cell.percent}%` }"
-                                            ></div>
-                                        </div>
-                                    </div>
-
-                                    <div v-else class="mt-5 text-sm text-white/35">
-                                        Sin actividad
-                                    </div>
-                                </article>
+                                <div class="flex justify-between text-[0.78rem] text-white/50">
+                                    <span>Respuestas</span>
+                                    <span class="text-white/80 font-medium">{{ selectedDay.correct }}/{{ selectedDay.total }}</span>
+                                </div>
+                                <div class="flex justify-between text-[0.78rem] text-white/50">
+                                    <span>Sesiones</span>
+                                    <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
+                                </div>
+                                <div class="h-1.5 bg-black/30 rounded-full overflow-hidden">
+                                    <div
+                                        class="h-full rounded-full transition-[width] duration-500 ease-out"
+                                        :class="accuracyBgClass(selectedDay.percent)"
+                                        :style="{ width: selectedDay.percent + '%' }"
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        </template>
+                        <p v-else class="text-[0.8rem] text-white/30">Sin actividad registrada</p>
                     </div>
-                </div>
-            </section>
-        </div>
+                </transition>
+            </div>
+        </template>
     </div>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
+import { Calendar as VCalendar } from 'v-calendar'
+import 'v-calendar/style.css'
 
-const LS_WEEKLY = 'ludoscript_weeklySessions'
-const DAY_MS = 24 * 60 * 60 * 1000
+// ── Constantes ───────────────────────────────────────────────────
+const LS_WEEKLY      = 'ludoscript_weeklySessions'
 const TWO_WEEKS_DAYS = 14
-const HISTORY_MS = TWO_WEEKS_DAYS * DAY_MS
+const HISTORY_MS     = TWO_WEEKS_DAYS * 24 * 60 * 60 * 1000
 
-const shortDateFormatter = new Intl.DateTimeFormat('es-ES', {
-    day: '2-digit',
-    month: 'short',
-})
-
-const monthFormatter = new Intl.DateTimeFormat('es-ES', {
-    month: 'short',
-})
-
-const DAY_ORDER = [
-    { index: 1, label: 'Lunes' },
-    { index: 2, label: 'Martes' },
-    { index: 3, label: 'Miercoles' },
-    { index: 4, label: 'Jueves' },
-    { index: 5, label: 'Viernes' },
-    { index: 6, label: 'Sabado' },
-    { index: 0, label: 'Domingo' },
+const LEGEND = [
+    { label: 'Sin datos', dotClass: 'bg-zinc-600' },
+    { label: 'Bajo',      dotClass: 'bg-rose-400' },
+    { label: 'Medio',     dotClass: 'bg-amber-400' },
+    { label: 'Alto',      dotClass: 'bg-emerald-400' },
 ]
 
-function startOfDay(date) {
-    const normalized = new Date(date)
-    normalized.setHours(0, 0, 0, 0)
-    return normalized
+const fmt = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short' })
+
+// ── Utilidades ───────────────────────────────────────────────────
+const startOfDay = (date) => {
+    const d = new Date(date)
+    d.setHours(0, 0, 0, 0)
+    return d
 }
 
-function toDateKey(date) {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+const toDateKey = (date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+
+const getAccuracy = (correct, total) =>
+    total > 0 ? Math.round((correct / total) * 100) : null
+
+const formatRange = (start, end) => `${fmt.format(start)} – ${fmt.format(end)}`
+
+function accuracyColorClass(percent) {
+    if (percent == null) return 'text-white/30'
+    if (percent >= 85)   return 'text-emerald-400'
+    if (percent >= 65)   return 'text-cyan-400'
+    if (percent >= 45)   return 'text-amber-400'
+    return 'text-rose-400'
 }
 
-function getAccuracy(correct, total) {
-    return total > 0 ? Math.round((correct / total) * 100) : null
+function accuracyBgClass(percent) {
+    if (percent == null) return 'bg-zinc-600'
+    if (percent >= 85)   return 'bg-emerald-400'
+    if (percent >= 65)   return 'bg-cyan-400'
+    if (percent >= 45)   return 'bg-amber-400'
+    return 'bg-rose-400'
 }
 
-function formatRange(start, end) {
-    return `${shortDateFormatter.format(start)} - ${shortDateFormatter.format(end)}`
+function dotHexColor(percent, total) {
+    if (total === 0)     return '#52525b' // zinc-600
+    if (percent >= 85)   return '#34d399' // emerald-400
+    if (percent >= 65)   return '#22d3ee' // cyan-400
+    if (percent >= 45)   return '#fbbf24' // amber-400
+    return '#f87171'                      // rose-400
 }
 
-function getCardClass(percent, total) {
-    if (total === 0) return 'border-white/10 bg-zinc-900/60'
-    if (percent >= 85) return 'border-emerald-400/30 bg-emerald-500/20'
-    if (percent >= 65) return 'border-cyan-400/30 bg-cyan-500/20'
-    if (percent >= 45) return 'border-amber-400/30 bg-amber-500/20'
-    return 'border-rose-400/30 bg-rose-500/20'
-}
-
+// ── Datos ────────────────────────────────────────────────────────
 function readRecentSessions() {
     try {
-        const stored = JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
         const cutoff = Date.now() - HISTORY_MS
-        return stored.filter(session => session.timestamp >= cutoff)
-    } catch (_) {
-        return []
-    }
+        return JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
+            .filter(s => s.timestamp >= cutoff)
+    } catch { return [] }
 }
 
 const recentSessions = ref(readRecentSessions())
 
 const sessionsByDate = computed(() => {
-    const aggregated = {}
-
+    const agg = {}
     for (const session of recentSessions.value) {
-        const sessionDate = startOfDay(new Date(session.timestamp))
-        const key = toDateKey(sessionDate)
-
-        if (!aggregated[key]) {
-            aggregated[key] = {
-                correct: 0,
-                total: 0,
-                sessions: 0,
-            }
-        }
-
-        aggregated[key].sessions += 1
-
+        const key = toDateKey(startOfDay(new Date(session.timestamp)))
+        if (!agg[key]) agg[key] = { correct: 0, total: 0, sessions: 0 }
+        agg[key].sessions++
         for (const stat of Object.values(session.stats ?? {})) {
-            aggregated[key].correct += stat.correct ?? 0
-            aggregated[key].total += stat.total ?? 0
+            agg[key].correct += stat.correct ?? 0
+            agg[key].total   += stat.total   ?? 0
         }
     }
-
-    return aggregated
+    return agg
 })
 
+// ── Rango de 14 días ─────────────────────────────────────────────
 const lastTwoWeeksDays = computed(() => {
     const today = startOfDay(new Date())
-
-    return Array.from({ length: TWO_WEEKS_DAYS }, (_, index) => {
-        const date = new Date(today)
-        date.setDate(today.getDate() - (TWO_WEEKS_DAYS - 1 - index))
-        return date
+    return Array.from({ length: TWO_WEEKS_DAYS }, (_, i) => {
+        const d = new Date(today)
+        d.setDate(today.getDate() - (TWO_WEEKS_DAYS - 1 - i))
+        return d
     })
 })
 
-const weekColumns = computed(() =>
-    [
-        lastTwoWeeksDays.value.slice(0, 7),
-        lastTwoWeeksDays.value.slice(7, 14),
-    ].map((days, index) => ({
-        key: `week-${index}`,
-        label: `Bloque ${index + 1}`,
-        range: formatRange(days[0], days[days.length - 1]),
-    }))
-)
+const rangeStart = computed(() => lastTwoWeeksDays.value.at(0))
+const rangeEnd   = computed(() => lastTwoWeeksDays.value.at(-1))
+const rangeLabel = computed(() => formatRange(rangeStart.value, rangeEnd.value))
 
-const calendarRows = computed(() =>
-    DAY_ORDER.map(day => {
-        const cells = lastTwoWeeksDays.value
-            .filter(date => date.getDay() === day.index)
-            .sort((left, right) => left - right)
-            .map(date => {
-                const summary = sessionsByDate.value[toDateKey(date)] ?? {
-                    correct: 0,
-                    total: 0,
-                    sessions: 0,
-                }
-                const percent = getAccuracy(summary.correct, summary.total)
-
-                return {
-                    ...summary,
-                    dateKey: toDateKey(date),
-                    dayNumber: String(date.getDate()).padStart(2, '0'),
-                    monthLabel: monthFormatter.format(date),
-                    percent,
-                    cardClass: getCardClass(percent ?? 0, summary.total),
-                    tooltip: summary.total > 0
-                        ? `${shortDateFormatter.format(date)}: ${percent}% de acierto, ${summary.correct}/${summary.total} correctas en ${summary.sessions} sesiones.`
-                        : `${shortDateFormatter.format(date)}: sin actividad registrada.`,
-                }
-            })
+// ── Atributos v-calendar ─────────────────────────────────────────
+const calendarAttributes = computed(() =>
+    lastTwoWeeksDays.value.map(date => {
+        const key     = toDateKey(date)
+        const data    = sessionsByDate.value[key] ?? { correct: 0, total: 0, sessions: 0 }
+        const percent = getAccuracy(data.correct, data.total)
+        const color   = dotHexColor(percent ?? 0, data.total)
 
         return {
-            label: day.label,
-            cells,
+            key,
+            dates: date,
+            dot: {
+                style: { backgroundColor: color, width: '8px', height: '8px', borderRadius: '50%' },
+            },
+            ...(data.total > 0 && {
+                highlight: {
+                    style: {
+                        backgroundColor: color + '22',
+                        border: `1px solid ${color}44`,
+                        borderRadius: '8px',
+                    },
+                },
+            }),
         }
     })
 )
 
-const rangeLabel = computed(() =>
-    formatRange(lastTwoWeeksDays.value[0], lastTwoWeeksDays.value[lastTwoWeeksDays.value.length - 1])
-)
+// ── Día seleccionado ─────────────────────────────────────────────
+const selectedDay = ref(null)
 
+function onDayClick({ date }) {
+    const key     = toDateKey(date)
+    const data    = sessionsByDate.value[key] ?? { correct: 0, total: 0, sessions: 0 }
+    selectedDay.value = {
+        ...data,
+        percent:   getAccuracy(data.correct, data.total),
+        dateKey:   key,
+        dateLabel: fmt.format(date),
+    }
+}
+
+// ── Totales y métricas ───────────────────────────────────────────
 const totals = computed(() =>
-    Object.values(sessionsByDate.value).reduce((accumulator, day) => {
-        accumulator.correct += day.correct
-        accumulator.total += day.total
-        accumulator.sessions += day.sessions
-        if (day.total > 0) accumulator.activeDays += 1
-        return accumulator
-    }, {
-        correct: 0,
-        total: 0,
-        sessions: 0,
-        activeDays: 0,
-    })
+    Object.values(sessionsByDate.value).reduce(
+        (acc, day) => {
+            acc.correct  += day.correct
+            acc.total    += day.total
+            acc.sessions += day.sessions
+            if (day.total > 0) acc.activeDays++
+            return acc
+        },
+        { correct: 0, total: 0, sessions: 0, activeDays: 0 }
+    )
 )
 
-const bestDay = computed(() => {
-    const candidates = calendarRows.value
-        .flatMap(row => row.cells.map(cell => ({ ...cell, weekday: row.label })))
-        .filter(cell => cell.total > 0)
-        .sort((left, right) => {
-            if (right.percent !== left.percent) return right.percent - left.percent
-            return right.total - left.total
+const bestDay = computed(() =>
+    lastTwoWeeksDays.value
+        .map(date => {
+            const data = sessionsByDate.value[toDateKey(date)]
+            if (!data?.total) return null
+            return { ...data, percent: getAccuracy(data.correct, data.total), date }
         })
-
-    return candidates[0] ?? null
-})
+        .filter(Boolean)
+        .sort((a, b) => b.percent - a.percent || b.total - a.total)
+        .at(0) ?? null
+)
 
 const summaryMetrics = computed(() => {
     const accuracy = getAccuracy(totals.value.correct, totals.value.total)
-
     return [
         {
-            label: 'Precision media',
-            value: accuracy !== null ? `${accuracy}%` : '-',
+            label:  'Precisión media',
+            value:  accuracy !== null ? `${accuracy}%` : '-',
             helper: `${totals.value.correct}/${totals.value.total} respuestas correctas`,
         },
         {
-            label: 'Dias activos',
-            value: totals.value.activeDays,
-            helper: `de ${TWO_WEEKS_DAYS} dias analizados`,
+            label:  'Días activos',
+            value:  totals.value.activeDays,
+            helper: `de ${TWO_WEEKS_DAYS} días analizados`,
         },
         {
-            label: 'Sesiones',
-            value: totals.value.sessions,
+            label:  'Sesiones',
+            value:  totals.value.sessions,
             helper: 'intentos de quiz registrados',
         },
         {
-            label: 'Mejor dia',
-            value: bestDay.value ? `${bestDay.value.weekday} ${bestDay.value.percent}%` : '-',
-            helper: bestDay.value ? `${bestDay.value.correct}/${bestDay.value.total} correctas` : 'sin datos suficientes',
+            label:  'Mejor día',
+            value:  bestDay.value ? `${bestDay.value.percent}%` : '-',
+            helper: bestDay.value
+                ? `${fmt.format(bestDay.value.date)} · ${bestDay.value.correct}/${bestDay.value.total}`
+                : 'sin datos suficientes',
         },
     ]
 })
 
 const hasActivity = computed(() =>
-    Object.values(sessionsByDate.value).some(entry => entry.total > 0)
+    Object.values(sessionsByDate.value).some(e => e.total > 0)
 )
 </script>
+
+<style scoped>
+/* Solo overrides de v-calendar — no expresables con Tailwind por ser :deep() */
+:deep(.vc-container)               { background: transparent !important; border: none !important; color: rgba(255,255,255,0.75) !important; font-family: inherit !important; width: 100% !important; }
+:deep(.vc-header)                  { padding: 12px 16px 0 !important; }
+:deep(.vc-title)                   { color: rgba(255,255,255,0.65) !important; font-size: 0.82rem !important; font-weight: 500 !important; background: transparent !important; }
+:deep(.vc-arrow)                   { color: rgba(255,255,255,0.4) !important; background: transparent !important; border-radius: 8px !important; }
+:deep(.vc-arrow:hover)             { background: rgba(255,255,255,0.08) !important; }
+:deep(.vc-weekday)                 { color: rgba(255,255,255,0.3) !important; font-size: 0.68rem !important; }
+:deep(.vc-day-content)             { color: rgba(255,255,255,0.65) !important; font-size: 0.82rem !important; border-radius: 8px !important; transition: background 0.15s !important; }
+:deep(.vc-day-content:hover)       { background: rgba(255,255,255,0.08) !important; cursor: pointer !important; }
+:deep(.vc-day-content.is-disabled) { color: rgba(255,255,255,0.15) !important; }
+:deep(.vc-dots)                    { gap: 3px !important; }
+</style>
