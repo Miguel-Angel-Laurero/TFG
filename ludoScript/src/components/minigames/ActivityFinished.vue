@@ -52,11 +52,13 @@
       <!-- Acciones -->
     </div>
   </div>
+ 
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
 import { IMAGES } from '@/utils/imgBucketStorage'
+import Bonus from '../shared/Bonus.vue'
 
 defineProps({
   title: { type: String, default: '¡Actividad completada!' },
