@@ -35,6 +35,10 @@ const UserData = sequelize.define("UserData", {
   first_login: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
+  },
+  bonus_percentage:{
+    type: DataTypes.INTEGER,
+    defaultValue: 5,
   }
 }, {
   tableName: "user_data",   // ← apunta a la tabla correcta

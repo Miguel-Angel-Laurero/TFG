@@ -81,6 +81,7 @@ export const useRewardsStore = defineStore('rewards', () => {
 
   // Evalúa la suerte del bonus y lo persiste en la BBDD
   async function evaluateBonus() {
+  const authStore = useAuthStore()
     const current = getBonusPercentage()
     const rand = Math.random() * 100
 
@@ -95,40 +96,54 @@ export const useRewardsStore = defineStore('rewards', () => {
       const next = Math.min(current + BONUS_INCREMENT, 100)
       setBonusPercentage(next)
     }
+  // En rewards.store.js
+try {
+  const userId = authStore.user.id;
+  const currentBonus = getBonusPercentage();
+  const currentCoins = authStore.userData?.coins || 0;
 
-    // PERSISTENCIA EN BBDD
-    try {
-      await api.patch('/users/me', { bonusPercentage: getBonusPercentage() })
-    } catch (error) {
-      console.warn('Error al persistir bonusPercentage:', error)
+  // Enviamos los datos dentro del objeto 'userData'
+  await api.put(`/users/${userId}`, {
+    userData: {
+      bonusPercentage: currentBonus,
+      coins: currentCoins
     }
-
+  });
+  
+  console.log("Sincronización con BD exitosa");
+} catch (error) {
+  console.error("Error al persistir:", error);
+}
     return { hasBonus: hasBonus.value, multiplier: currentMultiplier.value }
   }
 
   async function claimActivityReward(amount) {
-    if (amount <= 0) return { baseAmount: 0, multiplier: 1, totalAmount: 0 }
+  if (amount <= 0) return { baseAmount: 0, multiplier: 1, totalAmount: 0 }
 
-    try {
-      const multiplier = hasBonus.value ? currentMultiplier.value : 1
-      const totalAmount = Math.round(amount * multiplier)
+  try {
+    const multiplier = hasBonus.value ? currentMultiplier.value : 1
+    const totalAmount = Math.round(amount * multiplier)
+    const authStore = useAuthStore()
 
-      activityCoinsEarned.value += totalAmount
+    if (authStore.userData) {
+      // Actualización local
+      authStore.userData.coins = (authStore.userData.coins ?? 0) + totalAmount
 
-      const authStore = useAuthStore()
-      if (authStore.userData) {
-        authStore.userData.coins = (authStore.userData.coins ?? 0) + totalAmount
-        
-        // OPCIONAL: Si quieres persistir las monedas de actividad inmediatamente:
-        // await api.patch('/users/me', { coins: authStore.userData.coins })
-      }
+      // PERSISTENCIA REAL EN BD
+      await api.put(`/users/${authStore.user.id}`, {
+        userData: {
+          coins: authStore.userData.coins,
+          bonus_percentage: authStore.userData.bonusPercentage
 
-      return { baseAmount: amount, multiplier, totalAmount }
-    } catch (error) {
-      console.error('Error claiming activity reward:', error)
-      throw error
+        }
+      })
     }
+    return { baseAmount: amount, multiplier, totalAmount }
+  } catch (error) {
+    console.error('Error al guardar monedas:', error)
+    throw error
   }
+}
 
   return {
     streak, claimed, ready, activityCoinsEarned,

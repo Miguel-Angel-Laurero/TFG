@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User,UserData } = require("../models");
 const { hashPassword } = require("../utils/bcrypt");
 
 const getAll = async (req, res, next) => {
@@ -41,12 +41,18 @@ const update = async (req, res, next) => {
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
-    const { username, avatar, banner, password } = req.body;
+    const { username, avatar, banner, password, userData } = req.body;
     const updates = {};
     if (username) updates.username = username;
     if (avatar !== undefined) updates.avatar = avatar;
     if (banner !== undefined) updates.banner = banner;
     if (password) updates.password = await hashPassword(password);
+    if (userData) {
+      const dataRecord = await UserData.findOne({ where: { user_id: id } });
+      if (dataRecord) {
+        await dataRecord.update(userData);
+      }
+    }
 
     await user.update(updates);
     const { password: _pw, ...safe } = user.toJSON();
