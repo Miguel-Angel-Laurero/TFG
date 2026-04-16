@@ -6,14 +6,28 @@ const getRewards = async (req, res, next) => {
     if (!userData) return res.status(404).json({ message: "UserData no encontrado" });
 
     // ← Calcula si ya reclamó hoy
-    const claimedToday = userData.last_claimed_at
-      ? new Date(userData.last_claimed_at).toDateString() === new Date().toDateString()
-      : false
+    const now = new Date();
+    const lastClaim = userData.last_claimed_at ? new Date(userData.last_claimed_at) : null;
+
+    let claimedToday = false;
+    if (lastClaim) {
+      const diffTime = now.setHours(0,0,0,0) - lastClaim.setHours(0,0,0,0);
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) {
+        claimedToday = true;
+      } else if (diffDays > 1) {
+        // ─── AQUÍ OCURRE EL RESET ───
+        // Si pasó más de un día sin reclamar, volvemos a 0
+        userData.streak = 0;
+        await userData.save(); 
+      }
+    }
 
     res.json({
       streak: userData.streak,
       coins: userData.coins,
-      claimedToday, // ← ahora devuelve el valor real
+      claimedToday,
       rewards: Array.from({ length: 7 }, (_, i) => ({
         day: i + 1,
         reward: Math.min(Math.round(10 * (i + 1)), 100),
