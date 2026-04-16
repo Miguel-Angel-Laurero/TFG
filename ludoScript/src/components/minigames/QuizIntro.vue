@@ -77,8 +77,8 @@
             </button>
             <div v-if="open[2]" class="px-4 pb-4 pt-1">
               <ul class="flex flex-col space-y-2 text-sm text-gray-400">
-                <li>🗺️ Verás en qué áreas fallas</li>
-                <li>💡 Podrás repasar con explicaciones</li>
+                <li>🗺️ Comprueba que areas fallas</li>
+                <li>💡 Repasa con explicaciones</li>
               </ul>
             </div>
           </div>

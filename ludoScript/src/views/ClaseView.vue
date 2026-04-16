@@ -2,12 +2,12 @@
     <Header/>
     <div class="w-full min-h-screen p-2 md:p-4 bg-blue-950/20">
         <!-- Volver al inicio -->
-        <div class="max-w-4xl mx-auto mb-3">
+        <!-- <div class="max-w-4xl mx-auto mb-3">
             <button @click="router.push('/')"
                 class="flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors">
                 <i class="pi pi-arrow-left text-xs"></i> Volver al inicio
             </button>
-        </div>
+        </div> -->
 
         <!-- H1: loader mientras se carga la clase -->
         <div v-if="store.loading && !store.group" class="flex justify-center items-center h-64">
@@ -94,11 +94,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+// import { useRouter } from 'vue-router';
 import { useGroupStore } from '@/stores/group.store';
 import { useAuthStore } from '@/stores/auth.store';
 
-const router = useRouter();
+// const router = useRouter();
 
 import ClaseHeader from '@/components/clase/ClaseHeader.vue';
 import ClaseStatsTable from '@/components/clase/ClaseStatsTable.vue';
