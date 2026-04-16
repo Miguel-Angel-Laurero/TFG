@@ -2,6 +2,8 @@ const { Server } = require("socket.io");
 const { verifyToken } = require("../utils/jwt");
 const { User } = require("../models");
 const { registerGameHandlers } = require("./gameHandler");
+const { registerDuelHandlers } = require("./duelHandler");
+const { registerGroupGameHandlers } = require("./groupGameHandler");
 
 /**
  * Inicializa Socket.io adjuntándolo al servidor HTTP de Express.
@@ -23,9 +25,13 @@ function initSocket(httpServer, clientUrl) {
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
+
+      // Sin token → espectador invitado (acceso de solo lectura)
       if (!token) {
-        return next(new Error("Unauthorized: token required"));
+        socket.user = { id: null, username: "Espectador", isGuest: true };
+        return next();
       }
+
       const payload = verifyToken(token);
       if (!payload) {
         return next(new Error("Unauthorized: invalid or expired token"));
@@ -51,12 +57,36 @@ function initSocket(httpServer, clientUrl) {
     }
   });
 
+  // ── Mapa userId → socketId (para enviar invitaciones de duelo) ────────────
+  /** @type {Map<number, string>} */
+  const userSockets = new Map();
+
   // ── Handlers de eventos ────────────────────────────────────────────────────
   io.on("connection", (socket) => {
-    console.log(`🔌 Socket conectado: ${socket.id} (user ${socket.user?.id})`);
+    console.log(
+      `🔌 Socket conectado: ${socket.id} (user ${socket.user?.id ?? "guest"})`,
+    );
+
+    // Registrar socket en el mapa solo para usuarios autenticados
+    if (!socket.user.isGuest) {
+      userSockets.set(socket.user.id, socket.id);
+    }
+
+    // Guests solo pueden usar spectator:join (registrado dentro de gameHandlers)
     registerGameHandlers(io, socket);
 
+    if (!socket.user.isGuest) {
+      registerDuelHandlers(io, socket, userSockets);
+      registerGroupGameHandlers(io, socket, userSockets);
+    }
+
     socket.on("disconnect", (reason) => {
+      if (
+        !socket.user.isGuest &&
+        userSockets.get(socket.user?.id) === socket.id
+      ) {
+        userSockets.delete(socket.user.id);
+      }
       console.log(`🔌 Socket desconectado: ${socket.id} — ${reason}`);
     });
   });

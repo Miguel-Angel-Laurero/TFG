@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { groupService } from "@/api/group.service";
 import { useAuthStore } from "@/stores/auth.store";
+import { socketService } from "@/api/socket.service";
 
 export const useGroupStore = defineStore("group", () => {
   const group = ref(null); // Objeto del grupo con su lista de members
@@ -9,6 +10,13 @@ export const useGroupStore = defineStore("group", () => {
   const loading = ref(false);
   const loadingStats = ref(false);
   const error = ref(null);
+
+  // ── Estado de partida de grupo ────────────────────────────────────────────
+  /** Código de sala activa (partida iniciada por el propietario) */
+  const activeGameCode = ref(null);
+  /** Invitación pendiente recibida vía socket: { code, initiatorUsername, groupName, settings } */
+  const pendingGroupInvite = ref(null);
+  let _notifListenersRegistered = false;
 
   const isMember = computed(() => !!group.value);
   const isOwner = computed(() => {
@@ -160,12 +168,75 @@ export const useGroupStore = defineStore("group", () => {
     }
   }
 
+  // ── Notificaciones de partida de grupo (socket) ───────────────────────────
+  /**
+   * Conecta el socket y registra el listener group:game-invite.
+   * Idempotente: si ya está registrado no lo duplica.
+   */
+  function connectNotifications() {
+    if (_notifListenersRegistered) return;
+    try {
+      const socket = socketService.connect();
+      socket.on("group:game-invite", (invite) => {
+        pendingGroupInvite.value = invite;
+        activeGameCode.value = invite.code;
+      });
+      _notifListenersRegistered = true;
+    } catch {
+      // Sin token — usuario no autenticado, no conectar
+    }
+  }
+
+  /** Descarta la invitación pendiente (sin unirse) y limpia el código de sala activo. */
+  function dismissInvite() {
+    pendingGroupInvite.value = null;
+    activeGameCode.value = null;
+  }
+
+  /**
+   * El propietario inicia una partida de grupo.
+   * Emite group:start-game y espera room:created.
+   * @returns {Promise<string|null>} el código de sala, o null si hay error.
+   */
+  function startGroupGame({
+    questionCount = 10,
+    timePerQuestion = 20,
+    category = null,
+  } = {}) {
+    return new Promise((resolve) => {
+      try {
+        const socket = socketService.connect();
+
+        socket.once("room:created", ({ code }) => {
+          activeGameCode.value = code;
+          resolve(code);
+        });
+
+        socket.once("group:error", ({ message }) => {
+          error.value = message;
+          resolve(null);
+        });
+
+        socket.emit("group:start-game", {
+          questionCount,
+          timePerQuestion,
+          category,
+        });
+      } catch (e) {
+        error.value = "No se pudo conectar al servidor.";
+        resolve(null);
+      }
+    });
+  }
+
   return {
     group,
     stats,
     loading,
     loadingStats,
     error,
+    activeGameCode,
+    pendingGroupInvite,
     isMember,
     isOwner,
     memberCount,
@@ -178,5 +249,8 @@ export const useGroupStore = defineStore("group", () => {
     kickMember,
     dissolveGroup,
     fetchStats,
+    connectNotifications,
+    dismissInvite,
+    startGroupGame,
   };
 });

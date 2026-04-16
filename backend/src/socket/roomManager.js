@@ -123,6 +123,65 @@ function createRoom(hostId, username, socketId, settings) {
 }
 
 /**
+ * Crea una sala de duelo 1v1 entre dos miembros de un grupo.
+ * Los jugadores se unen por invitación; no hay host jugador.
+ */
+function createDuelRoom(inviterId, p1Id, p2Id, settings) {
+  const code = generateCode();
+  const room = {
+    code,
+    hostId: null,
+    inviterId,
+    type: "duel",
+    allowedPlayerIds: new Set([p1Id, p2Id]),
+    players: new Map(),
+    status: "lobby",
+    currentQuestionIndex: -1,
+    questions: [],
+    questionTimer: null,
+    tickInterval: null,
+    idleTimer: null,
+    questionStartTime: 0,
+    _inviteTimeout: null,
+    settings: {
+      questionCount: Math.min(Math.max(settings?.questionCount ?? 10, 3), 20),
+      timePerQuestion: 20,
+      category: settings?.category ?? null,
+    },
+  };
+  rooms.set(code, room);
+  scheduleIdleCleanup(room, null);
+  return room;
+}
+
+/**
+ * Une a un jugador a una sala de duelo. Valida allowedPlayerIds.
+ * @returns {{ ok: true, room: Room } | { ok: false, error: string }}
+ */
+function joinDuelRoom(code, userId, username, socketId) {
+  const room = rooms.get(code);
+  if (!room) return { ok: false, error: "Duelo no encontrado" };
+  if (room.type !== "duel") return { ok: false, error: "Código no válido" };
+  if (room.status !== "lobby")
+    return { ok: false, error: "El duelo ya ha comenzado" };
+  if (!room.allowedPlayerIds.has(userId))
+    return { ok: false, error: "No estás invitado a este duelo" };
+  if (room.players.size >= 2)
+    return { ok: false, error: "El duelo ya está completo" };
+
+  room.players.set(userId, {
+    socketId,
+    username,
+    score: 0,
+    answeredThisQuestion: false,
+    answerTime: null,
+  });
+
+  if (room.idleTimer) clearTimeout(room.idleTimer);
+  return { ok: true, room };
+}
+
+/**
  * Une a un jugador a una sala existente.
  * @returns {{ ok: true, room: Room } | { ok: false, error: string }}
  */
@@ -236,9 +295,20 @@ function startGame(room, io) {
     return;
   }
 
+  const pool = room.settings.category
+    ? ALL_QUESTIONS.filter((q) => q.category === room.settings.category)
+    : ALL_QUESTIONS;
+
+  if (pool.length === 0) {
+    io.to(room.code).emit("room:error", {
+      message: `No hay preguntas para la categoría "${room.settings.category}"`,
+    });
+    return;
+  }
+
   room.status = "playing";
-  const count = Math.min(room.settings.questionCount, ALL_QUESTIONS.length);
-  room.questions = shuffleArray(ALL_QUESTIONS).slice(0, count);
+  const count = Math.min(room.settings.questionCount, pool.length);
+  room.questions = shuffleArray(pool).slice(0, count);
   room.currentQuestionIndex = -1;
 
   io.to(room.code).emit("game:started", {
@@ -438,15 +508,47 @@ async function _saveResults(room, ranking) {
   );
 }
 
+/**
+ * Devuelve el estado público de una sala para espectadores.
+ * No incluye el índice correcto de la pregunta en curso.
+ */
+function getPublicState(room) {
+  const q =
+    room.status === "playing" &&
+    room.currentQuestionIndex >= 0 &&
+    room.questions[room.currentQuestionIndex];
+
+  return {
+    status: room.status,
+    settings: room.settings,
+    currentQuestionIndex: room.currentQuestionIndex,
+    players: getPlayersPublic(room),
+    currentQuestion: q
+      ? {
+          questionIndex: room.currentQuestionIndex,
+          totalQuestions: room.questions.length,
+          question: q.question,
+          options: q.options,
+          category: q.category,
+          difficulty: q.difficulty,
+          timeLimit: room.settings.timePerQuestion,
+        }
+      : null,
+  };
+}
+
 module.exports = {
   createRoom,
+  createDuelRoom,
   joinRoom,
+  joinDuelRoom,
   leaveRoom,
   leaveAllRooms,
   getRoom,
   getRoomByHost,
   getRoomByPlayer,
   getPlayersPublic,
+  getPublicState,
   destroyRoom,
   startGame,
   submitAnswer,

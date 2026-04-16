@@ -115,6 +115,23 @@ function registerGameHandlers(io, socket) {
   socket.on("disconnect", () => {
     _handleLeave(socket, userId, username, io);
   });
+  // ── spectator:join — accesible también para guests ──────────────────────
+  socket.on("spectator:join", ({ code } = {}) => {
+    if (!code) {
+      return socket.emit("spectator:error", {
+        message: "Código de sala requerido",
+      });
+    }
+    const room = roomManager.getRoom(code.toUpperCase());
+    if (!room || room.status === "finished") {
+      return socket.emit("spectator:error", {
+        message: "Sala no encontrada o la partida ya ha terminado",
+      });
+    }
+    socket.join(room.code);
+    socket.emit("spectator:joined", roomManager.getPublicState(room));
+    console.log(`👁️  Espectador ${socket.id} se unió a sala ${room.code}`);
+  });
 }
 
 /**

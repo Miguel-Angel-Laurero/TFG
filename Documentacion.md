@@ -1284,3 +1284,157 @@ Las tablas se crean automáticamente al arrancar el servidor en desarrollo, igua
 - El endpoint de stats (`GET /:id/stats`) comprueba que el usuario sea miembro del grupo antes de devolver los datos, evitando que usuarios externos consulten el rendimiento de otros.
 - El ownership check en lectura y escritura se hace directamente en controlador, nunca solo en frontend.
 - La generación del `inviteCode` usa `crypto.randomBytes`, que produce aleatoriedad criptográficamente segura.
+
+---
+
+## Partida de grupo y espectadores sin cuenta — 16/04
+
+### Objetivo
+
+Añadir al módulo `/clase` un modo de juego colectivo en el que el propietario inicia una partida que notifica automáticamente a todos los miembros del grupo conectados. Cualquier persona sin cuenta (p. ej. un alumno que solo quiere ver la proyección del aula) puede acceder a `/spectate/:code` para seguir la partida en tiempo real.
+
+---
+
+### Archivos creados (5)
+
+| Archivo                                                     | Rol                                                                                                |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `backend/src/socket/groupGameHandler.js`                    | Handler Socket.IO `group:start-game`: verifica propietario en BD, crea sala y notifica a miembros  |
+| `ludoScript/src/stores/spectator.store.js`                  | Store Pinia para espectadores; gestiona socket sin token y ciclo completo de vista                 |
+| `ludoScript/src/components/clase/GroupGameSetupModal.vue`   | Modal de configuración de la partida (nº preguntas, tiempo, categoría)                             |
+| `ludoScript/src/components/clase/GroupGameInviteBanner.vue` | Banner dinámico en `/clase`: muestra código + URL espectador al propietario, invitación a miembros |
+| `ludoScript/src/views/SpectatorView.vue`                    | Vista pública tipo "pantalla de aula": lobby → pregunta + timer + ranking → podio final            |
+
+---
+
+### Archivos modificados (6)
+
+| Archivo                                | Cambio                                                                                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `backend/src/socket/roomManager.js`    | Nueva función `getPublicState(room)`: estado serializable sin revelar la respuesta correcta                                          |
+| `backend/src/socket/gameHandler.js`    | Nuevo handler `spectator:join`: el socket entra al room y recibe estado inicial + todos los `game:*`                                 |
+| `backend/src/socket/index.js`          | Token JWT ahora opcional; sin token → `socket.user.isGuest = true`; registra `groupGameHandler`                                      |
+| `ludoScript/src/stores/group.store.js` | Añadidos `activeGameCode`, `pendingGroupInvite`, `connectNotifications()`, `dismissInvite()`, `startGroupGame()`                     |
+| `ludoScript/src/views/ClaseView.vue`   | Botón "Jugar con la clase" (solo propietario), `GroupGameSetupModal`, `GroupGameInviteBanner`, `connectNotifications` en `onMounted` |
+| `ludoScript/src/router/router.js`      | Nueva ruta `/spectate/:code` sin `meta.requiresAuth`                                                                                 |
+
+---
+
+### Cómo funciona el flujo
+
+#### Inicio de partida por el propietario
+
+1. El propietario accede a `/clase/` y ve el botón **"🎮 Jugar con la clase"** junto a "Duelo 1v1".
+2. Al pulsarlo se abre `GroupGameSetupModal` donde configura el número de preguntas (3-20), el tiempo por pregunta (5-60 s) y, opcionalmente, una categoría.
+3. Al confirmar, `group.store.startGroupGame(settings)` conecta el socket autenticado y emite `group:start-game`.
+4. En el backend, `groupGameHandler` verifica que el usuario sea `ownerId` de algún grupo (consulta BD), crea una sala con `roomManager.createRoom()` y emite `room:created` de vuelta al propietario.
+5. El propietario recibe el código, el store guarda `activeGameCode` y el frontend le redirige a `/multiplayer/` ya unido como host.
+6. En paralelo, el handler consulta todos los miembros del grupo en BD y, para cada uno que esté en `userSockets` (conectado vía socket), emite `group:game-invite: { code, initiatorUsername, groupName, settings }`.
+
+#### Recepción de la invitación por los miembros
+
+1. Al entrar en `/clase/`, `onMounted` llama a `store.connectNotifications()`, que conecta el socket y escucha `group:game-invite`.
+2. Cuando llega el evento, el store actualiza `activeGameCode` y `pendingGroupInvite`.
+3. `GroupGameInviteBanner` aparece automáticamente mostrando el nombre del propietario y un botón "¡Unirme!".
+4. Al pulsar "Unirme", `handleJoinGroupGame()` llama a `multiplayerStore.joinRoom(code)` y navega a `/multiplayer/` donde el miembro se une como jugador normal.
+5. El miembro puede ignorar la invitación pulsando "Ignorar", que llama a `store.dismissInvite()`.
+
+#### Acceso de espectadores sin cuenta
+
+1. En el banner todos ven la URL `https://…/spectate/XXXXXX` con un botón de copia. El propietario puede proyectarla en la pizarra del aula.
+2. Cualquier persona accede a esa URL sin necesidad de token. El middleware de Socket.IO ya no rechaza conexiones sin token: si no hay token, asigna `socket.user = { id: null, isGuest: true }`.
+3. `SpectatorView.vue` monta y llama a `spectatorStore.joinAsSpectator(code)`, que crea un socket independiente (sin `auth.token`) y emite `spectator:join`.
+4. El handler `spectator:join` en `gameHandler.js` busca la sala, hace `socket.join(room.code)` y responde con `spectator:joined` conteniendo `getPublicState(room)` (estado completo sin revelar la respuesta correcta).
+5. A partir de ese momento el espectador recibe automáticamente todos los eventos `game:*` al estar en el socket room: `game:question`, `game:timer`, `game:question-end` (con `correctIndex` para mostrar la correcta tras el reveal) y `game:finished`.
+
+```
+[Propietario] pulsa "Jugar con la clase"
+    │
+    ▼ emit group:start-game { questionCount, timePerQuestion, category }
+[Backend] groupGameHandler
+    ├─ verifica ownerId en BD
+    ├─ roomManager.createRoom() → code: "A3F9B2"
+    ├─ emit room:created → propietario
+    └─ para cada miembro conectado → emit group:game-invite
+    │
+    ▼ Propietario → /multiplayer/ (ya en sala como host)
+    ▼ Miembro    → banner en /clase/ → "Unirme" → /multiplayer/
+    ▼ Espectador → /spectate/A3F9B2 → emit spectator:join
+                                          │
+                              spectator:joined { status, players, currentQuestion }
+                              game:question  → muestra pregunta (read-only)
+                              game:timer     → countdown
+                              game:question-end → revela respuesta correcta
+                              game:finished  → podio final
+```
+
+---
+
+### Función `getPublicState(room)` — `roomManager.js`
+
+Devuelve el estado serializable de una sala para espectadores. No incluye el campo `correct` de la pregunta en curso (se revela solo en `game:question-end`).
+
+```js
+{
+  status: "playing",           // 'lobby' | 'playing' | 'finished'
+  settings: { questionCount, timePerQuestion },
+  currentQuestionIndex: 2,
+  players: [{ userId, username, score, isHost }],
+  currentQuestion: {           // null si no hay pregunta activa
+    questionIndex: 2,
+    totalQuestions: 10,
+    question: "¿Qué devuelve typeof null?",
+    options: ["object", "null", "undefined", "string"],
+    category: "javascript",
+    difficulty: 2,
+    timeLimit: 20
+    // ← SIN el campo 'correct'
+  }
+}
+```
+
+---
+
+### Soporte de guests en Socket.IO
+
+Antes del cambio el middleware rechazaba cualquier conexión sin token:
+
+```js
+// ANTES
+if (!token) return next(new Error("Unauthorized: token required"));
+```
+
+Ahora el token es opcional. Sin token la conexión se acepta con permisos de solo lectura:
+
+```js
+// AHORA
+if (!token) {
+  socket.user = { id: null, username: "Espectador", isGuest: true };
+  return next();
+}
+```
+
+Los guests solo pueden usar `spectator:join`. Los handlers de sala de juego, duelos y partida de grupo solo se registran si `!socket.user.isGuest`. El mapa `userSockets` (userId → socketId) tampoco se actualiza para guests.
+
+---
+
+### `SpectatorView.vue` — estados de la vista
+
+| Estado     | Condición                       | Lo que ve el espectador                                 |
+| ---------- | ------------------------------- | ------------------------------------------------------- |
+| Conectando | `store.loading`                 | Spinner "Conectando a la partida…"                      |
+| Error      | `store.error`                   | Mensaje de error con botón "Reintentar"                 |
+| Lobby      | `gameStatus === 'lobby'`        | Lista de jugadores conectados                           |
+| Jugando    | `gameStatus === 'playing'`      | Pregunta + opciones (read-only), timer, ranking lateral |
+| Reveal     | `revealedCorrectIndex !== null` | Opción correcta en verde, explicación                   |
+| Terminado  | `gameStatus === 'finished'`     | Podio 🥇🥈🥉 y tabla completa de resultados             |
+| Cerrado    | `gameStatus === 'closed'`       | "La sala ha sido cerrada"                               |
+
+---
+
+### Seguridad
+
+- Los espectadores no están en `room.players`, por lo que aunque emitieran `game:answer` el servidor lo ignoraría (la lógica de `submitAnswer` busca el userId en `room.players`).
+- La URL de espectador solo expone el código de sala de 6 caracteres, que es público por diseño (se proyecta en el aula).
+- Los guests no pueden acceder a rutas autenticadas del socket: no reciben invitaciones, no crean salas, no reciben eventos privados de otros usuarios.
+- `getPublicState` nunca incluye el índice de la respuesta correcta; ese dato solo llega en `game:question-end` cuando el tiempo ha expirado o todos los jugadores han respondido.

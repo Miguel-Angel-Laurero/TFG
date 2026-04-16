@@ -59,12 +59,44 @@ async function main() {
     )
     .join("\n\n");
 
-  const prompt = `Eres un experto en JavaScript. Clasifica cada pregunta con un nivel de dificultad:
-  1 = Básico    — conceptos fundamentales y sintaxis base que todo desarrollador debe conocer.
-  2 = Intermedio — mecanismos internos del lenguaje, APIs menos evidentes, comportamientos no triviales.
-  3 = Avanzado  — casos edge, patrones avanzados, comportamientos sutiles o conocimiento profundo del runtime.
+  const prompt = `Eres un experto evaluador de contenido educativo de JavaScript. Tu tarea es clasificar preguntas de quiz según la profundidad conceptual que requieren para ser respondidas correctamente.
 
-Preguntas a clasificar:
+## Niveles de dificultad
+
+**1 = Básico**
+El alumno solo necesita recordar o reconocer una definición o regla directa.
+- Se responde con conocimiento de primer nivel ("¿qué es X?", "¿qué hace Y?")
+- No requiere razonamiento sobre comportamiento implícito del lenguaje
+- El concepto está documentado de forma explícita en cualquier tutorial introductorio
+- Ejemplo de pregunta básica: "¿Qué hace el operador === en comparación con ==?" → respuesta directa, sin ambigüedad
+
+**2 = Intermedio**
+El alumno debe entender POR QUÉ ocurre algo, no solo QUÉ ocurre.
+- Requiere conocer mecanismos internos: coerción implícita, hoisting, scope, event loop, prototype chain
+- El alumno debe razonar sobre el comportamiento en un contexto específico
+- La respuesta incorrecta parece plausible si solo se conoce la definición superficial
+- Ejemplo de pregunta intermedia: "¿Qué devuelve `typeof null`? ¿Por qué?"
+
+**3 = Avanzado**
+El alumno debe aplicar varios conceptos simultáneamente o conocer un comportamiento edge/no intuitivo.
+- Casos donde el resultado sorprende incluso a desarrolladores con experiencia
+- Requiere entender interacciones entre conceptos (closures + async, prototype + this, etc.)
+- Implica conocimiento del runtime, especificación ECMAScript, o patrones avanzados
+- Ejemplo de pregunta avanzada: "¿Qué imprime este código con closures en un bucle var?"
+
+## Criterios de clasificación — IMPORTANTE
+
+IGNORA completamente:
+- La redacción o tono de la pregunta ("si repasas...", "en una revisión de código...", "¿cuál es la opción más precisa?")
+- Si la pregunta menciona un escenario laboral o académico
+- La longitud de la pregunta o las opciones
+
+EVALÚA únicamente:
+- ¿Qué nivel de comprensión necesita el alumno para elegir la respuesta correcta?
+- ¿Es suficiente con memorizar la definición (1) o hay que entender el mecanismo (2) o casos edge (3)?
+- Si dos preguntas sobre el mismo concepto tienen el mismo nivel de comprensión requerido → MISMO nivel de dificultad
+
+## Preguntas a clasificar
 
 ${questionsText}
 

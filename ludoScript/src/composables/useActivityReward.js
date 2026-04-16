@@ -17,8 +17,7 @@
 //   })
 //   await grantReward('notable')
 // ─────────────────────────────────────────────────────────────────────────────
-import { ref } from 'vue'
-import { useRewardsStore } from '@/stores/rewards.store'
+import { ref } from "vue";
 
 /**
  * @typedef {Object} ActivityRewardOptions
@@ -30,26 +29,22 @@ import { useRewardsStore } from '@/stores/rewards.store'
  * @param {ActivityRewardOptions} options
  */
 export function useActivityReward({ base, bonusByRank = {} }) {
-  const rewardsStore = useRewardsStore()
-
   // Recompensa total obtenida en esta sesión (base + bonus)
-  const earnedReward = ref(0)
+  const earnedReward = ref(0);
   // Rango alcanzado (null si la actividad no tiene puntuación)
-  const earnedRank   = ref(null)
+  const earnedRank = ref(null);
 
   /**
    * Calcula y registra la recompensa.
    * @param {string|null} rank - Clave del rango (debe existir en bonusByRank)
    */
   async function grantReward(rank = null) {
-    const bonus = rank && bonusByRank[rank] != null ? bonusByRank[rank] : 0
-    const total = base + bonus
+    const bonus = rank && bonusByRank[rank] != null ? bonusByRank[rank] : 0;
+    const total = base + bonus;
 
-    earnedReward.value = total
-    earnedRank.value   = rank
-
-    await rewardsStore.claimActivityReward(total)
+    earnedReward.value = total;
+    earnedRank.value = rank;
   }
 
-  return { earnedReward, earnedRank, grantReward }
+  return { earnedReward, earnedRank, grantReward };
 }

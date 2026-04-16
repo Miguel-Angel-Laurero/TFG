@@ -35,6 +35,16 @@
                 @openTransfer="transferModal = true" @openDissolve="dissolveModal = true"
                 @openLeave="leaveModal = true" />
 
+            <!-- Banner de partida de grupo activa -->
+            <GroupGameInviteBanner
+                v-if="store.activeGameCode"
+                :code="store.activeGameCode"
+                :initiator-username="store.pendingGroupInvite?.initiatorUsername ?? ''"
+                :is-owner="store.isOwner"
+                @join="handleJoinGroupGame"
+                @dismiss="store.dismissInvite()"
+            />
+
             <!-- H1: error localizado en la zona de stats -->
             <div v-if="store.error"
                 class="bg-red-900/20 border border-red-500/20 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
@@ -47,10 +57,22 @@
             <div class="bg-indigo-900/20 rounded-3xl p-2 border border-white/5">
                 <div class="flex items-center justify-between px-2 pt-1 pb-3">
                     <h3 class="text-white font-semibold text-lg">Ranking de la clase</h3>
-                    <button @click="store.fetchStats()" :disabled="store.loading"
-                        class="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 transition-colors">
-                        🔄 Actualizar
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <!-- Botón de partida de grupo: solo visible al propietario -->
+                        <button v-if="store.isOwner" @click="gameSetupModal = true"
+                            class="flex items-center gap-1.5 text-xs font-bold bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 px-3 py-1.5 rounded-xl transition-all">
+                            <i class="pi pi-users text-xs"></i> Jugar con la clase
+                        </button>
+                        <!-- Botón de duelo: solo visible al propietario -->
+                        <button v-if="store.isOwner" @click="duelModal = true"
+                            class="flex items-center gap-1.5 text-xs font-bold bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-xl transition-all">
+                            <i class="pi pi-bolt text-xs"></i> Duelo 1v1
+                        </button>
+                        <button @click="store.fetchStats()" :disabled="store.loading"
+                            class="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 transition-colors">
+                            🔄 Actualizar
+                        </button>
+                    </div>
                 </div>
 
                 <!-- H1: skeleton durante carga de stats -->
@@ -88,37 +110,54 @@
             confirm-class="bg-red-600 hover:bg-red-500" :loading="store.loading" @confirm="handleKick"
             @cancel="kickTarget = null" />
 
+        <!-- Modal de duelo 1v1 -->
+        <DuelSetupModal v-if="duelModal" @close="duelModal = false" />
+
+        <!-- Modal de partida de grupo -->
+        <GroupGameSetupModal v-if="gameSetupModal" :loading="startingGroupGame"
+            @start="handleStartGroupGame" @close="gameSetupModal = false" />
+
     </div>
     <Footer/>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-// import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useGroupStore } from '@/stores/group.store';
 import { useAuthStore } from '@/stores/auth.store';
-
-// const router = useRouter();
+import { useMultiplayerStore } from '@/stores/multiplayer.store';
 
 import ClaseHeader from '@/components/clase/ClaseHeader.vue';
 import ClaseStatsTable from '@/components/clase/ClaseStatsTable.vue';
 import NoClasePanel from '@/components/clase/NoClasePanel.vue';
 import ConfirmModal from '@/components/clase/ConfirmModal.vue';
 import TransferModal from '@/components/clase/TransferModal.vue';
+import DuelSetupModal from '@/components/clase/DuelSetupModal.vue';
+import GroupGameSetupModal from '@/components/clase/GroupGameSetupModal.vue';
+import GroupGameInviteBanner from '@/components/clase/GroupGameInviteBanner.vue';
 import Header from '@/components/shared/Header.vue';
 import Footer from '@/components/shared/Footer.vue';
 
+const router = useRouter();
 const store = useGroupStore();
 const auth = useAuthStore();
+const multiplayerStore = useMultiplayerStore();
 
 const leaveModal = ref(false);
 const dissolveModal = ref(false);
 const transferModal = ref(false);
 const kickTarget = ref(null); // { userId, username }
+const duelModal = ref(false);
+const gameSetupModal = ref(false);
+const startingGroupGame = ref(false);
 
 onMounted(async () => {
     await store.fetchMyGroup();
-    if (store.isMember) await store.fetchStats();
+    if (store.isMember) {
+        await store.fetchStats();
+        store.connectNotifications();
+    }
 });
 
 async function handleJoin(inviteCode) {
@@ -164,5 +203,24 @@ async function handleKick() {
     await store.kickMember(kickTarget.value.userId);
     kickTarget.value = null;
     await store.fetchStats();
+}
+
+async function handleStartGroupGame(settings) {
+    startingGroupGame.value = true;
+    const code = await store.startGroupGame(settings);
+    startingGroupGame.value = false;
+    gameSetupModal.value = false;
+    if (code) {
+        // Propietario entra directamente a la sala como jugador
+        multiplayerStore.joinRoom(code);
+        router.push('/multiplayer/');
+    }
+}
+
+function handleJoinGroupGame() {
+    if (!store.activeGameCode) return;
+    multiplayerStore.joinRoom(store.activeGameCode);
+    store.dismissInvite();
+    router.push('/multiplayer/');
 }
 </script>

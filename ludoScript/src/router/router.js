@@ -61,6 +61,18 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/duel-view/",
+      name: "duel",
+      component: () => import("../views/DuelView.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/spectate/:code",
+      name: "spectate",
+      component: () => import("../views/SpectatorView.vue"),
+      // Sin requiresAuth: acceso público para espectadores sin cuenta
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "NotFound",
       component: () => import("../views/NotFoundView.vue"),
