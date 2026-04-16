@@ -1,6 +1,6 @@
 <template>
+    <Header/>
     <div class="w-full min-h-screen p-2 md:p-4 bg-blue-950/20">
-
         <!-- Volver al inicio -->
         <div class="max-w-4xl mx-auto mb-3">
             <button @click="router.push('/')"
@@ -89,6 +89,7 @@
             @cancel="kickTarget = null" />
 
     </div>
+    <Footer/>
 </template>
 
 <script setup>
@@ -104,6 +105,8 @@ import ClaseStatsTable from '@/components/clase/ClaseStatsTable.vue';
 import NoClasePanel from '@/components/clase/NoClasePanel.vue';
 import ConfirmModal from '@/components/clase/ConfirmModal.vue';
 import TransferModal from '@/components/clase/TransferModal.vue';
+import Header from '@/components/shared/Header.vue';
+import Footer from '@/components/shared/Footer.vue';
 
 const store = useGroupStore();
 const auth = useAuthStore();
