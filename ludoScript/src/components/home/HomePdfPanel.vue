@@ -3,7 +3,7 @@
 
         <!-- Cabecera -->
         <div class="flex items-center justify-between flex-shrink-0">
-            <h3 class="text-lg font-semibold text-gray-50">Documentos</h3>
+            <h3 class="text-lg font-semibold text-gray-50 font-righteous">Documentos</h3>
 
             <!-- Botón de subida compacto: solo visible cuando ya hay PDFs subidos -->
             <label v-if="!loading && pdfs.length > 0" :class="[

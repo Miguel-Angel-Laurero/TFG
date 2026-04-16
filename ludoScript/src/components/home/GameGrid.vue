@@ -26,20 +26,20 @@
         <!-- Icono con brillo en hover -->
         <span class="text-4xl select-none transition-all duration-300
                  group-hover:brightness-125 group-hover:scale-110 shrink-0">
-          {{ gameIcon(minigame.name) }}
+          <img :src="gameIcon(minigame.name)" alt="" class="w-24">
         </span>
 
         <!-- Info -->
         <div class="flex-1 min-w-0">
           <p class="text-xl font-bold bg-clip-text text-transparent
-                    bg-gradient-to-r from-white to-slate-400">
+                    bg-gradient-to-r from-white to-slate-400 font-righteous" >
             {{ minigame.name }}
           </p>
           <p class="text-sm text-slate-400 mt-0.5">{{ minigame.description }}</p>
         </div>
 
         <!-- Botón CTA -->
-        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold
+        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold font-righteous
                  bg-indigo-600/80 hover:bg-indigo-500 text-white
                  transition-colors duration-200 pointer-events-none">
           {{ gameButtonText(minigame.name) }}
@@ -54,16 +54,16 @@
                hover:shadow-[0_8px_32px_rgba(234,179,8,0.18)]" @click="goToMultiplayer">
         <span class="text-4xl select-none transition-all duration-300
                  group-hover:brightness-125 group-hover:scale-110 shrink-0">
-          🎮
+           <img :src="IMAGES.multi" alt="" class="w-24">
         </span>
         <div class="flex-1 min-w-0">
           <p class="text-xl font-bold bg-clip-text text-transparent
-                    bg-gradient-to-r from-yellow-300 to-amber-400">
+                    bg-linear-to-r from-yellow-300 to-amber-400 font-righteous">
             Multijugador
           </p>
           <p class="text-sm text-slate-400 mt-0.5">Compite con otros jugadores en tiempo real.</p>
         </div>
-        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold
+        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold font-righteous
                  bg-yellow-500/80 hover:bg-yellow-400 text-gray-900
                  transition-colors duration-200 pointer-events-none">
           Jugar →
@@ -87,6 +87,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios'
+import { IMAGES } from '@/utils/imgBucketStorage'
 
 const props = defineProps({
   selectedFiles: {
@@ -108,10 +109,20 @@ const minigames = ref([])
 const isLoading = ref(true)
 const noSelectionWarning = ref(false)
 
-const GAME_ICONS = { Quiz: '🧠', Flashcards: '🃏' }
-const PDF_GAMES = ['Quiz', 'Flashcards']
+const PDF_GAMES = ['Quiz', 'FlashCards']
 
-function gameIcon(name) { return GAME_ICONS[name] ?? '🎮' }
+function gameIcon(name) {
+  switch (name) {
+    case 'Quiz':
+      return IMAGES.quiz
+    case 'FlashCards':
+      return IMAGES.cards
+    case 'Multiplayer':
+      return IMAGES.multi
+    default:
+      return IMAGES.defaultIcon
+  }
+}
 function isPdfGame(name) { return PDF_GAMES.includes(name) }
 
 function gameButtonText(name) {

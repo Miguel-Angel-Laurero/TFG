@@ -3,7 +3,7 @@
 
         <!-- Última sesión -->
         <section>
-            <h3 class="text-[11px] font-semibold text-blue-400/70 uppercase tracking-widest mb-3">
+            <h3 class="text-[11px] font-semibold text-blue-400/70 uppercase tracking-widest mb-3 font-righteous">
                 Última sesión
             </h3>
 

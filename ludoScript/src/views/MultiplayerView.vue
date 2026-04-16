@@ -17,24 +17,29 @@
             <!-- ── idle: selección crear vs unirse ── -->
             <template v-if="mp.status === 'idle'">
                 <template v-if="!subView">
-                    <div class="flex flex-col items-center gap-8 max-w-md w-full">
-                        <div class="text-center">
-                            <h1 class="text-white text-4xl font-black mb-2">Multijugador</h1>
-                            <p class="text-white/60">Juega contra tus amigos en tiempo real</p>
+                    <div class="grid grid-cols-2 items-center">
+                        <div>
+                            <img :src="IMAGES.multi" alt="multijugador">
                         </div>
-                        <div class="flex flex-col gap-4 w-full">
-                            <button @click="subView = 'create'"
-                                class="w-full bg-yellow-400 text-gray-900 font-bold py-4 rounded-2xl text-lg cursor-pointer hover:bg-yellow-300 transition-all">
-                                🏠 Crear sala
-                            </button>
-                            <button @click="subView = 'join'"
-                                class="w-full bg-white/10 border border-white/20 text-white font-bold py-4 rounded-2xl text-lg cursor-pointer hover:bg-white/20 transition-all">
-                                🚪 Unirse con código
-                            </button>
-                            <button @click="router.push('/')"
-                                class="text-white/40 cursor-pointer hover:text-white/60 text-sm text-center mt-2 transition-colors">
-                                ← Volver al inicio
-                            </button>
+                        <div class="flex flex-col items-center gap-8 max-w-md w-full mx-auto">
+                            <div class="text-center ">
+                                <h1 class="text-white text-4xl font-black mb-2 font-righteous">Multijugador</h1>
+                                <p class="text-white/60">Juega contra tus amigos en tiempo real</p>
+                            </div>
+                            <div class="flex flex-col gap-4 w-full">
+                                <button @click="subView = 'create'"
+                                    class="w-full bg-yellow-400 text-gray-900 font-bold py-4 rounded-2xl text-lg font-righteous cursor-pointer hover:bg-yellow-300 transition-all">
+                                    🏠 Crear sala
+                                </button>
+                                <button @click="subView = 'join'"
+                                    class="w-full bg-white/10 border border-white/20 text-white font-bold py-4 rounded-2xl text-lg font-righteous cursor-pointer hover:bg-white/20 transition-all">
+                                    🚪 Unirse con código
+                                </button>
+                                <button @click="router.push('/')"
+                                    class="text-white/40 font-righteous cursor-pointer hover:text-white/60 text-sm text-center mt-2 transition-colors">
+                                    ← Volver al inicio
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -85,6 +90,7 @@ import MultiplayerLobby from '@/components/multiplayer/MultiplayerLobby.vue'
 import MultiplayerGame from '@/components/multiplayer/MultiplayerGame.vue'
 import MultiplayerResults from '@/components/multiplayer/MultiplayerResults.vue'
 import Loading from '@/components/shared/Loading.vue'
+import { IMAGES } from '@/utils/imgBucketStorage'
 
 const router = useRouter()
 const mp = useMultiplayerStore()

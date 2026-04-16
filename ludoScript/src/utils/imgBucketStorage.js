@@ -13,4 +13,7 @@ export const IMAGES = {
   celebracion: `${BUCKET_URL}/celebracion.png`,
   aprobado: `${BUCKET_URL}/aprobado.png`,
   suspenso: `${BUCKET_URL}/suspenso.png`,
+  quiz:`${BUCKET_URL}/quiz_icon.png`,
+  cards:`${BUCKET_URL}/card_icon.png`,
+  multi:`${BUCKET_URL}/multi_icon.png`,
 }
