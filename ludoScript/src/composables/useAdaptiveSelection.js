@@ -93,8 +93,12 @@ function writeTutorialRecentIds(ids) {
 function rememberTutorialQuestionIds(questionIds) {
   if (!Array.isArray(questionIds) || questionIds.length === 0) return;
 
-  const uniqueIds = [...new Set(questionIds.map((id) => Number(id)).filter(Boolean))];
-  const current = readTutorialRecentIds().filter((id) => !uniqueIds.includes(id));
+  const uniqueIds = [
+    ...new Set(questionIds.map((id) => Number(id)).filter(Boolean)),
+  ];
+  const current = readTutorialRecentIds().filter(
+    (id) => !uniqueIds.includes(id),
+  );
   writeTutorialRecentIds([...uniqueIds, ...current]);
 }
 
@@ -143,7 +147,8 @@ function getCategoryProfileMap(stats = []) {
       };
       const accuracy = stat.total > 0 ? stat.correct / stat.total : null;
       const isWeak = stat.total >= WEAK_MIN_TOTAL && (accuracy ?? 1) < 0.7;
-      const isStable = stat.total >= STABLE_MIN_TOTAL && (accuracy ?? 0) >= 0.75;
+      const isStable =
+        stat.total >= STABLE_MIN_TOTAL && (accuracy ?? 0) >= 0.75;
       return [
         key,
         {
@@ -151,7 +156,9 @@ function getCategoryProfileMap(stats = []) {
           correct: stat.correct,
           total: stat.total,
           accuracy,
-          errorRate: weakMap.get(key)?.errorRate ?? (accuracy === null ? 0.45 : 1 - accuracy),
+          errorRate:
+            weakMap.get(key)?.errorRate ??
+            (accuracy === null ? 0.45 : 1 - accuracy),
           isWeak,
           isStable,
         },
@@ -162,20 +169,20 @@ function getCategoryProfileMap(stats = []) {
 
 function getDifficultyWeight(questionDifficulty, profile) {
   if (profile?.isWeak) {
-    if (questionDifficulty === 1) return 16;
-    if (questionDifficulty === 2) return 8;
-    return 1;
+    // Usuario con muchos errores: priorizar niveles 1-2, casi nunca 4-5
+    const weights = { 1: 20, 2: 15, 3: 6, 4: 2, 5: 1 };
+    return weights[questionDifficulty] ?? 1;
   }
 
   if (profile?.isStable) {
-    if (questionDifficulty === 2) return 12;
-    if (questionDifficulty === 3) return 9;
-    return 6;
+    // Usuario con buenos resultados: evitar niveles 1-2, priorizar 3-4
+    const weights = { 1: 2, 2: 5, 3: 14, 4: 13, 5: 9 };
+    return weights[questionDifficulty] ?? 1;
   }
 
-  if (questionDifficulty === 1) return 10;
-  if (questionDifficulty === 2) return 9;
-  return 5;
+  // Sin datos suficientes: ligero sesgo hacia niveles 2-3
+  const weights = { 1: 8, 2: 13, 3: 12, 4: 7, 5: 4 };
+  return weights[questionDifficulty] ?? 1;
 }
 
 function buildAdaptiveQuestionScore(question, context) {
@@ -187,7 +194,11 @@ function buildAdaptiveQuestionScore(question, context) {
     bucketCategorySet,
   } = context;
   const profile = categoryProfiles.get(question.category);
-  const topicWeakness = getTopicWeakness(topicStats, question.category, question.topic);
+  const topicWeakness = getTopicWeakness(
+    topicStats,
+    question.category,
+    question.topic,
+  );
   const isRecent = recentIds.has(question.id);
 
   let score = 0;
@@ -208,7 +219,9 @@ function pickBucketQuestions(questions, count, context) {
   const ranked = fisherYates(questions)
     .filter((question) => !context.selectedIds.has(question.id))
     .sort(
-      (a, b) => buildAdaptiveQuestionScore(b, context) - buildAdaptiveQuestionScore(a, context),
+      (a, b) =>
+        buildAdaptiveQuestionScore(b, context) -
+        buildAdaptiveQuestionScore(a, context),
     );
 
   const picked = ranked.slice(0, Math.min(count, ranked.length));
@@ -227,7 +240,11 @@ function pickCategoriesByPriority(categoryProfiles) {
     .map((entry) => entry.category);
 }
 
-function selectAdaptiveQuestions(allQuestions, stats = [], totalQuestions = 15) {
+function selectAdaptiveQuestions(
+  allQuestions,
+  stats = [],
+  totalQuestions = 15,
+) {
   if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
     return { questions: [], weakCategories: [] };
   }
@@ -256,13 +273,17 @@ function selectAdaptiveQuestions(allQuestions, stats = [], totalQuestions = 15) 
     bucketCategorySet: new Set(middle),
   });
 
-  const generalBucket = pickBucketQuestions(allQuestions, totalQuestions - weakBucket.length - middleBucket.length, {
-    categoryProfiles,
-    topicStats,
-    recentIds,
-    selectedIds,
-    bucketCategorySet: new Set(orderedCategories),
-  });
+  const generalBucket = pickBucketQuestions(
+    allQuestions,
+    totalQuestions - weakBucket.length - middleBucket.length,
+    {
+      categoryProfiles,
+      topicStats,
+      recentIds,
+      selectedIds,
+      bucketCategorySet: new Set(orderedCategories),
+    },
+  );
 
   const selected = [...weakBucket, ...middleBucket, ...generalBucket].slice(
     0,

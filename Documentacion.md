@@ -1008,6 +1008,102 @@ Recomendaciones futuras
 
 ---
 
+## Rediseño del banco de preguntas: 5 niveles de dificultad reales — 16/04
+
+### Objetivo
+
+Reestructurar el sistema de generación del banco de preguntas para que los 5 niveles de dificultad sean genuinamente distintos en contenido, no solo variaciones cosméticas del enunciado. Añadir un bloque de preguntas para principiantes en cada categoría y actualizar el motor adaptativo para aprovechar los 5 niveles.
+
+---
+
+### Problema que resuelve
+
+El sistema anterior generaba 5 variantes por concepto con niveles `[1, 1, 2, 2, 3]`: la misma respuesta correcta, los mismos distractores, solo con la frase del enunciado ligeramente distinta. La dificultad era cosmética, no conceptual. Además, todas las preguntas del banco asumían un conocimiento previo de JavaScript, dejando sin cobertura al usuario que empieza a programar.
+
+---
+
+### Archivos modificados
+
+| Archivo                                                             | Cambio                                                                                              |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `scripts/generate-quiz-bank.mjs`                                    | VARIANTS rediseñadas a 5 niveles reales + bloques beginner añadidos + umbral de validación mejorado |
+| `ludoScript/src/composables/useAdaptiveSelection.js`                | `getDifficultyWeight` actualizado para 5 niveles con rampas explícitas                              |
+| `ludoScript/src/composables/__tests__/useAdaptiveSelection.spec.js` | `makeQuestions` actualizado a `(i % 5) + 1` para cubrir los 5 niveles                               |
+| `ludoScript/public/quizQuestions.json`                              | Regenerado automáticamente (340 preguntas)                                                          |
+
+---
+
+### Nuevos niveles de dificultad
+
+| Nivel | Tipo de pregunta                                              | Ejemplo de stem                                                      |
+| ----- | ------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 1     | Reconocimiento directo — respuesta clara, distractores obvios | "¿Qué afirmación describe mejor…?"                                   |
+| 2     | Comprensión básica — distractores plausibles pero uno mejor   | "Si repasas…, ¿con qué idea básica deberías quedarte?"               |
+| 3     | Aplicación en contexto — requiere entender, no solo recordar  | "En una revisión de código, ¿qué conviene recordar sobre…?"          |
+| 4     | Precisión técnica — distractores técnicamente cercanos        | "Para evitar errores frecuentes, ¿qué afirmación es la más precisa?" |
+| 5     | Dominio experto — matices del spec, casos edge                | "¿Cuál es la opción técnica más precisa cuando se habla de…?"        |
+
+---
+
+### Conceptos beginner añadidos por categoría
+
+Se añadieron 3–4 conceptos nuevos por categoría con tópicos propios (`fundamentos-basicos`, `arrays-basicos`, `funciones-basicas`, `objetos-basicos`, `asincronia-basica`) orientados a quien empieza a programar:
+
+| Categoría            | Conceptos añadidos                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| `fundamentos-js`     | qué es una variable, declarar con `let`, qué hace `console.log`, diferencia number/string |
+| `arrays-colecciones` | qué es un array, acceso por índice, propiedad `length`, añadir con `push`                 |
+| `funciones-scope`    | qué es una función, cómo llamarla, qué es un parámetro, qué hace `return`                 |
+| `objetos`            | qué es un objeto, notación literal `{}`, acceso con punto                                 |
+| `asincronia`         | qué significa asíncrono, qué hace `setTimeout`, qué hace `async`                          |
+
+Cada concepto nuevo genera automáticamente las 5 variantes (niveles 1–5) al ejecutar el script.
+
+---
+
+### Motor adaptativo actualizado (`getDifficultyWeight`)
+
+La función que pondera cada pregunta en el algoritmo de selección ahora maneja 5 niveles con rampas claras:
+
+| Perfil del usuario en la categoría          | 1   | 2   | 3   | 4   | 5   |
+| ------------------------------------------- | --- | --- | --- | --- | --- |
+| **Débil** (errorRate alto, ≥5 respuestas)   | 20  | 15  | 6   | 2   | 1   |
+| **Estable** (accuracy ≥75 %, ≥8 respuestas) | 2   | 5   | 14  | 13  | 9   |
+| **Sin datos suficientes**                   | 8   | 13  | 12  | 7   | 4   |
+
+Un usuario que falla mucho recibirá casi exclusivamente preguntas de nivel 1–2. Un usuario con buen historial recibirá principalmente nivel 3–4, con ocasionales nivel 5.
+
+---
+
+### Resultado del banco generado
+
+```
+node scripts/generate-quiz-bank.mjs
+→ Generadas 340 preguntas en ludoScript/public/quizQuestions.json
+```
+
+Distribución: 68 preguntas por categoría (5 niveles × ~13–14 conceptos), exactamente 1/5 de cada nivel.
+
+---
+
+### Cómo añadir preguntas nuevas
+
+Solo hay que añadir una entrada al `CATEGORY_BANK` en `scripts/generate-quiz-bank.mjs` con el formato:
+
+```js
+{
+  topic: "nombre-del-topic",
+  title: "el concepto en minúsculas sin artículo",
+  correct: "la respuesta correcta completa",
+  distractors: ["distractor 1", "distractor 2", "distractor 3"],
+  explanation: "explicación breve que aparece al responder.",
+}
+```
+
+Después ejecutar `node scripts/generate-quiz-bank.mjs` para regenerar el JSON. Las 5 variantes de dificultad se generan automáticamente.
+
+---
+
 ## Perfil de usuario: avatar, banner y visualizacion
 
 ### Objetivo

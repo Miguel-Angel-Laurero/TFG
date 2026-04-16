@@ -8,12 +8,17 @@ import {
   trackTutorialQuestionResult,
 } from "@/composables/useAdaptiveSelection";
 
-const makeQuestions = (n, start = 1, category = "fundamentos-js", topic = "tipos-coercion") =>
+const makeQuestions = (
+  n,
+  start = 1,
+  category = "fundamentos-js",
+  topic = "tipos-coercion",
+) =>
   Array.from({ length: n }, (_, i) => ({
     id: i + start,
     category,
     topic,
-    difficulty: ((i % 3) + 1),
+    difficulty: (i % 5) + 1,
     question: `Pregunta ${i + start}`,
     options: ["A", "B", "C", "D"],
     correct: 0,
@@ -47,12 +52,18 @@ describe("useAdaptiveSelection", () => {
       const questions = makeQuestions(20, 100);
       const flashCards = [{ id: "fc-1" }];
 
-      const activeIds = savePdfQuestionsToStorage("pdf-1", questions, flashCards);
+      const activeIds = savePdfQuestionsToStorage(
+        "pdf-1",
+        questions,
+        flashCards,
+      );
       const stored = loadPdfQuestionsFromStorage("pdf-1");
 
       expect(activeIds).toHaveLength(15);
       expect(new Set(activeIds).size).toBe(activeIds.length);
-      expect(activeIds.every((id) => questions.some((q) => q.id === id))).toBe(true);
+      expect(activeIds.every((id) => questions.some((q) => q.id === id))).toBe(
+        true,
+      );
       expect(hasPdfInStorage("pdf-1")).toBe(true);
       expect(stored).toEqual({ questions, flashCards, activeIds });
     });
@@ -93,7 +104,9 @@ describe("useAdaptiveSelection", () => {
       expect(result.questions).toHaveLength(15);
       expect(new Set(result.questions.map((q) => q.id)).size).toBe(15);
       expect(result.weakCategories[0].category).toBe("fundamentos-js");
-      expect(result.questions.some((q) => q.category === "fundamentos-js")).toBe(true);
+      expect(
+        result.questions.some((q) => q.category === "fundamentos-js"),
+      ).toBe(true);
     });
   });
 });
