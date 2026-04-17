@@ -6,7 +6,8 @@
 
 @theme {
   --font-righteous: 'Righteous', cursive;
-  --font-lexend: 'Lexend',cursive,
+  --font-lexend: 'Lexend', cursive;
+  --breakpoint-xs: 480px;
 }
 
 body {
@@ -15,7 +16,10 @@ body {
   margin: 0;
   font-family: "Lexend";
 }
-h1,h2,h3{
+
+h1,
+h2,
+h3 {
   font-family: "Righteous", sans-serif;
 }
 

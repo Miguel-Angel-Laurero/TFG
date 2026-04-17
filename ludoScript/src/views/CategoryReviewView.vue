@@ -4,7 +4,7 @@
       <Header />
     </header>
 
-    <main class="flex-grow max-w-3xl mx-auto w-full px-6 py-8">
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 sm:px-6 py-8">
 
       <!-- Breadcrumb / back (Nielsen #3: user control and freedom) -->
       <button

@@ -30,11 +30,11 @@
             />
         </div>
 
-        <div class="bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden" style="height: 420px;">
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden h-[320px] sm:h-[420px]">
             <div class="px-5 pt-5 pb-3">
                 <label class="text-gray-300 font-semibold text-sm">Equipamiento del avatar</label>
             </div>
-            <div class="h-[360px]">
+            <div class="h-[260px] sm:h-[360px]">
                 <AvatarProfile />
             </div>
         </div>

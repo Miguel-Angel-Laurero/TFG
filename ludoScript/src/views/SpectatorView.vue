@@ -2,7 +2,7 @@
     <div class="min-h-screen flex flex-col bg-gray-900">
 
         <!-- H8: cabecera mínima sin menú (acceso sin cuenta) -->
-        <header class="bg-gray-900/80 backdrop-blur border-b border-white/5 px-4 py-3 flex items-center gap-3">
+        <header class="bg-gray-900/80 backdrop-blur border-b border-white/5 px-4 py-3 flex flex-wrap items-center gap-2 sm:gap-3">
             <span class="text-white font-black text-lg tracking-tight">LudoScript</span>
             <span class="text-slate-500 text-xs">· Modo espectador</span>
             <span v-if="store.roomCode"

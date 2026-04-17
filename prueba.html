@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ludoscript - Progreso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #081735;
+        }
+
+        .glass-card {
+            background: linear-gradient(180deg, rgba(16, 30, 77, 0.98) 0%, rgba(13, 24, 63, 0.98) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .calendar-day {
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-1px);
+        }
+
+        .calendar-day.selected {
+            border-color: rgba(125, 211, 252, 0.95) !important;
+            box-shadow: 0 0 0 2px rgba(125, 211, 252, 0.22);
+        }
+
+        .tone-none {
+            background: rgba(255, 255, 255, 0.03);
+            color: rgb(100 116 139);
+            border: 1px solid transparent;
+        }
+
+        .tone-low {
+            background: rgba(244, 63, 94, 0.12);
+            color: rgb(253 164 175);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        .tone-mid {
+            background: rgba(250, 204, 21, 0.10);
+            color: rgb(253 230 138);
+            border: 1px solid rgba(250, 204, 21, 0.22);
+        }
+
+        .tone-high {
+            background: rgba(52, 211, 153, 0.10);
+            color: rgb(167 243 208);
+            border: 1px solid rgba(52, 211, 153, 0.24);
+        }
+    </style>
+</head>
+
+<body class="text-white min-h-screen">
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
+        <section
+            class="rounded-[28px] px-5 py-5 md:px-6 md:py-6 bg-gradient-to-r from-pink-200 via-rose-200 to-pink-300 shadow-xl">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-16 h-16 rounded-full bg-sky-300 border-2 border-white/70 shadow-md flex items-center justify-center text-slate-900 font-bold text-lg">
+                    A
+                </div>
+                <div>
+                    <p class="text-sm text-slate-800/80 font-medium">Alumno</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">Tu progreso</h1>
+                    <p class="text-sm md:text-base text-slate-800/80">Entiende cómo vas, detecta patrones y decide qué
+                        reforzar ahora.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid lg:grid-cols-[1.55fr_1fr] gap-6 mt-6">
+            <article class="glass-card rounded-[28px] p-6">
+                <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+                    <div>
+                        <p class="text-sm text-slate-300 font-medium">Estado actual</p>
+                        <div class="mt-3 flex flex-wrap items-end gap-3">
+                            <span id="heroAccuracy"
+                                class="text-6xl md:text-7xl font-extrabold tracking-tight">45%</span>
+                            <span id="heroDelta"
+                                class="mb-2 px-3 py-1 rounded-full text-sm font-semibold bg-emerald-400/15 text-emerald-300">+5%
+                                esta semana</span>
+                        </div>
+                        <p id="heroNarrative" class="mt-4 max-w-2xl text-sm md:text-base leading-7 text-slate-300">
+                            Estás mejorando respecto a la semana pasada. Tu mejor rendimiento está en Cardiología, pero
+                            sigues fallando más de lo deseable en Digestivo.
+                        </p>
+                    </div>
+
+                    <div class="rounded-3xl bg-white/5 border border-white/5 p-4 xl:max-w-sm">
+                        <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Recomendación ahora</p>
+                        <p id="heroRecommendation" class="mt-3 text-sm leading-6 text-slate-200">
+                            Haz un test corto de Digestivo y revisa los errores de los últimos 3 días.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <aside class="glass-card rounded-[28px] p-6">
+                <p class="text-sm text-slate-300 font-medium">Resumen rápido</p>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Precisión media</p>
+                        <p id="summaryAccuracy" class="mt-2 text-2xl font-bold">45%</p>
+                    </div>
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Días activos</p>
+                        <p id="summaryActiveDays" class="mt-2 text-2xl font-bold">4</p>
+                    </div>
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Tests completados</p>
+                        <p id="summaryTests" class="mt-2 text-2xl font-bold">211</p>
+                    </div>
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Racha</p>
+                        <p id="summaryStreak" class="mt-2 text-2xl font-bold">2 días</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="grid lg:grid-cols-[0.95fr_2fr] gap-6 mt-6">
+            <article class="glass-card rounded-[28px] p-6">
+                <p class="text-sm text-slate-300 font-medium">Lectura de la semana</p>
+
+                <div class="mt-5 space-y-4">
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Evolución</p>
+                        <p id="weeklyEvolution" class="mt-2 text-lg font-semibold text-white">Has subido un 5% frente a
+                            la semana anterior</p>
+                    </div>
+
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Patrón detectado</p>
+                        <p id="weeklyPattern" class="mt-2 text-sm leading-6 text-slate-200">
+                            Tus mejores días coinciden con mayor constancia. Cuando haces varias sesiones cortas, rindes
+                            mejor que cuando concentras todo en un solo día.
+                        </p>
+                    </div>
+
+                    <div class="metric-card rounded-3xl p-4">
+                        <p class="text-xs text-slate-400">Siguiente paso</p>
+                        <p id="weeklyNextStep" class="mt-2 text-sm leading-6 text-slate-200">
+                            Mantén 4 días activos por semana y refuerza primero los temas débiles antes de aumentar
+                            volumen.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="glass-card rounded-[28px] p-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <p class="text-sm text-slate-300 font-medium">Actividad diaria</p>
+                        <h2 class="mt-1 text-2xl md:text-3xl font-extrabold">Abril 2026</h2>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="px-3 py-1 rounded-full bg-white/5 text-slate-300">Sin actividad</span>
+                        <span class="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300">Bajo</span>
+                        <span class="px-3 py-1 rounded-full bg-yellow-400/15 text-yellow-200">Medio</span>
+                        <span class="px-3 py-1 rounded-full bg-emerald-400/15 text-emerald-200">Alto</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-2 md:gap-3 text-center text-xs md:text-sm text-slate-400 mt-6">
+                    <div class="font-medium">Lun</div>
+                    <div class="font-medium">Mar</div>
+                    <div class="font-medium">Mié</div>
+                    <div class="font-medium">Jue</div>
+                    <div class="font-medium">Vie</div>
+                    <div class="font-medium">Sáb</div>
+                    <div class="font-medium">Dom</div>
+                </div>
+
+                <div id="calendarGrid" class="grid grid-cols-7 gap-2 md:gap-3 mt-3"></div>
+
+                <div class="mt-6 rounded-[28px] bg-white/5 border border-white/5 p-5 md:p-6">
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
+                        <div>
+                            <p id="detailDate" class="text-sm text-slate-400">16 de abril</p>
+                            <div class="flex items-end gap-3 mt-2">
+                                <span id="detailScore" class="text-4xl md:text-5xl font-extrabold">42%</span>
+                                <span class="pb-1 text-sm text-slate-300">precisión</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 md:min-w-[260px]">
+                            <div class="rounded-3xl p-3 bg-white/5 border border-white/5">
+                                <p class="text-xs text-slate-400">Sesiones</p>
+                                <p id="detailSessions" class="mt-1 text-lg font-bold">6</p>
+                            </div>
+                            <div class="rounded-3xl p-3 bg-white/5 border border-white/5">
+                                <p class="text-xs text-slate-400">Correctas</p>
+                                <p id="detailCorrect" class="mt-1 text-lg font-bold">20/48</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <p class="text-xs uppercase tracking-[0.18em] text-slate-400">Interpretación del sistema</p>
+                        <p id="detailMessage" class="mt-3 text-sm leading-6 text-slate-200">
+                            Día flojo. Conviene revisar errores y reforzar conceptos.
+                        </p>
+                    </div>
+
+                    <div class="mt-5">
+                        <div class="mb-2 flex items-center justify-between text-xs text-slate-400">
+                            <span>Rendimiento del día</span>
+                            <span id="detailProgressLabel">42%</span>
+                        </div>
+                        <div class="h-2.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                            <div id="detailProgressBar"
+                                class="h-full rounded-full bg-gradient-to-r from-rose-400 via-yellow-300 to-emerald-300"
+                                style="width: 42%"></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const progressData = {
+            accuracy: 45,
+            weeklyChange: 5,
+            activeDays: 4,
+            testsCompleted: 211,
+            streak: 2,
+            strongestTopic: 'Cardiología',
+            weakestTopic: 'Digestivo',
+            calendar: [
+                { day: 1, score: null, sessions: 0 },
+                { day: 2, score: null, sessions: 0 },
+                { day: 3, score: 41, sessions: 3 },
+                { day: 4, score: 52, sessions: 4 },
+                { day: 5, score: null, sessions: 0 },
+                { day: 6, score: 36, sessions: 2 },
+                { day: 7, score: 48, sessions: 5 },
+                { day: 8, score: 57, sessions: 6 },
+                { day: 9, score: null, sessions: 0 },
+                { day: 10, score: 44, sessions: 4 },
+                { day: 11, score: 63, sessions: 6 },
+                { day: 12, score: 39, sessions: 3 },
+                { day: 13, score: null, sessions: 0 },
+                { day: 14, score: 45, sessions: 5 },
+                { day: 15, score: 49, sessions: 4 },
+                { day: 16, score: 42, sessions: 6 },
+                { day: 17, score: 51, sessions: 5 },
+                { day: 18, score: null, sessions: 0 },
+                { day: 19, score: null, sessions: 0 },
+                { day: 20, score: 55, sessions: 4 },
+                { day: 21, score: null, sessions: 0 },
+                { day: 22, score: 46, sessions: 3 },
+                { day: 23, score: null, sessions: 0 },
+                { day: 24, score: 58, sessions: 5 },
+                { day: 25, score: null, sessions: 0 },
+                { day: 26, score: null, sessions: 0 },
+                { day: 27, score: 43, sessions: 4 },
+                { day: 28, score: 61, sessions: 5 },
+                { day: 29, score: null, sessions: 0 },
+                { day: 30, score: 47, sessions: 4 }
+            ]
+        };
+
+        let selectedDay = progressData.calendar.find(item => item.day === 16) || progressData.calendar[0];
+
+        function getToneClass(score) {
+            if (score === null) return 'tone-none';
+            if (score < 45) return 'tone-low';
+            if (score < 60) return 'tone-mid';
+            return 'tone-high';
+        }
+
+        function getStatusMessage(score) {
+            if (score === null) return 'No hubo actividad este día. Si se repite, conviene recuperar ritmo para no perder continuidad.';
+            if (score < 45) return 'Día flojo. Conviene revisar errores y reforzar conceptos antes de seguir acumulando tests.';
+            if (score < 60) return 'Día aceptable. Hay margen claro de mejora si repasas errores recientes y repites preguntas similares.';
+            return 'Buen rendimiento. Mantén el ritmo y aprovecha para consolidar antes de pasar a temas nuevos.';
+        }
+
+        function renderHeaderData() {
+            document.getElementById('heroAccuracy').textContent = `${progressData.accuracy}%`;
+            document.getElementById('heroDelta').textContent = `${progressData.weeklyChange > 0 ? '+' : ''}${progressData.weeklyChange}% esta semana`;
+            document.getElementById('heroNarrative').innerHTML = `Estás mejorando respecto a la semana pasada. Tu mejor rendimiento está en <span class="font-semibold text-white">${progressData.strongestTopic}</span>, pero sigues fallando más de lo deseable en <span class="font-semibold text-white">${progressData.weakestTopic}</span>.`;
+            document.getElementById('heroRecommendation').innerHTML = `Haz un test corto de <span class="font-semibold text-white">${progressData.weakestTopic}</span> y revisa los errores de los últimos 3 días.`;
+
+            document.getElementById('summaryAccuracy').textContent = `${progressData.accuracy}%`;
+            document.getElementById('summaryActiveDays').textContent = progressData.activeDays;
+            document.getElementById('summaryTests').textContent = progressData.testsCompleted;
+            document.getElementById('summaryStreak').textContent = `${progressData.streak} días`;
+
+            document.getElementById('weeklyEvolution').textContent = `Has subido un ${progressData.weeklyChange}% frente a la semana anterior`;
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            progressData.calendar.forEach(item => {
+                const button = document.createElement('button');
+                button.className = `calendar-day rounded-3xl px-2 py-4 md:py-5 text-sm border ${getToneClass(item.score)} ${selectedDay.day === item.day ? 'selected' : ''}`;
+                button.innerHTML = `
+          <div class="font-semibold">${item.day}</div>
+          <div class="mt-1 text-[11px] opacity-80">${item.sessions > 0 ? `${item.sessions} ses.` : '—'}</div>
+        `;
+
+                button.addEventListener('click', () => {
+                    selectedDay = item;
+                    renderCalendar();
+                    renderDayDetail();
+                });
+
+                grid.appendChild(button);
+            });
+        }
+
+        function renderDayDetail() {
+            const score = selectedDay.score;
+            const totalQuestions = 48;
+            const correct = score === null ? 0 : Math.round((score / 100) * totalQuestions);
+
+            document.getElementById('detailDate').textContent = `${selectedDay.day} de abril`;
+            document.getElementById('detailScore').textContent = score === null ? '--' : `${score}%`;
+            document.getElementById('detailSessions').textContent = selectedDay.sessions;
+            document.getElementById('detailCorrect').textContent = `${correct}/${totalQuestions}`;
+            document.getElementById('detailMessage').textContent = getStatusMessage(score);
+            document.getElementById('detailProgressLabel').textContent = score === null ? '0%' : `${score}%`;
+            document.getElementById('detailProgressBar').style.width = `${score ?? 0}%`;
+        }
+
+        renderHeaderData();
+        renderCalendar();
+        renderDayDetail();
+    </script>
+</body>
+
+</html>
