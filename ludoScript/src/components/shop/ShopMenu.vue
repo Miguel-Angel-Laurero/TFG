@@ -28,8 +28,8 @@
         <div v-else class="hidden md:flex items-center gap-2">
           <MultiSelect 
             v-model="shopStore.selectedCategories" 
-            :options="categories" 
-            optionLabel="name" 
+            :options="mappedCategories" 
+            optionLabel="displayName" 
             placeholder="Categorías" 
             class="w-48 lg:w-64"
           />
@@ -63,10 +63,10 @@
           <label class="text-xs font-bold text-gray-400 uppercase">Categorías</label>
           <MultiSelect 
             v-model="shopStore.selectedCategories" 
-            :options="categories" 
-            optionLabel="name" 
+            :options="mappedCategories" 
+            optionLabel="displayName" 
             placeholder="Categorías" 
-            class="w-48 lg:w-64"
+            class="w-full lg:w-64"
           />
         </div>
 
@@ -102,7 +102,7 @@ import Drawer from 'primevue/drawer'
 import { useShopStore } from '@/stores/shop.store'
 import { useAuthStore } from '@/stores/auth.store'
 import { IMAGES } from '@/utils/imgBucketStorage'
-import api from '@/api/axios' // Tu instancia de Axios
+import api from '@/api/axios'
 
 const isMobile = ref(false)
 const drawerVisible = ref(false)
@@ -142,7 +142,30 @@ const acquisitionOptions = [
   { label: 'Adquirido', value: 'adquirido' },
   { label: 'No adquirido', value: 'no_adquirido' }
 ]
+// Asegúrate de que las CLAVES coincidan con lo que devuelve el servidor
+const categoryLabels = {
+  'icons': 'Iconos',      
+  'banners': 'Banners',
+  'headwear': 'Cabeza',
+  'hands': 'Manos',
+  'trinkets': 'Accesorios',
+  'feets': 'Pies',
+  'lowerbody': 'Parte Inferior',
+  'upperbody': 'Parte Superior'
+}
 
+const mappedCategories = computed(() => {
+  return categories.value.map(cat => {
+    // Si tu API devuelve 'name', usa cat.name
+    // Si tu API devuelve 'categoryName', usa cat.categoryName
+    const internalName = cat.name || cat.categoryName; 
+    
+    return {
+      ...cat,
+      displayName: categoryLabels[internalName] || internalName || 'Sin nombre'
+    }
+  })
+})
 const activeFiltersCount = computed(() => {
   let count = 0
   if (shopStore.selectedCategories?.length > 0) count++
