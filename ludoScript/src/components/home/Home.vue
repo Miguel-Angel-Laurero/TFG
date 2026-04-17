@@ -19,7 +19,7 @@
 
     <section class="flex-1 flex justify-center overflow-y-auto py-6 md:py-8 min-w-0">
       <div class="w-full max-w-2xl px-4 md:px-8">
-        <h2 class="text-xl md:text-2xl font-righteous text-white mb-4 text-center md:text-left">Minijuegos</h2>
+        <h2 class="text-xl md:text-2xl text-white mb-4 text-center md:text-left">Minijuegos</h2>
 
         <div :class="[
           'mb-6 px-4 py-2.5 rounded-xl text-xs md:text-sm font-medium flex items-center gap-2 border transition-colors',
@@ -36,7 +36,7 @@
     </section>
 
     <aside class="w-full md:w-80 shrink-0 border-t md:border-t-0 md:border-l border-blue-900/40 px-6 py-8 overflow-y-auto bg-blue-900/10">
-      <h3 class="text-white font-righteous mb-4 md:hidden text-center text-lg">Estadísticas</h3>
+      <h3 class="text-white mb-4 md:hidden text-center text-lg">Estadísticas</h3>
       <CategoryHeatMap />
     </aside>
   </main>

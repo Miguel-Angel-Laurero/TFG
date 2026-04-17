@@ -9,7 +9,7 @@ export const useRewardsStore = defineStore('rewards', () => {
   const MAX_REWARD = 100
   const BASE_BONUS_PERCENTAGE = 5
   const BONUS_INCREMENT = 5
-  const BONUS_MULTIPLIERS = [1.2, 1.5, 2, 4, 8]
+  const BONUS_MULTIPLIERS = [1.1, 1.2, 1.4, 1.5, 1.8, 2, 2.5, 4, 8]
 
   // --- Estado ---
   const streak = ref(0)
@@ -42,13 +42,14 @@ export const useRewardsStore = defineStore('rewards', () => {
   // --- Helpers de Bonus (Acceso a authStore) ---
   function getBonusPercentage() {
     const authStore = useAuthStore()
-    return authStore.userData?.bonusPercentage ?? BASE_BONUS_PERCENTAGE
+    console.log(authStore.userData?.bonus_percentage);
+    return authStore.userData?.bonus_percentage ?? BASE_BONUS_PERCENTAGE
   }
 
   function setBonusPercentage(value) {
     const authStore = useAuthStore()
     if (authStore.userData) {
-      authStore.userData.bonusPercentage = value
+      authStore.userData.bonus_percentage = value
     }
   }
 
@@ -100,16 +101,14 @@ export const useRewardsStore = defineStore('rewards', () => {
 try {
   const userId = authStore.user.id;
   const currentBonus = getBonusPercentage();
-  const currentCoins = authStore.userData?.coins || 0;
 
   // Enviamos los datos dentro del objeto 'userData'
   await api.put(`/users/${userId}`, {
     userData: {
-      bonusPercentage: currentBonus,
-      coins: currentCoins
+      bonus_percentage: currentBonus,
     }
   });
-  
+
   console.log("Sincronización con BD exitosa");
 } catch (error) {
   console.error("Error al persistir:", error);
@@ -133,7 +132,7 @@ try {
       await api.put(`/users/${authStore.user.id}`, {
         userData: {
           coins: authStore.userData.coins,
-          bonus_percentage: authStore.userData.bonusPercentage
+          bonus_percentage: authStore.userData.bonus_percentage
 
         }
       })

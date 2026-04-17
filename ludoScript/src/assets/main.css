@@ -1,16 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 @import "tailwindcss";
 @import 'primeicons/primeicons.css';
 
 @theme {
   --font-righteous: 'Righteous', cursive;
+  --font-lexend: 'Lexend',cursive,
 }
 
 body {
   background-color: #0f172a;
   /* slate-900 — azul oscuro */
   margin: 0;
+  font-family: "Lexend";
+}
+h1,h2,h3{
+  font-family: "Righteous", sans-serif;
 }
 
 /* ConfirmDialog custom button styles */

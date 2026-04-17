@@ -19,7 +19,7 @@
     <!-- Tarjetas de juego con Glassmorphism -->
     <template v-else>
       <div v-for="minigame in minigames" :key="minigame.id" class="group relative flex items-center gap-6 px-7 py-6 rounded-2xl
-               bg-slate-800/50 backdrop-blur-md border border-slate-700/50
+               bg-slate-800/50 backdrop-blur-md border border-slate-700/50 font-lexend
                cursor-pointer transition-all duration-300
                hover:-translate-y-1 hover:border-indigo-500/60
                hover:shadow-[0_8px_32px_rgba(99,102,241,0.18)]" @click="goToGame(minigame.name)">

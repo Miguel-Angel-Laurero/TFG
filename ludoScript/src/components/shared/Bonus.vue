@@ -28,7 +28,7 @@ const authStore    = useAuthStore()
 
 // computed reactivo: se actualiza automáticamente cuando userData.bonusPercentage cambia
 const bonusPercentage = computed(
-  () => authStore.userData?.bonusPercentage ?? rewardsStore.BASE_BONUS_PERCENTAGE
+  () => authStore.userData?.bonus_percentage ?? rewardsStore.BASE_BONUS_PERCENTAGE
 )
 
 const totalCoins = computed(() =>
