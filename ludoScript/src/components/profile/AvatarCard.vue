@@ -1,10 +1,12 @@
 <template>
   <Card
-    :style="{ height: height + 'px' }"
-    class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900 !rounded-xl !text-gray-50 w-full max-w-[300px] mx-auto overflow-hidden flex flex-col"
+  class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900
+         !rounded-xl !text-gray-50 w-full max-w-[300px]  max-h-[350px] mx-auto overflow-hidden flex flex-col aspect-[3/5]"
+>
+
   >
     <template #content>
-      <div class="relative w-full h-full flex items-center justify-center p-2">
+      <div class="relative w-full h-full flex items-center justify-center">
         <img
           :src="IMAGES.pj"
           alt="plantilla-pj"
