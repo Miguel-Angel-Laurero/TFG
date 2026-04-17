@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full h-full">
-        <Chart type="line" :data="chartData" :options="chartOptions" />
+    <div class="w-full h-full bg-slate-950/40 border border-white/[0.08] rounded-2xl">
+        <Chart type="bar" :data="chartData" :options="chartOptions" />
     </div>
 </template>
 
@@ -35,17 +35,11 @@ const setChartData = (counts, scores) => {
         labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
         datasets: [
             {
-                label: 'Tests completados',
+                label: 'Rendimiento',
                 backgroundColor: documentStyle.getPropertyValue('--p-cyan-500') || '#06b6d4',
                 borderColor: documentStyle.getPropertyValue('--p-cyan-500') || '#06b6d4',
                 data: counts
             },
-            {
-                label: 'Puntos XP ganados',
-                backgroundColor: documentStyle.getPropertyValue('--p-purple-500') || '#a855f7',
-                borderColor: documentStyle.getPropertyValue('--p-purple-500') || '#a855f7',
-                data: scores
-            }
         ]
     };
 };

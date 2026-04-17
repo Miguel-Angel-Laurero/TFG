@@ -15,5 +15,6 @@ export const IMAGES = {
   suspenso: `${BUCKET_URL}/suspenso.png`,
   quiz:`${BUCKET_URL}/quiz_icon.png`,
   cards:`${BUCKET_URL}/card_icon.png`,
-  multi:`${BUCKET_URL}/multi_icon.png`,
+  multi: `${BUCKET_URL}/multi_icon.png`,
+  profesor: `${BUCKET_URL}/profesor.png`,
 }

@@ -1,26 +1,26 @@
 <template>
     <div class="relative p-2 rounded-2xl mb-2 overflow-hidden" :style="bannerStyle">
-        <div class="absolute inset-0 bg-slate-900/35"></div>
-
-        <Avatar
-            v-if="auth.user?.avatar"
-            :image="auth.user.avatar"
-            class="relative ml-2 mt-2"
-            size="xlarge"
-            shape="circle"
-            :pt="{ image: { style: 'width: 100%; height: 100%; object-fit: cover;' } }"
-        />
-
-        <div
-            v-else
-            class="relative ml-2 mt-2 w-[72px] h-[72px] rounded-full bg-slate-700/90 border-2 border-white/60 flex items-center justify-center text-3xl text-slate-200"
-        >
-            ?
+       <div class="relative overflow-hidden rounded-lg mb-5" :style="profileBannerStyle">
+            
+            <div class="relative flex items-center gap-4 p-3">
+                <img
+                    v-if="auth.user?.avatar"
+                    :src="auth.user.avatar"
+                    alt="Avatar"
+                    class="w-14 h-14 rounded-full object-cover ring-2 ring-blue-400"
+                />
+                <div
+                    v-else
+                    class="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center ring-2 ring-blue-400"
+                >
+                    <span class="text-2xl text-gray-300">?</span>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-gray-900 font-semibold text-lg leading-tight truncate">{{ auth.user?.username }}</p>
+                    <p class="text-gray-900 text-sm truncate">{{ auth.user?.email }}</p>
+                </div>
+            </div>
         </div>
-
-        <p class="absolute inset-0 flex items-center justify-center font-bold text-gray-50 text-2xl">
-            {{ auth.user.username }}
-        </p>
     </div>
 </template>
 <script setup>

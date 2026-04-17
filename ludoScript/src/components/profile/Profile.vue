@@ -1,29 +1,29 @@
 <template>
-    <div class="w-full min-h-screen md:h-screen md:overflow-hidden p-2 md:p-4 bg-blue-950/20">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
-            
-            <div class="lg:col-span-7 flex flex-col gap-4 md:gap-2 min-h-0">
-                <Banner class="flex-shrink-0 w-full" />
-                
-                <AvatarProfile class="flex-1 min-h-[400px] md:min-h-0" />
-            </div>
+  <div class="w-full max-w-[1400px] mx-auto p-4 md:p-8 flex flex-col gap-8 bg-blue-950">
+    
+    <header class="relative w-full">
+      <Banner />
+    </header>
 
-            <div class="lg:col-span-5 flex flex-col gap-4 lg:overflow-y-auto lg:h-full pr-0 lg:pr-2 pb-10 lg:pb-0">       
-                <div class="bg-indigo-900/20 rounded-3xl p-1 border border-white/5">
-                    <UserStats />
-                </div>
-
-                <div class="bg-indigo-900/20 rounded-3xl p-1 border border-white/5">
-                    <FortnightResume />
-                </div>        
-            </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <aside class="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-8">
+        <div class="bg-slate-950/30 backdrop-blur-xl p-2 ">
+           <UserStats />
         </div>
+      </aside>
+
+      <main class="lg:col-span-8 flex flex-col gap-6">
+        <div class="bg-slate-950/30 backdrop-blur-xl p-2 ">
+          <FortnightResume />
+        </div>
+      </main>
+
     </div>
+  </div>
 </template>
 
 <script setup>
-import AvatarProfile from './AvatarProfile.vue';
 import Banner from './Banner.vue';
 import FortnightResume from './FortnightResume.vue';
 import UserStats from './UserStats.vue';

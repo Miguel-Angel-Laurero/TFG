@@ -1,46 +1,36 @@
 <template>
-    <div class="flex flex-col gap-5 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
-
+    <div class="flex flex-col bg-white[0.03] border border-white-[0.08] rounded-2xl p-6">
         <!-- Header -->
-        <div>
-            <h2 class="text-base font-semibold text-white">Vista general de progreso</h2>
-            <p class="text-xs text-white/40 mt-1">Últimos 14 días · porcentaje de acierto por sesión</p>
-        </div>
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/5 pb-6">
+      <div>
+        <h2 class="text-3xl font-bold text-white tracking-tight">Rendimiento</h2>
+        <p class="text-sm text-indigo-300/50 mt-1 italic">Métricas de precisión de las últimas 2 semanas</p>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-white/5 pb-6">
+  <div v-if="performanceStatus" 
+       :class="[performanceStatus.bg, performanceStatus.border]"
+       class="border px-4 py-2.5 rounded-2xl transition-all duration-500 flex flex-col items-end">
+    <span :class="performanceStatus.color" class="text-xs font-bold uppercase tracking-tighter">
+        {{ performanceStatus.text }}
+    </span>
+    <span class="text-[10px] text-white/40 font-medium">
+        {{ performanceStatus.subtext }}
+    </span>
+  </div>
+</div>
+    </div>
 
-        <!-- Sin actividad -->
-        <div v-if="!hasActivity" class="flex flex-col items-center gap-1.5 py-10 text-white/35 text-sm text-center">
-            <span class="text-3xl">📅</span>
-            <p>Sin actividad en los últimos 14 días.</p>
-            <p class="text-xs text-white/20">Completa un quiz para empezar a llenar el calendario.</p>
-        </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <article v-for="metric in summaryMetrics" :key="metric.label"
+        class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-3xl p-5 transition-all duration-300">
+        <p class="text-[10px] uppercase font-black text-indigo-300/40 tracking-widest mb-3">{{ metric.label }}</p>
+        <p class="text-3xl font-black text-white group-hover:text-indigo-300 transition-colors">{{ metric.value }}</p>
+        <p class="text-[10px] text-white/20 mt-2 font-medium">{{ metric.helper }}</p>
+      </article>
+    </div>
 
-        <template v-else>
-            <!-- Métricas -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <article v-for="metric in summaryMetrics" :key="metric.label"
-                    class="bg-white/[0.04] border border-white/[0.08] rounded-[14px] p-3.5">
-                    <p class="text-[0.65rem] uppercase tracking-[0.08em] text-white/40">{{ metric.label }}</p>
-                    <p class="text-[1.6rem] font-bold text-white leading-none mt-2 mb-1">{{ metric.value }}</p>
-                    <p class="text-[0.68rem] text-white/35">{{ metric.helper }}</p>
-                </article>
-            </div>
-
-            <!-- Calendario -->
-            <div class="bg-slate-950/40 border border-white/[0.08] rounded-2xl overflow-hidden">
-
-                <!-- Cabecera -->
-                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3.5 border-b border-white/[0.07]">
-                    <p class="flex-1 min-w-[120px] text-sm font-medium text-white">Calendario de rendimiento</p>
-                    <p class="text-[0.72rem] text-white/35">{{ rangeLabel }}</p>
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <span v-for="item in LEGEND" :key="item.label"
-                            class="flex items-center gap-1.5 text-[0.65rem] text-white/40">
-                            <span class="w-2 h-2 rounded-full inline-block" :class="item.dotClass" />
-                            {{ item.label }}
-                        </span>
-                    </div>
-                </div>
-
+    <div class="bg-slate-950/60 border border-white/5 rounded-[2rem] overflow-hidden">
+       </div>
                 <!-- v-calendar -->
                 <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
                     :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless @dayclick="onDayClick" />
@@ -86,8 +76,6 @@
                     </div>
                 </transition>
             </div>
-        </template>
-    </div>
 </template>
 
 <script setup>
@@ -172,7 +160,46 @@ const sessionsByDate = computed(() => {
     }
     return agg
 })
+// -- Lógica de mensajes de estado dinámicos --
+const performanceStatus = computed(() => {
+    const accuracy = getAccuracy(totals.value.correct, totals.value.total);
+    
+    if (accuracy === null) return null;
 
+    if (accuracy >= 90) {
+        return {
+            text: '¡Rendimiento Maestro!',
+            subtext: 'Nivel excepcional',
+            color: 'text-emerald-400',
+            bg: 'bg-emerald-500/10',
+            border: 'border-emerald-500/20'
+        };
+    } else if (accuracy >= 75) {
+        return {
+            text: 'Progresando adecuadamente',
+            subtext: 'Buen ritmo de aprendizaje',
+            color: 'text-cyan-400',
+            bg: 'bg-cyan-500/10',
+            border: 'border-cyan-500/20'
+        };
+    } else if (accuracy >= 50) {
+        return {
+            text: 'Rendimiento estable',
+            subtext: 'Sigue practicando para mejorar',
+            color: 'text-amber-400',
+            bg: 'bg-amber-500/10',
+            border: 'border-amber-500/20'
+        };
+    } else {
+        return {
+            text: 'Necesitas más práctica',
+            subtext: 'No te rindas, la clave es la constancia',
+            color: 'text-rose-400',
+            bg: 'bg-rose-500/10',
+            border: 'border-rose-500/20'
+        };
+    }
+});
 // ── Rango de 14 días ─────────────────────────────────────────────
 const lastTwoWeeksDays = computed(() => {
     const today = startOfDay(new Date())

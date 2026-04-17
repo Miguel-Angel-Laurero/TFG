@@ -1,12 +1,14 @@
 <template>
     <!-- H1: el código y el contador dan visibilidad del estado del grupo -->
+<div>
+    <img :src="IMAGES.profesor" class="w-32 m-auto"/>
+    
     <div
         class="bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-white/5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
         <!-- Info principal -->
         <div class="min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-2xl">🏫</span>
                 <h2 class="text-xl sm:text-2xl font-bold text-white truncate">{{ group.name }}</h2>
                 <span :class="memberCountColor" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/10">
                     {{ memberCount }}/30 miembros
@@ -49,10 +51,12 @@
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import { IMAGES } from '@/utils/imgBucketStorage';
 
 const props = defineProps({
     group: { type: Object, required: true },
