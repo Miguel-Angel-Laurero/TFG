@@ -105,6 +105,12 @@ const props = defineProps({
 })
 
 const router = useRouter()
+
+const DEFAULT_MINIGAMES = [
+  { id: 1, name: 'Quiz', description: 'Pon a prueba tu conocimiento del tema.' },
+  { id: 2, name: 'FlashCards', description: 'Practica y repasa mediante tarjetas sobre el tema que prefieras.' },
+]
+
 const minigames = ref([])
 const isLoading = ref(true)
 const noSelectionWarning = ref(false)
@@ -138,10 +144,10 @@ function gameButtonText(name) {
 onMounted(async () => {
   try {
     const res = await api.get("/activities")
-    // Axios ya parsea el JSON, los datos están en res.data
-    minigames.value = res.data 
+    minigames.value = res.data?.length ? res.data : DEFAULT_MINIGAMES
   } catch (err) {
-    console.error('Error al cargar los minijuegos', err)
+    console.error('Error al cargar los minijuegos, usando datos por defecto', err)
+    minigames.value = DEFAULT_MINIGAMES
   } finally {
     isLoading.value = false
   }
