@@ -62,7 +62,7 @@ import { IMAGES } from '@/utils/imgBucketStorage';
 const { buyItem } = useTransaction();
 const shopStore = useShopStore();
 const first = ref(0);
-const rows = ref(12);
+const rows = ref(20);
 const products = ref([]);
 const loading = ref(true);
 

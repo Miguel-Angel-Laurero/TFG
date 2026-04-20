@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full min-h-screen overflow-x-hidden">
 
-    <ConfettiBackground v-if="gameFinished" style="position: absolute; inset: 0; z-index: 0; pointer-events: none;" />
+    <component :is="ConfettiBackground" v-if="showConfetti" style="position: absolute; inset: 0; z-index: 0; pointer-events: none;" />
 
     <div class="relative z-10 flex flex-col min-h-screen">
 
@@ -48,10 +48,9 @@
 </template>
 
 <script setup>
-import { computed, watch, ref, onMounted } from 'vue'
+import { computed, watch, ref, onMounted, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import ProgressBar from 'primevue/progressbar'
-import ConfettiBackground from '../shared/ConfettiBackground.vue'
 import Quiz from './Quiz.vue'
 import QuizIntro from './QuizIntro.vue'
 import FlashCard from './FlashCard.vue'
@@ -59,8 +58,12 @@ import { useGameProgress } from '@/composables/useGameProgress'
 import { useGameExit } from '@/composables/useGameExit'
 
 const route = useRoute()
-const { progress, gameFinished, resetProgress } = useGameProgress()
+const { progress, gameFinished, resetProgress, score } = useGameProgress()
 const { confirmExit } = useGameExit()
+
+const ConfettiBackground = defineAsyncComponent(() => import('../shared/ConfettiBackground.vue'))
+
+const showConfetti = computed(() => gameFinished.value && score.value >= 5)
 
 const showIntro = ref(route.query.game === 'Quiz')
 

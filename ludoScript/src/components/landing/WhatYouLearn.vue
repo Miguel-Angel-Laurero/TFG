@@ -56,7 +56,7 @@
       <div class="flex flex-col md:flex-row items-center gap-12">
         <div class="flex-1">
           <img
-            src=""
+            :src="IMAGES.progreso"
             alt="Seguimiento de progreso"
             class="w-full rounded-2xl object-contain mask-r-from-60% mask-r-to-100% mask-l-from-95% mask-l-to-100% mask-y-from-95% mask-y-to-100%"
           >

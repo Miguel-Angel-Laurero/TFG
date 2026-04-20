@@ -106,6 +106,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useGameProgress } from '@/composables/useGameProgress'
 
 // ─── Props de dificultad (pasados desde InGame.vue vía QuizIntro)
 const props = defineProps({
@@ -128,6 +129,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 const route = useRoute()
 const router = useRouter()
+const { updateScore } = useGameProgress()
 
 // Loading UI guard (mantener comportamiento anterior)
 const loadingManual = ref(true)
@@ -195,7 +197,7 @@ const score = computed(() => Math.max(0, correctCount.value - wrongCount.value /
 // Historial y desbloqueo adaptativo
 const { history: quizHistory, canUseAdaptive, remainingGames, gamesSinceLastAdaptive, historyLoading, loadHistory, markAdaptiveUsed, timeAgo } = useAdaptiveHistory('Quiz')
 
-watch(finished, (v) => { if (v) loadHistory() })
+watch(finished, (v) => { if (v) { loadHistory(); updateScore(score.value) } })
 
 function handleAdaptiveClick() {
   markAdaptiveUsed()
