@@ -9,7 +9,7 @@
     />
 
     <section class="flex-1 overflow-hidden p-4">
-      <ScrollPanel style="height: calc(100vh - 10rem)">
+      <ScrollPanel style="height: calc(100vh - 13rem)">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-items-center">
           <ProductCard
             v-for="product in displayedProducts"

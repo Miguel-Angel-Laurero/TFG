@@ -4,7 +4,7 @@
       <Header/>
     </header>
     <main class="flex-grow">
-      <div v-if="showAuthenticatedHome">
+      <div v-if="showAuthenticatedHome" class="h-full">
         <DailyReward v-if="rewards.ready && !rewards.claimed"/>  <!-- ← espera a ready -->
         <Home/>
       </div>

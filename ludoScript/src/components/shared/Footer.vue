@@ -1,5 +1,5 @@
 <template>
-    <footer class="w-full fixed bottom-0 bg-indigo-900 text-gray-50/50 px-6 py-6 md:py-4">
+    <footer class="w-full bg-indigo-900 text-gray-50/50 px-6 py-6 md:py-4">
         <p class="text-sm md:text-base text-center md:text-left mb-4 md:mb-0">
             <span class="font-righteous text-gray-50">LudoScript </span>
             - Aprende a programar jugando. Retos, puntos y logros que harán tu aprendizaje adictivo.

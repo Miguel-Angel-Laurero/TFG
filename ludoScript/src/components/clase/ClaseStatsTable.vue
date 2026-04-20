@@ -26,7 +26,7 @@
                     @transfer="$emit('transfer', $event)" />
 
                 <!-- Categorías (acordeón) — H7: solo accesible si el usuario quiere ver más -->
-                <div v-if="member.categoryStats?.length" class="mt-1 pl-12">
+                <!-- <div v-if="member.categoryStats?.length" class="mt-1 pl-12">
                     <button @click="toggleExpanded(member.userId)"
                         class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
                         {{ expanded.has(member.userId) ? '▲ Ocultar categorías' : '▼ Ver por categorías' }}
@@ -43,7 +43,7 @@
                             </span>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
