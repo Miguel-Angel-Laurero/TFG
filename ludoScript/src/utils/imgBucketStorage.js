@@ -14,7 +14,11 @@ export const IMAGES = {
   aprobado: `${BUCKET_URL}/aprobado.png`,
   suspenso: `${BUCKET_URL}/suspenso.png`,
   quiz:`${BUCKET_URL}/quiz_icon.png`,
-  cards:`${BUCKET_URL}/card_icon.png`,
+  cards:`${BUCKET_URL}/icon/card_icon.png`,
   multi: `${BUCKET_URL}/multi_icon.png`,
   profesor: `${BUCKET_URL}/profesor.png`,
+  medalla_1:`${BUCKET_URL}/icon/medalla_primero.png`,
+  medalla_2:`${BUCKET_URL}/icon/medalla_segundo.png`,
+  medalla_3:`${BUCKET_URL}/icon/medalla_tercero.png`,
+  corona:`${BUCKET_URL}/icon/corona_lider.png`,
 }

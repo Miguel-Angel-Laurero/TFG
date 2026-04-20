@@ -34,7 +34,7 @@
                 <template v-if="isOwner">
                     <button @click="$emit('openTransfer')"
                         class="text-xs bg-blue-700/40 hover:bg-blue-700/70 border border-blue-500/30 text-blue-300 px-3 py-1.5 rounded-lg transition-colors">
-                        👑 Transferir liderazgo
+                        <img :src="IMAGES.corona" class="w-8"/>
                     </button>
                     <!-- H5: acción destructiva pide confirmación -->
                     <button @click="$emit('openDissolve')"

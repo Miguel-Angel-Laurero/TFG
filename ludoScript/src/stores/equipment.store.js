@@ -51,10 +51,12 @@ export const useEquipmentStore = defineStore('equipment', () => {
     const loading      = ref(false)
     const error        = ref(null)
 
+    const initialized = ref(false)
     async function fetchItems() {
         const authStore = useAuthStore()
         if (!authStore.user?.id) return
-
+        if (initialized.value) return
+        
         loading.value = true
         error.value   = null
         try {
@@ -74,6 +76,7 @@ export const useEquipmentStore = defineStore('equipment', () => {
                 if (is_equipped) {
                     equipped[slot] = enrichedItem
                 }
+                initialized.value = true
             })
         } catch (e) {
             error.value = 'Error al cargar inventario'

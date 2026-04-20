@@ -4,8 +4,8 @@
     <!-- CARD -->
     <!-- <div class="w-full max-w-md rounded-2xl shadow-xl p-7 grid grid-cols-3 gap-6"> -->
 
-      <div class="items-center mx-auto">
-        <img :src="IMAGES.quiz" alt="" class="w-80">
+      <div class="items-center mx-auto m-4">
+        <Character/>
       </div>
       <!-- HERO -->
       <div class="text-center flex flex-col gap-4 mx-auto">
@@ -115,6 +115,7 @@
 <script setup>
 import { reactive } from 'vue'
 import { IMAGES } from '@/utils/imgBucketStorage'
+import Character from '../profile/Character.vue'
 
 const RANKS = [
   { label: 'Bronce', range: '0–4 pts', icon: '🥉', color: 'text-orange-400' },

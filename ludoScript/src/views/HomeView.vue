@@ -10,7 +10,7 @@
       </div>
       <HomeNoLogin v-else-if="showGuestHome"/>
     </main>
-    <footer>
+    <footer class="sticky bottom-0 z-10">
       <Footer v-if="showAuthenticatedHome"/>
       <FooterNoLogin v-else-if="showGuestHome"/>
     </footer>
