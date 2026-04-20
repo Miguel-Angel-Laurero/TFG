@@ -13,3 +13,7 @@ pdf predefinidos --> dejan tal y como están, no se implementa el algo
 JSON que devuelve la primera llamada --> JSON se guarda en localStorage y en nube --> todo lo que se modifique es sobre el localStorage
 
 Botón de guardar test para subir a la nube que es la base de datos de supabase, con esto se guardarían tanto el test como el resto de preguntas, todo esto para tener distintos JSON independientes, el objetivo es que el base que se genera por primera vez esté intacto y luego si se ha generado otra llamada con gemini para hacer nuevas preguntas quiero que esas preguntas también se suban en otro array distinto
+
+botón de generar nuevas preguntas arreglarlo
+
+inicio de sesión en producción persistente, es decir, que no se cierre sesión
