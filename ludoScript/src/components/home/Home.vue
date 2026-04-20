@@ -23,8 +23,9 @@
       @mousedown.prevent="startDrag" 
     />
 
-    <section class="flex-1 grid grid-cols-2 justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20">
-      <Character class="max-w-xs m-auto md:max-w-md"/>
+    <section class="flex-1 grid grid-cols-[1fr_2fr] justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20">
+    
+      <Character class="max-w-sm m-auto ml-32 md:max-w-xs"/>
       <div class="w-full max-w-2xl m-auto px-4 md:px-8">
         <h2 class="text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Minijuegos</h2>
 

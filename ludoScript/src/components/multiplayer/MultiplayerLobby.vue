@@ -33,28 +33,37 @@
                 </li>
             </transition-group>
         </div>
-
+        
         <!-- Esperando... -->
         <p v-if="!mp.isHost" class="text-white/50 text-sm animate-pulse">
             Esperando a que el host inicie la partida…
         </p>
-
+        
         <!-- Botón iniciar (solo host) -->
         <button v-if="mp.isHost" @click="mp.startGame()" :disabled="mp.players.length < 1"
-            class="w-full bg-green-500 hover:bg-green-400 disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-all">
-            ¡Iniciar partida! ({{ mp.players.length }} jugador{{ mp.players.length !== 1 ? 'es' : '' }})
-        </button>
-
-        <!-- Abandonar -->
-        <button @click="mp.leaveRoom()" class="text-red-400/70 hover:text-red-400 text-sm transition-colors">
-            Abandonar sala
-        </button>
-    </div>
+        class="w-full bg-green-500 hover:bg-green-400 disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-all">
+        ¡Iniciar partida! ({{ mp.players.length }} jugador{{ mp.players.length !== 1 ? 'es' : '' }})
+    </button>
+    
+    <!-- Abandonar -->
+    <button @click="mp.leaveRoom()" class="text-red-400/70 hover:text-red-400 text-sm transition-colors">
+        Abandonar sala
+    </button>
+</div>
+<div 
+  v-for="player in mp.players" 
+  :key="player.userId"
+  class="bg-indigo-950/40 w-full rounded-2xl p-8 h-96 m-auto flex flex-col items-center justify-center"
+>
+    <Character/>
+    <span class="text-white font-medium bg-indigo-900/40 p-4 rounded-2xl">{{ player.username }}</span>
+</div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useMultiplayerStore } from '@/stores/multiplayer.store'
+import Character from '../profile/Character.vue'
 
 const mp = useMultiplayerStore()
 const copied = ref(false)

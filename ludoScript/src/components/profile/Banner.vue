@@ -2,7 +2,7 @@
     <div class="relative p-2 rounded-2xl mb-2 overflow-hidden" :style="bannerStyle">
        <div class="relative overflow-hidden rounded-lg mb-5" :style="profileBannerStyle">
             
-            <div class="relative flex items-center gap-4 p-3">
+            <div class="relative flex items-center gap-4 bg-gray-100/20 rounded-2xl p-4">
                 <img
                     v-if="auth.user?.avatar"
                     :src="auth.user.avatar"
