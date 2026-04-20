@@ -146,6 +146,25 @@ Los iconos disponibles son de PrimeIcons (`pi pi-…`). Ver [https://primevue.or
 | `useUserStore`        | `user.store.js`        | `users`, `current`                                 |
 | `useShopStore`        | `shop.store.js`        | `searchQuery`, `selectedCategories`                |
 
+## Sistema de composables de quiz/juego
+
+Hay 20+ composables en `src/composables/` que implementan el sistema de quiz adaptativo. **Trabajan juntos — no modificar uno de forma aislada sin entender sus dependencias.**
+
+| Composable             | Responsabilidad                                                       |
+| ---------------------- | --------------------------------------------------------------------- |
+| `useQuizController`    | Máquina de estados del quiz (pregunta actual, timer, avance)          |
+| `useQuizLoader`        | Carga y prepara el pool de preguntas desde la API                     |
+| `useAdaptiveSelection` | Selecciona preguntas priorizando categorías débiles del usuario       |
+| `useAdaptiveHistory`   | Controla si el modo adaptativo está desbloqueado (umbral de partidas) |
+| `useActivitySession`   | Ciclo de vida genérico compartido por quiz y flashcards               |
+| `useActivityReward`    | Calcula monedas/XP según rendimiento al terminar                      |
+| `useCategoryStats`     | Lee/escribe estadísticas de precisión por categoría                   |
+| `useQuizReward`        | Orquesta la recompensa completa al finalizar partida                  |
+| `useGameProgress`      | Progreso visual durante la partida (preguntas respondidas)            |
+| `useSessionTracker`    | Envía tiempo de sesión al backend al salir                            |
+
+Para añadir lógica de quiz, preferir extender un composable existente o crear uno nuevo que los componga, antes que meter lógica directamente en un componente.
+
 ## Alias de rutas
 
 El alias `@` apunta a `ludoScript/src/`. Usar siempre `@/...` en imports en lugar de rutas relativas.
