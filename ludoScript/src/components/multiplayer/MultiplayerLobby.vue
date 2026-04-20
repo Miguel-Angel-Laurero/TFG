@@ -56,7 +56,7 @@
   class="bg-indigo-950/40 w-full rounded-2xl p-8 h-96 m-auto flex flex-col items-center justify-center"
 >
     <Character/>
-    <span class="text-white font-medium bg-indigo-900/40 p-4 rounded-2xl">{{ player.username }}</span>
+    <span class="flex text-white font-medium bg-indigo-900/40 p-4 rounded-2xl">{{ player.username }}</span>
 </div>
 </template>
 

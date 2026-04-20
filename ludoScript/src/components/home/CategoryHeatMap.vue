@@ -8,7 +8,6 @@
 
             <div v-if="summary" class="flex flex-col items-center gap-4">
                 <!-- <div class="grid grid-cols-2"> -->
-                    <!-- <Character class="max-w-18 h-24"/> -->
                     <!-- Anillo SVG grande con precisión global -->
                     <div class="relative w-24 h-24">
                         <svg viewBox="0 0 60 60" class="w-full h-full -rotate-90">
@@ -73,7 +72,6 @@
                 <p>
                     Completa una actividad para ver tus estadísticas.
                 </p>
-                <Character/>
             </div>
         </section>
 
@@ -87,7 +85,7 @@ import { getSessionSummary } from '@/composables/useSessionTracker'
 import { formatCategoryLabel } from '@/composables/useAdaptiveSelection'
 import { gameService } from '@/api/game.service'
 import { timeAgo } from '@/composables/useAdaptiveHistory'
-import Character from '../profile/Character.vue'
+
 
 const router = useRouter()
 
