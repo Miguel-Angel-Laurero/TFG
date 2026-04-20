@@ -10,9 +10,9 @@
         <img
             v-for="(item, slot) in equippedItems"
             :key="slot"
-            :src="item.img"
+            :src="item.equipped_img"
             :alt="item.name"
-            class="absolute inset-0 max-w-full max-h-full object-contain block mx-auto"
+            class="absolute max-w-full max-h-full object-contain block mx-auto"
         />
     </div>
 </template>
@@ -30,10 +30,12 @@ const equippedItems = computed(() =>
         Object.entries(store.equipped).filter(([, item]) => item !== null)
     )
 )
+console.log(equippedItems.value)
 
 onMounted(async () => {
     try {
         await store.fetchItems()
+        console.log(store.fetchItems())
     } catch (error) {
         console.error("Error cargando inventario al recargar:", error)
     }

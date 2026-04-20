@@ -23,6 +23,10 @@ const Item = sequelize.define("Item", {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  equipped_img: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
 }, {
   tableName: "item",
   timestamps: false,
