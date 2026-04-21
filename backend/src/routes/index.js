@@ -14,5 +14,7 @@ router.use("/pdfs", require("./pdf.routes"));
 router.use("/category-stats", require("./categoryStats.routes"));
 // Sistema de clases (grupos)
 router.use("/groups", require("./group.routes"));
+// Sesiones de quiz del usuario
+router.use("/sessions", require("./session.routes"));
 
 module.exports = router;

@@ -106,6 +106,7 @@ import { useRoute } from 'vue-router'
 import Header from '@/components/shared/Header.vue'
 import Footer from '@/components/shared/Footer.vue'
 import { getQuizCategoryLabel } from '@/utils/quizCategories'
+import { sessionService } from '@/api/session.service'
 
 const route = useRoute()
 const categoryKey = computed(() => route.query.category ?? '')
@@ -125,21 +126,16 @@ const categoryLabel = computed(() => getQuizCategoryLabel(categoryKey.value))
 
 const loading = ref(true)
 const allQuestions = ref([])
+const lastSession = ref(null)
 
 // Failed IDs from the last session for this category
-const failedIds = computed(() => {
-  try {
-    const session = JSON.parse(localStorage.getItem(LS_LAST_SESSION) || 'null')
-    return session?.stats?.[categoryKey.value]?.failedIds ?? []
-  } catch (_) { return [] }
-})
+const failedIds = computed(() =>
+  lastSession.value?.stats?.[categoryKey.value]?.failedIds ?? []
+)
 
-const categoryStats = computed(() => {
-  try {
-    const session = JSON.parse(localStorage.getItem(LS_LAST_SESSION) || 'null')
-    return session?.stats?.[categoryKey.value] ?? { correct: 0, total: 0 }
-  } catch (_) { return { correct: 0, total: 0 } }
-})
+const categoryStats = computed(() =>
+  lastSession.value?.stats?.[categoryKey.value] ?? { correct: 0, total: 0 }
+)
 
 const categoryColor = computed(() =>
   masteryColor(categoryStats.value.correct, categoryStats.value.total)
@@ -153,14 +149,23 @@ const failedQuestions = computed(() => {
 })
 
 onMounted(async () => {
+  // Cargar la última sesión desde la API, fallback a localStorage
+  try {
+    const res = await sessionService.getLastSession()
+    lastSession.value = res.data ?? null
+  } catch (_) {
+    try {
+      lastSession.value = JSON.parse(localStorage.getItem(LS_LAST_SESSION) || 'null')
+    } catch (__) { /* ignorar */ }
+  }
+
   try {
     const res = await fetch('/quizQuestions.json')
     allQuestions.value = await res.json()
-    // Bug 2 fix: si la sesión vino de un PDF, añadir sus preguntas al banco
-    const session = JSON.parse(localStorage.getItem(LS_LAST_SESSION) || 'null')
-    if (session?.pdfId) {
+    // Si la sesión vino de un PDF, añadir sus preguntas al banco
+    if (lastSession.value?.pdfId) {
       try {
-        const raw = localStorage.getItem(`ludoscript_pdf_questions_${session.pdfId}`)
+        const raw = localStorage.getItem(`ludoscript_pdf_questions_${lastSession.value.pdfId}`)
         const stored = JSON.parse(raw || 'null')
         if (stored?.questions?.length) {
           allQuestions.value = [...allQuestions.value, ...stored.questions]

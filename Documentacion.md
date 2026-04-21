@@ -1534,3 +1534,119 @@ Los guests solo pueden usar `spectator:join`. Los handlers de sala de juego, due
 - La URL de espectador solo expone el código de sala de 6 caracteres, que es público por diseño (se proyecta en el aula).
 - Los guests no pueden acceder a rutas autenticadas del socket: no reciben invitaciones, no crean salas, no reciben eventos privados de otros usuarios.
 - `getPublicState` nunca incluye el índice de la respuesta correcta; ese dato solo llega en `game:question-end` cuando el tiempo ha expirado o todos los jugadores han respondido.
+
+---
+
+## Estadísticas de sesión en la nube — 21/04
+
+### Objetivo
+
+Persistir en base de datos los datos de cada sesión de quiz completada por el usuario, de forma que el perfil, el heatmap de la home y la vista de revisión de categorías muestren siempre los datos correctos, independientemente del navegador o dispositivo que el usuario use. Antes de este cambio toda esa información vivía exclusivamente en `localStorage`, por lo que cambiando de navegador la sección de estadísticas del perfil aparecía vacía.
+
+Adicionalmente, la sección "Rendimiento" del perfil (`FortnightResume`) se rediseña para mostrar los **últimos 14 tests completados** en lugar de los últimos 14 días naturales. Esto hace que el rango del calendario sea dinámico (se adapta a la actividad real del usuario) y que el contador "Días activos" indique cuántos de esos 14 tests pertenecen a días distintos.
+
+---
+
+### Archivos creados
+
+**Backend:**
+
+| Archivo                                         | Rol                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backend/src/models/UserSession.model.js`       | Modelo Sequelize de la tabla `user_sessions`. Almacena por sesión: `userId` (FK), `timestamp` (BIGINT, ms epoch del frontend), `pdfId` (STRING, nullable) y `stats` (JSON). Sin `createdAt`/`updatedAt` de Sequelize — se usa el `timestamp` propio para ordenar y filtrar. |
+| `backend/src/controllers/session.controller.js` | Tres handlers: `saveSession` (POST), `getLastSession` (GET /last) y `getRecentSessions` (GET /recent?limit).                                                                                                                                                                |
+| `backend/src/routes/session.routes.js`          | Tres rutas protegidas con `authMiddleware`: `POST /`, `GET /last`, `GET /recent`.                                                                                                                                                                                           |
+
+**Frontend:**
+
+| Archivo                                 | Rol                                                                                         |
+| --------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `ludoScript/src/api/session.service.js` | Capa HTTP: `saveSession(sessionData)`, `getLastSession()`, `getRecentSessions(limit = 14)`. |
+
+---
+
+### Archivos modificados
+
+| Archivo                                                 | Cambio                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backend/src/models/index.js`                           | Importa `UserSession`, declara `User.hasMany(UserSession, { onDelete: 'CASCADE' })` + `UserSession.belongsTo(User)` y lo exporta.                                                                                                                                                                   |
+| `backend/src/routes/index.js`                           | Añade `router.use('/sessions', require('./session.routes'))`.                                                                                                                                                                                                                                       |
+| `ludoScript/src/composables/useCategoryStats.js`        | En `submitSession()`, tras escribir en localStorage, llama también a `sessionService.saveSession(sessionData)` en un bloque `try/catch` independiente. Si la llamada falla, la sesión sigue registrada en localStorage (fallback).                                                                  |
+| `ludoScript/src/components/home/CategoryHeatMap.vue`    | `categoryRings` pasa de inicializarse síncronamente de localStorage a ser un `ref([])` poblado en `onMounted` vía `sessionService.getLastSession()`. Fallback a `localStorage.getItem('ludoscript_lastSession')` si la API falla.                                                                   |
+| `ludoScript/src/views/CategoryReviewView.vue`           | `lastSession` pasa a ser un `ref(null)` cargado en `onMounted` desde `sessionService.getLastSession()`. `failedIds` y `categoryStats` se derivan como `computed` de ese ref. Fallback a localStorage si la API falla.                                                                               |
+| `ludoScript/src/components/profile/FortnightResume.vue` | `recentSessions` pasa a `ref([])` cargado en `onMounted` vía `getRecentSessions(14)`. Rango del calendario dinámico (fecha de la sesión más antigua → hoy). Texto actualizado: "últimos 14 tests". Helper "Días activos" cambia de "de 14 días" a "de N tests analizados". Fallback a localStorage. |
+| `ludoScript/src/components/profile/WeeklyResume.vue`    | `weeklySessions` pasa a `ref([])` con `onMounted` async; carga 14 sesiones de la API y filtra en cliente las de los últimos 7 días. `hasWeekly` pasa de booleano estático a `computed`. Fallback a localStorage.                                                                                    |
+
+---
+
+### Esquema de la tabla `user_sessions`
+
+| Columna     | Tipo       | Descripción                                                                                                                                                                        |
+| ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`        | INTEGER PK | Autoincremental                                                                                                                                                                    |
+| `userId`    | INTEGER FK | Referencia a `users.id`. La asociación tiene `onDelete: CASCADE`: al borrar el usuario se borran todas sus sesiones.                                                               |
+| `timestamp` | BIGINT     | `Date.now()` en milisegundos enviado desde el frontend. Se usa para ordenar y filtrar; no se usa `createdAt` de Sequelize para mantener coherencia con el formato de localStorage. |
+| `pdfId`     | STRING     | ID del PDF origen si la sesión se generó desde un PDF del usuario. `null` para sesiones del banco estándar.                                                                        |
+| `stats`     | JSON       | `{ [category]: { correct: number, total: number, failedIds: number[] } }` — misma estructura que `ludoscript_lastSession` en localStorage.                                         |
+
+La tabla se crea automáticamente al arrancar el servidor en desarrollo gracias a `sequelize.sync({ alter: true })`.
+
+---
+
+### Rutas REST del recurso sesión
+
+Todas las rutas están protegidas con `authMiddleware` (JWT).
+
+| Método | Ruta                            | Descripción                                                                                                                  |
+| ------ | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/sessions`                 | Guarda una sesión. Body: `{ timestamp: number, pdfId?: string, stats: object }`. Responde con el registro creado (HTTP 201). |
+| `GET`  | `/api/sessions/last`            | Devuelve la sesión más reciente del usuario (orden por `timestamp DESC`). Responde 404 si no tiene ninguna.                  |
+| `GET`  | `/api/sessions/recent?limit=14` | Devuelve las N sesiones más recientes (por defecto 14, máximo 50).                                                           |
+
+---
+
+### Estrategia de persistencia dual (nube + localStorage)
+
+El sistema mantiene localStorage como capa de caché/fallback, de modo que:
+
+- Si la API no está disponible (por ejemplo, en modo offline), los componentes siguen funcionando con los datos locales.
+- Si el usuario completa un quiz sin conexión, la sesión queda registrada localmente; cuando vuelve a abrir el perfil con conexión verá los datos de nube (más completos) en lugar de los locales.
+
+El flujo al terminar un quiz es:
+
+```
+submitSession()
+   ├── localStorage.setItem('ludoscript_lastSession', ...)
+   ├── localStorage.setItem('ludoscript_weeklySessions', ...)   ← se mantiene (fallback offline)
+   ├── POST /api/category-stats/batch   ← acumula totales por categoría (ya existía)
+   └── POST /api/sessions               ← NUEVO: guarda la sesión completa en BD
+```
+
+El flujo al cargar un componente de estadísticas es:
+
+```
+onMounted()
+   ├── try: GET /api/sessions/last  (o /recent)
+   │        ✓ éxito → usa datos de la nube
+   │        ✗ falla → lee localStorage como fallback
+   └── renderiza con lo que tenga
+```
+
+---
+
+### Por qué `pdfId` existe en `UserSession`
+
+El campo `pdfId` indica si la sesión se generó desde un PDF subido por el usuario (sistema Gemini) en lugar del banco estándar de preguntas. `CategoryReviewView` lo usa para saber si, además del banco estándar (`quizQuestions.json`), debe buscar también las preguntas del PDF en localStorage (`ludoscript_pdf_questions_<pdfId>`). Si el quiz fue estándar, `pdfId` es `null`.
+
+---
+
+### Cambio de "últimas 2 semanas" a "últimos 14 tests" en FortnightResume
+
+| Comportamiento anterior                                          | Comportamiento nuevo                                                              |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Rango fijo: siempre los 14 días naturales anteriores a hoy       | Rango dinámico: desde la fecha de la sesión más antigua de las 14 hasta hoy       |
+| El calendario siempre muestra exactamente 14 días                | El calendario puede mostrar más o menos días según la antigüedad de las sesiones  |
+| Helper "Días activos": "de 14 días analizados"                   | Helper "Días activos": "de N tests analizados" (N = número de sesiones cargadas)  |
+| `recentSessions` cargado síncronamente de localStorage al inicio | `recentSessions` cargado en `onMounted` desde la API, con fallback a localStorage |
+
+Si el usuario tiene menos de 14 sesiones registradas, se muestran todas las que haya. Si tiene más de 14, se muestran las 14 más recientes (que pueden abarcar más o menos de 14 días naturales según la frecuencia de uso).

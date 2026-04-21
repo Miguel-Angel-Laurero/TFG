@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/5 pb-6">
       <div>
         <h2 class="text-3xl font-bold text-white tracking-tight">Rendimiento</h2>
-        <p class="text-sm text-indigo-300/50 mt-1 italic">Métricas de precisión de las últimas 2 semanas</p>
+        <p class="text-sm text-indigo-300/50 mt-1 italic">Métricas de precisión de los últimos 14 tests</p>
       </div>
       <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-white/5 pb-6">
   <div v-if="performanceStatus" 
@@ -79,9 +79,10 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { Calendar as VCalendar } from 'v-calendar'
 import 'v-calendar/style.css'
+import { sessionService } from '@/api/session.service'
 
 // ── Constantes ───────────────────────────────────────────────────
 const LS_WEEKLY = 'ludoscript_weeklySessions'
@@ -136,16 +137,21 @@ function dotHexColor(percent, total) {
     return '#f87171'                      // rose-400
 }
 
-// ── Datos ────────────────────────────────────────────────────────
-function readRecentSessions() {
-    try {
-        const cutoff = Date.now() - HISTORY_MS
-        return JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
-            .filter(s => s.timestamp >= cutoff)
-    } catch { return [] }
-}
+// ── Datos (cargados desde la API con fallback a localStorage) ─────────────
+const recentSessions = ref([])
 
-const recentSessions = ref(readRecentSessions())
+onMounted(async () => {
+    try {
+        const res = await sessionService.getRecentSessions(14)
+        recentSessions.value = res.data ?? []
+    } catch (_) {
+        try {
+            const cutoff = Date.now() - HISTORY_MS
+            recentSessions.value = JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
+                .filter(s => s.timestamp >= cutoff)
+        } catch { recentSessions.value = [] }
+    }
+})
 
 const sessionsByDate = computed(() => {
     const agg = {}
@@ -200,23 +206,35 @@ const performanceStatus = computed(() => {
         };
     }
 });
-// ── Rango de 14 días ─────────────────────────────────────────────
-const lastTwoWeeksDays = computed(() => {
-    const today = startOfDay(new Date())
-    return Array.from({ length: TWO_WEEKS_DAYS }, (_, i) => {
-        const d = new Date(today)
-        d.setDate(today.getDate() - (TWO_WEEKS_DAYS - 1 - i))
+// ── Rango dinámico: desde la sesión más antigua hasta hoy ────────────────
+const rangeEnd = computed(() => startOfDay(new Date()))
+
+const rangeStart = computed(() => {
+    if (recentSessions.value.length === 0) {
+        const d = new Date(rangeEnd.value)
+        d.setDate(d.getDate() - (TWO_WEEKS_DAYS - 1))
         return d
-    })
+    }
+    const oldest = Math.min(...recentSessions.value.map(s => s.timestamp))
+    return startOfDay(new Date(oldest))
 })
 
-const rangeStart = computed(() => lastTwoWeeksDays.value.at(0))
-const rangeEnd = computed(() => lastTwoWeeksDays.value.at(-1))
+const rangeDays = computed(() => {
+    const days = []
+    const current = new Date(rangeStart.value)
+    const end = new Date(rangeEnd.value)
+    while (current <= end) {
+        days.push(new Date(current))
+        current.setDate(current.getDate() + 1)
+    }
+    return days
+})
+
 const rangeLabel = computed(() => formatRange(rangeStart.value, rangeEnd.value))
 
 // ── Atributos v-calendar ─────────────────────────────────────────
 const calendarAttributes = computed(() =>
-    lastTwoWeeksDays.value.map(date => {
+    rangeDays.value.map(date => {
         const key = toDateKey(date)
         const data = sessionsByDate.value[key] ?? { correct: 0, total: 0, sessions: 0 }
         const percent = getAccuracy(data.correct, data.total)
@@ -270,7 +288,7 @@ const totals = computed(() =>
 )
 
 const bestDay = computed(() =>
-    lastTwoWeeksDays.value
+    rangeDays.value
         .map(date => {
             const data = sessionsByDate.value[toDateKey(date)]
             if (!data?.total) return null
@@ -292,7 +310,7 @@ const summaryMetrics = computed(() => {
         {
             label: 'Días activos',
             value: totals.value.activeDays,
-            helper: `de ${TWO_WEEKS_DAYS} días analizados`,
+            helper: `de ${recentSessions.value.length} tests analizados`,
         },
         {
             label: 'Sesiones',

@@ -48,9 +48,10 @@
     </div>
 </template>
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { QUIZ_CATEGORIES } from '@/utils/quizCategories'
+import { sessionService } from '@/api/session.service'
 const router = useRouter()
 const LS_WEEKLY = 'ludoscript_weeklySessions'
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
@@ -77,19 +78,30 @@ function toCategoryList(statsMap) {
         }
     })
 }
-const weeklySessions = (() => {
+
+const weeklySessions = ref([])
+
+onMounted(async () => {
     try {
-        const all = JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
+        // Pedimos 14 sesiones y filtramos en cliente las de los últimos 7 días
+        const res = await sessionService.getRecentSessions(14)
         const cutoff = Date.now() - ONE_WEEK_MS
-        return all.filter((s) => s.timestamp > cutoff)
+        weeklySessions.value = (res.data ?? []).filter(s => s.timestamp > cutoff)
     } catch (_) {
-        return []
+        try {
+            const all = JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
+            const cutoff = Date.now() - ONE_WEEK_MS
+            weeklySessions.value = all.filter(s => s.timestamp > cutoff)
+        } catch (__) {
+            weeklySessions.value = []
+        }
     }
-})()
-const hasWeekly = weeklySessions.length > 0
+})
+
+const hasWeekly = computed(() => weeklySessions.value.length > 0)
 const weeklyCategories = computed(() => {
     const agg = {}
-    for (const session of weeklySessions) {
+    for (const session of weeklySessions.value) {
         for (const [cat, { correct, total }] of Object.entries(session.stats ?? {})) {
             if (!agg[cat]) agg[cat] = { correct: 0, total: 0 }
             agg[cat].correct += correct

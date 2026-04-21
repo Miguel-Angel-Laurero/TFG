@@ -84,7 +84,7 @@ import { useRouter } from 'vue-router'
 import { getSessionSummary } from '@/composables/useSessionTracker'
 import { formatCategoryLabel } from '@/composables/useAdaptiveSelection'
 import { gameService } from '@/api/game.service'
-import { timeAgo } from '@/composables/useAdaptiveHistory'
+import { sessionService } from '@/api/session.service'
 
 
 const router = useRouter()
@@ -112,34 +112,45 @@ function categoryRingColor(accuracy) {
     return '#ef4444'                       // rojo
 }
 
-// Anillos de categorías desde la última sesión guardada en localStorage
-const LS_LAST_SESSION = 'ludoscript_lastSession'
-let categoryRings = []
-try {
-    const raw = localStorage.getItem(LS_LAST_SESSION)
-    if (raw) {
-        const { stats } = JSON.parse(raw)
-        categoryRings = Object.entries(stats)
-            .filter(([, s]) => s.total > 0)
-            .map(([cat, s]) => {
-                const accuracy = Math.round((s.correct / s.total) * 100)
-                return {
-                    slug: cat,
-                    label: formatCategoryLabel(cat),
-                    accuracy,
-                    color: categoryRingColor(accuracy),
-                }
-            })
-    }
-} catch (_) {
-    categoryRings = []
+function parseCategoryRings(stats) {
+    return Object.entries(stats)
+        .filter(([, s]) => s.total > 0)
+        .map(([cat, s]) => {
+            const accuracy = Math.round((s.correct / s.total) * 100)
+            return {
+                slug: cat,
+                label: formatCategoryLabel(cat),
+                accuracy,
+                color: categoryRingColor(accuracy),
+            }
+        })
 }
+
+// Anillos de categorías: se cargan desde la API con fallback a localStorage
+const LS_LAST_SESSION = 'ludoscript_lastSession'
+const categoryRings = ref([])
 
 // Historial de partidas (Quiz + FlashCards)
 const historyLoading = ref(true)
 const recentGames = ref([])
 
 onMounted(async () => {
+    // Cargar anillos de categorías desde la API, fallback a localStorage
+    try {
+        const res = await sessionService.getLastSession()
+        const stats = res.data?.stats ?? {}
+        categoryRings.value = parseCategoryRings(stats)
+    } catch (_) {
+        try {
+            const raw = localStorage.getItem(LS_LAST_SESSION)
+            if (raw) {
+                const { stats } = JSON.parse(raw)
+                categoryRings.value = parseCategoryRings(stats)
+            }
+        } catch (__) { /* ignorar */ }
+    }
+
+    // Cargar historial de partidas
     try {
         const res = await gameService.getMine()
         recentGames.value = (res.data ?? [])

@@ -10,6 +10,7 @@ const CategoryStat = require("./CategoryStat.model");
 const Activities = require("./Activities.model");
 const Group = require("./Group.model");
 const GroupMember = require("./GroupMember.model");
+const UserSession = require("./UserSession.model");
 
 // ── Asociaciones ────────────────────────────────────────────────────────────
 User.hasMany(Game, { foreignKey: "userId", as: "games", onDelete: "CASCADE" });
@@ -56,6 +57,14 @@ GroupMember.belongsTo(Group, { foreignKey: "groupId", as: "group" });
 GroupMember.belongsTo(User, { foreignKey: "userId", as: "member" });
 User.hasOne(GroupMember, { foreignKey: "userId", as: "groupMembership" });
 
+// ── Sesiones de usuario ───────────────────────────────────────────────────────
+User.hasMany(UserSession, {
+  foreignKey: "userId",
+  as: "sessions",
+  onDelete: "CASCADE",
+});
+UserSession.belongsTo(User, { foreignKey: "userId", as: "user" });
+
 module.exports = {
   sequelize,
   User,
@@ -69,4 +78,5 @@ module.exports = {
   Activities,
   Group,
   GroupMember,
+  UserSession,
 };

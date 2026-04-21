@@ -11,6 +11,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { ref } from "vue";
 import { categoryStatsService } from "@/api/categoryStats.service";
+import { sessionService } from "@/api/session.service";
 import { recordAnswer } from "@/composables/useSessionTracker";
 import { trackTutorialQuestionResult } from "@/composables/useAdaptiveSelection";
 
@@ -112,6 +113,16 @@ export function useCategoryStats() {
         err,
       );
     }
+
+    // Guardar sesión en la nube (independiente del batch de categorías)
+    try {
+      await sessionService.saveSession(sessionData);
+    } catch (err) {
+      console.error(
+        "[useCategoryStats] Error al guardar sesión en la nube:",
+        err,
+      );
+    }
   }
 
   function resetSession() {
@@ -119,5 +130,11 @@ export function useCategoryStats() {
     currentPdfId.value = null;
   }
 
-  return { sessionStats, trackAnswer, submitSession, resetSession, setPdfSource };
+  return {
+    sessionStats,
+    trackAnswer,
+    submitSession,
+    resetSession,
+    setPdfSource,
+  };
 }
