@@ -22,22 +22,26 @@ import { computed, onMounted } from 'vue'
 import { IMAGES } from '@/utils/imgBucketStorage'
 import { useEquipmentStore } from '@/stores/equipment.store'
 
+const props = defineProps({
+  userId: {
+    type: String,
+    required: true
+  }
+})
+
 const store = useEquipmentStore()
 
-// Solo los slots que tienen un item equipado (no null)
 const equippedItems = computed(() =>
-    Object.fromEntries(
-        Object.entries(store.equipped).filter(([, item]) => item !== null)
-    )
+  Object.fromEntries(
+    Object.entries(store.getEquippedByUser(props.userId)).filter(([, item]) => item !== null)
+  )
 )
-console.log(equippedItems.value)
 
 onMounted(async () => {
-    try {
-        await store.fetchItems()
-        console.log(store.fetchItems())
-    } catch (error) {
-        console.error("Error cargando inventario al recargar:", error)
-    }
+  try {
+    await store.fetchItemsForUser(props.userId)
+  } catch (error) {
+    console.error("Error cargando inventario:", error)
+  }
 })
 </script>

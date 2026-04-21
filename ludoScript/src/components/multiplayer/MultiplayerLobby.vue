@@ -53,10 +53,12 @@
 <div 
   v-for="player in mp.players" 
   :key="player.userId"
-  class="bg-indigo-950/40 w-full rounded-2xl p-8 h-96 m-auto flex flex-col items-center justify-center"
+  class="bg-indigo-950/40 w-full  "
 >
-    <Character/>
-    <span class="flex text-white font-medium bg-indigo-900/40 p-4 rounded-2xl">{{ player.username }}</span>
+    <div class="flex flex-col h-96 p-8  m-auto flex items-center justify-center rounded-2xl">
+        <Character :user-id="player.userId"/>
+        <span class="flex text-white font-medium bg-indigo-900/40 p-4 rounded-2xl">{{ player.username }}</span>
+    </div>
 </div>
 </template>
 
