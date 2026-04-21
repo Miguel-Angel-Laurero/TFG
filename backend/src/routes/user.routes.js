@@ -18,8 +18,11 @@ router.put("/:id", userController.update);
 // DELETE /api/users/:id
 router.delete("/:id", userController.remove);
 
-// GET /api/users/:id/items
+// GET /api/users/:id/items  →  solo el propio usuario o admin
 router.get("/:id/items", userItemsController.getUserItems);
+
+// GET /api/users/:id/equipped  →  cualquier usuario autenticado (para el lobby)
+router.get("/:id/equipped", userItemsController.getEquippedItems);
 
 // PUT /api/users/:id/items/:itemsUserId/equip
 router.put("/:id/items/:itemsUserId/equip", userItemsController.equipItem);

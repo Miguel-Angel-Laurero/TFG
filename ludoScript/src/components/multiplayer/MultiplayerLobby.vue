@@ -33,33 +33,41 @@
                 </li>
             </transition-group>
         </div>
-        
+
+        <!-- Personajes en fila horizontal -->
+        <div class="w-full overflow-x-auto">
+            <div class="flex flex-row gap-4 justify-center min-w-max mx-auto px-2">
+                <div
+                    v-for="player in mp.players"
+                    :key="player.userId"
+                    class="flex flex-col items-center gap-2"
+                >
+                    <div class="bg-indigo-950/40 rounded-2xl p-4 flex items-center justify-center w-64 h-64">
+                        <Character :user-id="player.userId" />
+                    </div>
+                    <span class="text-white font-medium text-sm bg-indigo-900/40 px-3 py-1 rounded-xl text-center max-w-28 truncate">
+                        {{ player.username }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <!-- Esperando... -->
         <p v-if="!mp.isHost" class="text-white/50 text-sm animate-pulse">
             Esperando a que el host inicie la partida…
         </p>
-        
+
         <!-- Botón iniciar (solo host) -->
         <button v-if="mp.isHost" @click="mp.startGame()" :disabled="mp.players.length < 1"
-        class="w-full bg-green-500 hover:bg-green-400 cursor-pointer disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-all">
-        ¡Iniciar partida! ({{ mp.players.length }} jugador{{ mp.players.length !== 1 ? 'es' : '' }})
-    </button>
-    
-    <!-- Abandonar -->
-    <button @click="mp.leaveRoom()" class="text-red-400/70 cursor-pointer hover:text-red-400 text-sm transition-colors">
-        Abandonar sala
-    </button>
-</div>
-<div 
-  v-for="player in mp.players" 
-  :key="player.userId"
-  class="bg-indigo-950/40 w-full  "
->
-    <div class="flex flex-col h-96 p-8  m-auto flex items-center justify-center rounded-2xl">
-        <Character :user-id="player.userId"/>
-        <span class="flex text-white font-medium bg-indigo-900/40 p-4 rounded-2xl">{{ player.username }}</span>
+            class="w-full bg-green-500 hover:bg-green-400 cursor-pointer disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-all">
+            ¡Iniciar partida! ({{ mp.players.length }} jugador{{ mp.players.length !== 1 ? 'es' : '' }})
+        </button>
+
+        <!-- Abandonar -->
+        <button @click="mp.leaveRoom()" class="text-red-400/70 cursor-pointer hover:text-red-400 text-sm transition-colors">
+            Abandonar sala
+        </button>
     </div>
-</div>
 </template>
 
 <script setup>

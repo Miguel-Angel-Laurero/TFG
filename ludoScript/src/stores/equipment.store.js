@@ -95,7 +95,7 @@ export const useEquipmentStore = defineStore('equipment', () => {
 
         loadingByUser[userId] = true
         try {
-            const { data } = await api.get(`/users/${userId}/items`)
+            const { data } = await api.get(`/users/${userId}/equipped`)
 
             // Inicializar slots vacíos para este usuario
             equippedByUser[userId] = { ...EMPTY_SLOTS }

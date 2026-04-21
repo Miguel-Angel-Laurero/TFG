@@ -1,6 +1,6 @@
 const { ItemsUser, Item, ItemCategory } = require("../models");
 
-// GET /api/users/:id/items
+// GET /api/users/:id/items  →  solo el propio usuario o admin
 const getUserItems = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -9,11 +9,30 @@ const getUserItems = async (req, res, next) => {
       return res.status(403).json({ message: "Acceso denegado" });
     }
 
-       const raw = await ItemsUser.findAll({ where: { user_id: id } })
-    console.log('raw items_user:', JSON.stringify(raw, null, 2))
-
     const items = await ItemsUser.findAll({
       where: { user_id: id },
+      include: [
+        {
+          model: Item,
+          as: "item",
+          include: [{ model: ItemCategory, as: "category" }],
+        },
+      ],
+    });
+
+    res.json(items);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/users/:id/equipped  →  cualquier usuario autenticado puede ver el equipamiento de otro
+const getEquippedItems = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const items = await ItemsUser.findAll({
+      where: { user_id: id, is_equipped: true },
       include: [
         {
           model: Item,
@@ -55,4 +74,4 @@ const equipItem = async (req, res, next) => {
   }
 };
 
-module.exports = { getUserItems, equipItem };
+module.exports = { getUserItems, getEquippedItems, equipItem };
