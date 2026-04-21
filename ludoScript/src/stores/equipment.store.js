@@ -62,8 +62,9 @@ export const useEquipmentStore = defineStore('equipment', () => {
     async function fetchItems() {
         const authStore = useAuthStore()
         if (!authStore.user?.id) return
-        if (initialized.value) return
-        
+        // ✅ Eliminado: if (initialized.value) return
+        // Siempre recarga para que al recargar página se vea el estado real
+
         loading.value = true
         error.value   = null
         try {
@@ -79,6 +80,15 @@ export const useEquipmentStore = defineStore('equipment', () => {
                 itemPool[slot].push(enrichedItem)
                 if (is_equipped) equipped[slot] = enrichedItem
             })
+
+            // ✅ Sincroniza equippedByUser con el estado propio
+            // así Character.vue también ve los cambios
+            const ownId = String(authStore.user.id)
+            equippedByUser[ownId] = { ...EMPTY_SLOTS }
+            Object.entries(equipped).forEach(([slot, item]) => {
+                equippedByUser[ownId][slot] = item
+            })
+            initializedUsers[ownId] = true
             initialized.value = true
         } catch (e) {
             error.value = 'Error al cargar inventario'
@@ -138,28 +148,36 @@ export const useEquipmentStore = defineStore('equipment', () => {
 
     async function selectItem(item) {
         const slot = selectedSlot.value
-        if (!slot) return 
+        if (!slot) return
 
         const authStore = useAuthStore()
+        const ownId = String(authStore.user.id)
         const previousItem = equipped[slot]
 
+        // ✅ Actualiza ambos estados a la vez
         equipped[slot] = item
-        selectedSlot.value = null 
+        if (!equippedByUser[ownId]) equippedByUser[ownId] = { ...EMPTY_SLOTS }
+        equippedByUser[ownId][slot] = item
 
         try {
-            const userId = authStore.user.id
-            if (previousItem) {
-                await api.put(`/users/${userId}/items/${previousItem.items_user_id}/equip`, {
-                    is_equipped: false,
+            if (previousItem?.items_user_id !== item.items_user_id) {
+                if (previousItem) {
+                    await api.put(`/users/${ownId}/items/${previousItem.items_user_id}/equip`, {
+                        is_equipped: false,
+                    })
+                }
+                await api.put(`/users/${ownId}/items/${item.items_user_id}/equip`, {
+                    is_equipped: true,
                 })
             }
-            await api.put(`/users/${userId}/items/${item.items_user_id}/equip`, {
-                is_equipped: true,
-            })
         } catch (e) {
             console.error("Error al equipar:", e)
-            equipped[slot] = previousItem 
+            // ✅ Rollback en ambos estados
+            equipped[slot] = previousItem
+            equippedByUser[ownId][slot] = previousItem
             error.value = 'No se pudo guardar el equipo'
+        } finally {
+            selectedSlot.value = null
         }
     }
 
