@@ -41,12 +41,12 @@
         
         <!-- Botón iniciar (solo host) -->
         <button v-if="mp.isHost" @click="mp.startGame()" :disabled="mp.players.length < 1"
-        class="w-full bg-green-500 hover:bg-green-400 disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-all">
+        class="w-full bg-green-500 hover:bg-green-400 cursor-pointer disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-all">
         ¡Iniciar partida! ({{ mp.players.length }} jugador{{ mp.players.length !== 1 ? 'es' : '' }})
     </button>
     
     <!-- Abandonar -->
-    <button @click="mp.leaveRoom()" class="text-red-400/70 hover:text-red-400 text-sm transition-colors">
+    <button @click="mp.leaveRoom()" class="text-red-400/70 cursor-pointer hover:text-red-400 text-sm transition-colors">
         Abandonar sala
     </button>
 </div>
