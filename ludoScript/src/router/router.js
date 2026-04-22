@@ -77,12 +77,39 @@ const router = createRouter({
       name: "NotFound",
       component: () => import("../views/NotFoundView.vue"),
     },
+    {
+      path: "/admin",
+      name: "admin",
+      component: () => import("../views/AdminView.vue"),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 });
+
+import { useAuthStore } from "@/stores/auth.store";
 
 router.beforeEach((to) => {
   if (to.meta.requiresAuth && !localStorage.getItem("token")) {
     return { name: "home" };
+  }
+
+  if (to.meta.requiresAdmin) {
+    const authStore = useAuthStore();
+    // Si todavía no se ha cargado el user o no es admin
+    if (!authStore.user) {
+      // Intentar una espera si fetchMe se está haciendo en main.js o rechazar temporalmente
+      // Lo más seguro es mandar a /home y mostrar un error si se intenta navegar directamente y aún no hay info
+      // o dejar la responsabilidad de validar `admin` al servidor también, pero no queremos pantallazos vacíos
+      if (localStorage.getItem("token")) {
+        // asumimos que fetchMe pasará, la validación real de admin se hace en fetchMe o en AdminView OnMounted
+        // pero para mejor UX: si está cargado y no es admin, bloqueamos:
+        if (authStore.user !== null && authStore.user?.role !== "admin") {
+          return { name: "home" };
+        }
+      }
+    } else if (authStore.user.role !== "admin") {
+      return { name: "home" };
+    }
   }
 });
 

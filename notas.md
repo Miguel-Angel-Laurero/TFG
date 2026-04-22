@@ -17,3 +17,8 @@ Botón de guardar test para subir a la nube que es la base de datos de supabase,
 botón de generar nuevas preguntas arreglarlo
 
 inicio de sesión en producción persistente, es decir, que no se cierre sesión
+
+en clase:
+
+- Poner botón de abandonar
+- al reciclar el modo multijugador debe enviar una invitación para unirse a la sala (del duelo) y ya

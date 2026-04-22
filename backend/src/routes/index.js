@@ -17,4 +17,7 @@ router.use("/groups", require("./group.routes"));
 // Sesiones de quiz del usuario
 router.use("/sessions", require("./session.routes"));
 
+// Panel de administración general
+router.use("/admin", require("./admin.routes"));
+
 module.exports = router;

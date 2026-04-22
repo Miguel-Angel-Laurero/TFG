@@ -56,49 +56,57 @@ const toggle = (event) => {
 };
 
 // Opciones del menú
-const items = ref([
-    {
-        label: 'Opciones',
-        items: [
-            {
-                label: 'Inicio',
-                icon: 'pi pi-home',
-                command: () => router.push('/')
-            },
-            {
-                label: 'Progreso',
-                icon: 'pi pi-chart-line',
-                command: () => router.push('/profile-view/')
-            },
-            {
-                label: 'Editar Perfil',
-                icon: 'pi pi-pen-to-square',
-                command: () => router.push('/edit-profile-view/')
-            },
-            {
-                label: 'Tienda',
-                icon: 'pi pi-shop',
-                command: () => router.push('/shop-view/')
-            },
-            {
-                label: 'Mi Clase',
-                icon: 'pi pi-users',
-                command: () => router.push('/clase/')
-            },
-            // {
-            //     label: 'Multijugador',
-            //     icon: 'pi pi-users',
-            //     command: () => router.push('/multiplayer/')
-            // },
-            {
-                label: 'Cerrar sesión',
-                icon: 'pi pi-sign-out',
-                command: () => {
-                    auth.logout();
-                    router.push('/login-view');
-                }
-            }
-        ]
+const items = computed(() => {
+    const baseItems = [
+        {
+            label: 'Inicio',
+            icon: 'pi pi-home',
+            command: () => router.push('/')
+        },
+        {
+            label: 'Progreso',
+            icon: 'pi pi-chart-line',
+            command: () => router.push('/profile-view/')
+        },
+        {
+            label: 'Editar Perfil',
+            icon: 'pi pi-pen-to-square',
+            command: () => router.push('/edit-profile-view/')
+        },
+        {
+            label: 'Tienda',
+            icon: 'pi pi-shop',
+            command: () => router.push('/shop-view/')
+        },
+        {
+            label: 'Mi Clase',
+            icon: 'pi pi-users',
+            command: () => router.push('/clase/')
+        }
+    ];
+
+    if (auth.user?.role === 'admin') {
+        baseItems.push({
+            label: 'Panel Admin',
+            icon: 'pi pi-shield',
+            command: () => router.push('/admin')
+        });
     }
-]);
+
+    baseItems.push({
+        label: 'Cerrar sesión',
+        icon: 'pi pi-sign-out',
+        command: () => {
+            auth.logout();
+            router.push('/login-view');
+        }
+    });
+
+    return [
+        {
+            label: 'Opciones',
+            items: baseItems
+        }
+    ];
+});
 </script>

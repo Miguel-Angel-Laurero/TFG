@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const auth = require("../middlewares/auth.middleware");
+const { authMiddleware: auth } = require("../middlewares/auth.middleware");
 const ctrl = require("../controllers/group.controller");
 
 // POST /api/groups — crear una clase

@@ -93,6 +93,7 @@ function createRoom(hostId, username, socketId, settings) {
   const room = {
     code,
     hostId,
+    groupId: settings.groupId || null, // Guardamos el groupId para partidas de clase
     players: new Map([
       [
         hostId,
@@ -256,6 +257,24 @@ function getRoomByPlayer(userId) {
     if (room.players.has(userId)) return room;
   }
   return null;
+}
+
+/**
+ * Verifica si un grupo ya tiene una sala activa en la que hay jugadores
+ */
+function hasActiveGroupRoom(groupId) {
+  if (!groupId) return false;
+  for (const room of rooms.values()) {
+    if (
+      room.groupId === groupId &&
+      room.players.size > 0 &&
+      room.status !== "finished" &&
+      room.status !== "closed"
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -547,6 +566,7 @@ module.exports = {
   getRoom,
   getRoomByHost,
   getRoomByPlayer,
+  hasActiveGroupRoom,
   getPlayersPublic,
   getPublicState,
   destroyRoom,

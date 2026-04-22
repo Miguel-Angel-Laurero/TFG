@@ -30,4 +30,22 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const isAdmin = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "No autenticado" });
+    }
+
+    if (req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Acceso denegado: requiere rol de administrador" });
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { authMiddleware, isAdmin };

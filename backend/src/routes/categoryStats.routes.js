@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const controller = require("../controllers/categoryStats.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
+const { authMiddleware } = require("../middlewares/auth.middleware");
 
 // Todas las rutas requieren autenticación
 router.use(authMiddleware);

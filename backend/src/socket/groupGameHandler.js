@@ -23,20 +23,34 @@ function registerGroupGameHandlers(io, socket, userSockets) {
       category = null,
     } = {}) => {
       try {
-        // 1. Verificar que el usuario es propietario de algún grupo
-        const group = await Group.findOne({ where: { ownerId: userId } });
+        // 1. Verificar que el usuario pertenece a algún grupo
+        const member = await GroupMember.findOne({ where: { userId } });
+        if (!member) {
+          return socket.emit("group:error", {
+            message: "Debes estar en una clase para jugar en grupo",
+          });
+        }
+        const group = await Group.findByPk(member.groupId);
         if (!group) {
           return socket.emit("group:error", {
-            message:
-              "Solo el propietario de una clase puede iniciar una partida de grupo",
+            message: "El grupo no existe",
           });
         }
 
-        // 2. Limpiar salas previas del host
+        // 1.5 Validar que NO haya otra partida de grupo activa simultáneamente
+        if (roomManager.hasActiveGroupRoom(group.id)) {
+          return socket.emit("group:error", {
+            message:
+              "Ya hay una partida de grupo en marcha. Termina esa partida o abandónala primero.",
+          });
+        }
+
+        // 2. Limpiar salas previas del usuario que la crea
         roomManager.leaveAllRooms(userId, socket, io);
 
         // 3. Crear sala
         const settings = {
+          groupId: group.id,
           questionCount: Math.min(Math.max(questionCount, 3), 20),
           timePerQuestion: Math.min(Math.max(timePerQuestion, 5), 60),
           category: category ?? null,

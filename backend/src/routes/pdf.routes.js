@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const multer = require("multer");
-const authMiddleware = require("../middlewares/auth.middleware");
+const { authMiddleware } = require("../middlewares/auth.middleware");
 const {
   uploadPdf,
   listPdfs,

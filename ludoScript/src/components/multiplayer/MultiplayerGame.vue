@@ -1,8 +1,15 @@
 <template>
     <div class="flex flex-col items-center gap-6 w-full max-w-3xl mx-auto p-4">
+        <!-- Controles de partida: Abandonar / Información -->
         <div class="w-full flex justify-between items-center text-white/60 text-sm font-medium">
-            <span>Pregunta {{ questionIndex + 1 }} / {{ mp.currentQuestion?.totalQuestions }}</span>
-            <span class="uppercase tracking-wide text-xs">{{ mp.currentQuestion?.category?.replace(/-/g, ' ') }}</span>
+            <button @click="mp.leaveRoom()" class="flex items-center gap-1.5 text-red-400/70 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer group">
+                <i class="pi pi-sign-out text-xs group-hover:-translate-x-0.5 transition-transform"></i>
+                Abandonar
+            </button>
+            <div class="flex gap-4">
+                <span>Pregunta {{ questionIndex + 1 }} / {{ mp.currentQuestion?.totalQuestions }}</span>
+                <span class="uppercase tracking-wide text-xs text-right">{{ mp.currentQuestion?.category?.replace(/-/g, ' ') }}</span>
+            </div>
         </div>
 
         <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">

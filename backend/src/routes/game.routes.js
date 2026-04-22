@@ -2,7 +2,7 @@ const router = require("express").Router();
 const fs = require("fs");
 const path = require("path");
 const gameController = require("../controllers/game.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
+const { authMiddleware } = require("../middlewares/auth.middleware");
 const { CategoryStat } = require("../models");
 const {
   generateAdaptiveReinforcement,

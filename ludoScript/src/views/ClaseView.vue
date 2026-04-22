@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <Header/>
     <div class="w-full min-h-screen p-2 md:p-4 bg-blue-950/20">
         <!-- Volver al inicio -->
@@ -35,15 +35,7 @@
                 @openTransfer="transferModal = true" @openDissolve="dissolveModal = true"
                 @openLeave="leaveModal = true" />
 
-            <!-- Banner de partida de grupo activa -->
-            <GroupGameInviteBanner
-                v-if="store.activeGameCode"
-                :code="store.activeGameCode"
-                :initiator-username="store.pendingGroupInvite?.initiatorUsername ?? ''"
-                :is-owner="store.isOwner"
-                @join="handleJoinGroupGame"
-                @dismiss="store.dismissInvite()"
-            />
+
 
             <!-- H1: error localizado en la zona de stats -->
             <div v-if="store.error"
@@ -59,12 +51,12 @@
                     <h3 class="text-white font-semibold text-lg">Ranking de la clase</h3>
                     <div class="flex items-center gap-2">
                         <!-- Botón de partida de grupo: solo visible al propietario -->
-                        <button v-if="store.isOwner" @click="gameSetupModal = true"
+                        <button  @click="gameSetupModal = true"
                             class="flex items-center gap-1.5 text-xs font-bold bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 px-3 py-1.5 rounded-xl transition-all">
                             <i class="pi pi-users text-xs"></i> Jugar con la clase
                         </button>
                         <!-- Botón de duelo: solo visible al propietario -->
-                        <button v-if="store.isOwner" @click="duelModal = true"
+                        <button  @click="duelModal = true"
                             class="flex items-center gap-1.5 text-xs font-bold bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-xl transition-all">
                             <i class="pi pi-bolt text-xs"></i> Duelo 1v1
                         </button>
@@ -135,7 +127,6 @@ import ConfirmModal from '@/components/clase/ConfirmModal.vue';
 import TransferModal from '@/components/clase/TransferModal.vue';
 import DuelSetupModal from '@/components/clase/DuelSetupModal.vue';
 import GroupGameSetupModal from '@/components/clase/GroupGameSetupModal.vue';
-import GroupGameInviteBanner from '@/components/clase/GroupGameInviteBanner.vue';
 import Header from '@/components/shared/Header.vue';
 import Footer from '@/components/shared/Footer.vue';
 
@@ -224,3 +215,5 @@ function handleJoinGroupGame() {
     router.push('/multiplayer/');
 }
 </script>
+
+
