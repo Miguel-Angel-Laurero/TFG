@@ -17,14 +17,14 @@
         </div>
 
         <!-- Centro: links (absolute para centrarlo de verdad) -->
-        <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-6 text-xl font-bold">
+        <div v-if="auth.isLoggedIn" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 lg:gap-6 lg:text-2xl text-md font-bold">
             <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Home
             </RouterLink>
             <RouterLink to="/clase" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Clase
             </RouterLink>
-            <RouterLink to="/admin" class="text-white/50 hover:text-yellow-400 transition-colors">
+            <RouterLink v-if="auth.user.role === 'admin'" to="/admin" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Panel de Administracion
             </RouterLink>
         </div>
@@ -39,5 +39,8 @@
 <script setup>
 import Menu from './Menu.vue';
 import Avatar from 'primevue/avatar';
+import { useAuthStore } from '@/stores/auth.store';
 import { IMAGES } from '@/utils/imgBucketStorage';
+
+const auth = useAuthStore();
 </script>

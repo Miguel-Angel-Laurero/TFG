@@ -32,7 +32,7 @@
                     @click="$emit('create')"
                     class="flex items-center gap-2 px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm rounded font-medium shadow transition"
                 >
-                    <span class="text-lg leading-none">＋</span> Nuevo item
+                    <span class="text-lg leading-none">＋</span> Nuevo objeto
                 </button>
             </div>
         </div>
@@ -54,10 +54,11 @@
                 <thead>
                     <tr class="bg-indigo-900 text-gray-300 text-sm uppercase">
                         <th class="p-4 border-b border-gray-600">ID</th>
-                        <th class="p-4 border-b border-gray-600">Usuario</th>
-                        <th class="p-4 border-b border-gray-600">Email</th>
-                        <th class="p-4 border-b border-gray-600">Rol</th>
-                        <th class="p-4 border-b border-gray-600">Fech. Registro</th>
+                        <th class="p-4 border-b border-gray-600">Nombre</th>
+                        <th class="p-4 border-b border-gray-600">Categoria</th>
+                        <th class="p-4 border-b border-gray-600">Precio</th>
+                        <th class="p-4 border-b border-gray-600">Imagen</th>
+                        <th class="p-4 border-b border-gray-600">Imagen Equipable</th>
                         <th class="p-4 border-b border-gray-600 text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -76,6 +77,9 @@
                             >
                                 {{ user.role }}
                             </span>
+                        </td>
+                        <td class="p-4 text-gray-400 text-sm">
+                            {{ new Date(user.createdAt).toLocaleDateString() }}
                         </td>
                         <td class="p-4 text-gray-400 text-sm">
                             {{ new Date(user.createdAt).toLocaleDateString() }}
@@ -100,7 +104,7 @@
                     </tr>
                     <tr v-if="users.length === 0">
                         <td colspan="6" class="p-6 text-center text-gray-500">
-                            No se encontraron usuarios.
+                            No se encontraron objetos.
                         </td>
                     </tr>
                 </tbody>
