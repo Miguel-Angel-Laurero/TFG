@@ -49,10 +49,10 @@
         </div>
 
         <!-- Users Table -->
-        <div v-else class="bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div v-else class="bg-indigo-950 rounded-lg shadow overflow-hidden">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-gray-700 text-gray-300 text-sm uppercase">
+                    <tr class="bg-indigo-900 text-gray-300 text-sm uppercase">
                         <th class="p-4 border-b border-gray-600">ID</th>
                         <th class="p-4 border-b border-gray-600">Usuario</th>
                         <th class="p-4 border-b border-gray-600">Email</th>
