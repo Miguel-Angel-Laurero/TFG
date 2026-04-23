@@ -1,6 +1,7 @@
 <template>
     <nav class="w-full bg-blue-900 top-0 py-2 px-2 sm:px-6 flex items-center justify-between font-righteous shadow-lg">
         
+        <!-- Izquierda: logo -->
         <div class="flex items-center min-w-0 flex-1">
             <Avatar
                 :image="IMAGES.logo"
@@ -8,21 +9,27 @@
                 size="medium" 
                 shape="circle" 
             />
-            
             <div class="font-bold text-lg sm:text-xl md:text-2xl tracking-tight text-gray-50 truncate">
                 <h1 class="flex items-center gap-1 sm:gap-2">
                     <span>LudoScript</span>
-                    <span class="text-white/40">/</span>
-                    <RouterLink 
-                        to="/" 
-                        class="text-white/50 hover:text-yellow-400 transition-colors font-normal truncate"
-                    >
-                        Home
-                    </RouterLink>
                 </h1>
             </div>
         </div>
 
+        <!-- Centro: links (absolute para centrarlo de verdad) -->
+        <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-6 text-xl font-bold">
+            <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
+                Home
+            </RouterLink>
+            <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
+                Clase
+            </RouterLink>
+            <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
+                Panel de Administracion
+            </RouterLink>
+        </div>
+
+        <!-- Derecha: menú -->
         <div class="flex-shrink-0 pl-2">
             <Menu />
         </div>
