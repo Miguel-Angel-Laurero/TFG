@@ -160,7 +160,13 @@ export const useEquipmentStore = defineStore('equipment', () => {
         equippedByUser[ownId][slot] = item
 
         try {
-            if (previousItem?.items_user_id !== item.items_user_id) {
+            if (item === null) {
+                if (previousItem) {
+                    await api.put(`/users/${ownId}/items/${previousItem.items_user_id}/equip`, {
+                        is_equipped: false,
+                    })
+                }
+            } else if (previousItem?.items_user_id !== item.items_user_id) {
                 if (previousItem) {
                     await api.put(`/users/${ownId}/items/${previousItem.items_user_id}/equip`, {
                         is_equipped: false,

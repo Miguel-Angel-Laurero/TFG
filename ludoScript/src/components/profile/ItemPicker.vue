@@ -7,6 +7,16 @@
             </div>
             <div class="flex gap-2 flex-wrap">
                 <div
+                    class="flex flex-col items-center gap-1 cursor-pointer p-2 rounded-lg border transition-colors w-16"
+                    :class="!equipped[slotId]
+                        ? 'border-red-400 bg-red-900/60'
+                        : 'border-white/20 hover:border-red-400/50'"
+                    @click="$emit('select', null)"
+                >
+                    <span class="text-2xl">🚫</span>
+                    <span class="text-white/70 text-xs text-center leading-tight">Quitar</span>
+                </div>
+                <div
                     v-for="item in itemPool[slotId]" :key="item.id"
                     class="flex flex-col items-center gap-1 cursor-pointer p-2 rounded-lg border transition-colors w-16"
                     :class="equipped[slotId]?.id === item.id
