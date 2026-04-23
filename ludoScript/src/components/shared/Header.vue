@@ -17,7 +17,7 @@
         </div>
 
         <!-- Centro: links (absolute para centrarlo de verdad) -->
-        <div v-if="auth.isLoggedIn" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 lg:gap-6 lg:text-2xl text-md font-bold">
+        <div v-if="auth.isLoggedIn" class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-4 lg:gap-6 text-md lg:text-xl font-bold">
             <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Home
             </RouterLink>
