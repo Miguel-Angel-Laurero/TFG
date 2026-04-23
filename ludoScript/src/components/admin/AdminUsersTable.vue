@@ -30,7 +30,7 @@
                 <!-- New user -->
                 <button
                     @click="$emit('create')"
-                    class="flex items-center gap-2 px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm rounded font-medium shadow transition"
+                    class="flex items-center gap-2 px-4 py-2 cursor-pointer bg-indigo-900 hover:bg-indigo-700 text-white text-sm rounded font-medium shadow transition"
                 >
                     <span class="text-lg leading-none">＋</span> Nuevo usuario
                 </button>
@@ -49,10 +49,10 @@
         </div>
 
         <!-- Users Table -->
-        <div v-else class="bg-indigo-950/60 rounded-lg shadow overflow-hidden">
+        <div v-else class="bg-indigo-950/40 rounded-lg shadow overflow-hidden">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-indigo-900 text-gray-300 text-sm uppercase">
+                    <tr class="bg-indigo-700/40 text-gray-300 text-sm uppercase">
                         <th class="p-4 border-b border-gray-600">ID</th>
                         <th class="p-4 border-b border-gray-600">Usuario</th>
                         <th class="p-4 border-b border-gray-600">Email</th>
@@ -83,14 +83,14 @@
                         <td class="p-4 text-right space-x-2">
                             <button
                                 @click="$emit('edit', user)"
-                                class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded transition"
+                                class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded transition cursor-pointer"
                                 title="Editar"
                             >
                                 ✏️
                             </button>
                             <button
                                 @click="$emit('delete', user.id)"
-                                class="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition mx-1"
+                                class="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition mx-1 cursor-pointer"
                                 disabled
                                 title="Eliminar (No disponible en demo)"
                             >

@@ -1,8 +1,8 @@
 <template>
-    <div class="min-h-screen bg-indigo-900/40 text-white flex flex-col font-sans">
+    <div class="min-h-screen bg-slate-900/20 text-white flex flex-col font-sans">
         <Header />
-        <main class="flex-1 p-6 max-w-6xl mx-auto w-full">
-            <div class="px-5 py-5 rounded-lg text-2xl font-bold font-righteous mb-6 text-center bg-indigo-950">
+        <main class="flex-1 p-6 max-w-6xl mx-auto w-full ">
+            <div class="px-5 py-5 rounded-lg text-2xl font-bold font-righteous mb-6 text-center bg-indigo-900/40">
                 Panel de Administración
             </div>
 
@@ -13,7 +13,7 @@
                     @click="activeTab = tab.id"
                     class="px-5 py-2 rounded-lg text-sm font-medium transition cursor-pointer"
                     :class="activeTab === tab.id
-                        ? 'bg-indigo-600 text-white shadow'
+                        ? 'bg-indigo-900 text-white  hover:bg-indigo-700 shadow'
                         : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'"
                 >
                     {{ tab.label }}
@@ -23,6 +23,7 @@
             <!-- Contenido activo -->
             <component :is="activeComponent" />
         </main>
+        <Footer/>
     </div>
 </template>
 
@@ -31,10 +32,11 @@ import { ref, computed } from 'vue'
 import Header from '@/components/shared/Header.vue'
 import UsersTab from '@/components/admin/UsersTab.vue'
 import ItemsTab from '@/components/admin/ItemsTab.vue'
+import Footer from '@/components/shared/Footer.vue'
 
 const tabs = [
     { id: 'users', label: 'Usuarios', component: UsersTab },
-    { id: 'items', label: 'Items',    component: ItemsTab },
+    { id: 'items', label: 'Objetos',    component: ItemsTab },
 ]
 
 const activeTab = ref('users')

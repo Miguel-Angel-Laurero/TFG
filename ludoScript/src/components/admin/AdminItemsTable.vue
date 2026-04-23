@@ -45,10 +45,10 @@
 
         <!-- Loading State -->
         <div v-if="loading && users.length === 0" class="text-center py-10 text-gray-400">
-            Cargando usuarios...
+            Cargando objetos...
         </div>
 
-        <!-- Users Table -->
+        <!-- Items Table -->
         <div v-else class="bg-indigo-950/60 rounded-lg shadow overflow-hidden">
             <table class="w-full text-left border-collapse">
                 <thead>

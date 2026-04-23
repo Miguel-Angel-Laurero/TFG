@@ -52,16 +52,16 @@
                     <div class="flex items-center gap-2">
                         <!-- Botón de partida de grupo: solo visible al propietario -->
                         <button  @click="gameSetupModal = true"
-                            class="flex items-center gap-1.5 text-xs font-bold bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 px-3 py-1.5 rounded-xl transition-all">
+                            class="flex items-center gap-1.5 text-xs font-bold cursor-pointer bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 px-3 py-1.5 rounded-xl transition-all">
                             <i class="pi pi-users text-xs"></i> Jugar con la clase
                         </button>
                         <!-- Botón de duelo: solo visible al propietario -->
                         <button  @click="duelModal = true"
-                            class="flex items-center gap-1.5 text-xs font-bold bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-xl transition-all">
+                            class="flex items-center gap-1.5 text-xs font-bold cursor-pointer bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-xl transition-all">
                             <i class="pi pi-bolt text-xs"></i> Duelo 1v1
                         </button>
                         <button @click="store.fetchStats()" :disabled="store.loading"
-                            class="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 transition-colors">
+                            class="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 transition-colors cursor-pointer">
                             🔄 Actualizar
                         </button>
                     </div>
