@@ -3,8 +3,8 @@
         <!-- Toolbar -->
         <div class="mb-6 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl font-bold">Gestión de Usuarios</h2>
-                <p class="text-gray-400 text-sm">Administra roles, correos y acceso</p>
+                <h2 class="text-2xl font-bold">Gestión de Objetos</h2>
+                <p class="text-gray-400 text-sm">Administra los objetos de la tienda</p>
             </div>
 
             <div class="flex items-center gap-3">
@@ -14,7 +14,7 @@
                         v-model="searchQuery"
                         @keyup.enter="$emit('search', searchQuery.trim())"
                         type="text"
-                        placeholder="Buscar por usuario o email..."
+                        placeholder="Buscar por nombre..."
                         class="bg-gray-800 border border-gray-700 rounded px-4 py-2 text-sm w-64 focus:outline-none focus:border-purple-500"
                     />
                     <button
@@ -32,7 +32,7 @@
                     @click="$emit('create')"
                     class="flex items-center gap-2 px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm rounded font-medium shadow transition"
                 >
-                    <span class="text-lg leading-none">＋</span> Nuevo usuario
+                    <span class="text-lg leading-none">＋</span> Nuevo item
                 </button>
             </div>
         </div>
