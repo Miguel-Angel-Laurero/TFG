@@ -9,5 +9,6 @@ router.use(isAdmin);
 router.get("/users", adminController.getUsers);
 router.put("/users/:id", adminController.updateUser);
 router.delete("/users/:id", adminController.deleteUser);
+router.post('/users', adminController.createUser)
 
 module.exports = router;

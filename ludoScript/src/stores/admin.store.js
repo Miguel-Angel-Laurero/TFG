@@ -36,7 +36,21 @@ export const useAdminStore = defineStore("admin", () => {
       loading.value = false;
     }
   };
-
+  const createUser = async (userData) => {
+    loading.value = true
+    error.value   = null
+    try {
+        const response = await adminService.createUser(userData)
+        users.value.unshift(response.data.user)  // lo pone primero en la lista
+        pagination.value.total += 1
+        return response.data
+    } catch (err) {
+        error.value = err.response?.data?.message || 'Error al crear usuario'
+        return null
+    } finally {
+        loading.value = false
+    }
+}
   const updateUser = async (id, userData) => {
     loading.value = true;
     error.value = null;
@@ -83,5 +97,6 @@ export const useAdminStore = defineStore("admin", () => {
     fetchUsers,
     updateUser,
     deleteUser,
+    createUser,
   };
 });

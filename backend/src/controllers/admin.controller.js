@@ -38,6 +38,35 @@ const adminController = {
     }
   },
 
+  // POST /api/admin/users
+createUser: async (req, res, next) => {
+    try {
+        const { username, email, password, role = 'user' } = req.body
+
+        const existing = await User.findOne({
+            where: { [Op.or]: [{ username }, { email }] }
+        })
+        if (existing) {
+            return res.status(400).json({ message: 'El usuario o email ya están en uso' })
+        }
+
+        const bcrypt = require('bcryptjs')
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const user = await User.create({ username, email, password: hashedPassword, role })
+
+        res.status(201).json({
+            message: 'Usuario creado correctamente',
+            user: { id: user.id, username: user.username, email: user.email, role: user.role, createdAt: user.createdAt }
+        })
+    } catch (err) {
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ message: 'El usuario o email ya están en uso' })
+        }
+        next(err)
+    }
+},
+
   // PUT /api/admin/users/:id
   updateUser: async (req, res, next) => {
     try {

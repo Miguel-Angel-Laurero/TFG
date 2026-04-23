@@ -14,6 +14,8 @@ const adminService = {
   deleteUser(id) {
     return api.delete(`/admin/users/${id}`);
   },
+
+  createUser: (userData) => api.post('/admin/users', userData),
 };
 
 export default adminService;
