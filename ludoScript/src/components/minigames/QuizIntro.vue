@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col items-center justify-center grid grid-cols-3 min-h-[60vh] px-4 pt-16">
+  <div class="items-center grid grid-cols-3 gap-12 min-h-[60vh] mx-4 px-6">
 
     <!-- CARD -->
     <!-- <div class="w-full max-w-md rounded-2xl shadow-xl p-7 grid grid-cols-3 gap-6"> -->
 
-      <div class="items-center mx-auto m-4">
+      <div class="  bg-blue-950/20 pt-8 rounded-full" >
         <Character/>
       </div>
       <!-- HERO -->

@@ -1,11 +1,11 @@
 <template>
-  <div class="relative w-full min-h-screen overflow-x-hidden">
+  <div class="relative h-full w-full overflow-x-hidden">
 
     <component :is="ConfettiBackground" v-if="showConfetti" style="position: absolute; inset: 0; z-index: 0; pointer-events: none;" />
 
-    <div class="relative z-10 flex flex-col min-h-screen">
+    <div class="relative z-10 flex flex-col">
 
-      <header class="w-full flex flex-col md:flex-row items-center gap-4 p-4">
+      <header class="w-full flex flex-col md:flex-row items-center gap-4 p-4 pb-16">
         <div class="flex-1 w-full flex justify-center md:justify-start order-2 md:order-1">
           <button v-if="!gameFinished" @click="confirmExit"
             class="w-full md:w-auto bg-red-500 text-white px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-bold hover:bg-red-600 transition-colors text-sm md:text-base shadow-lg">

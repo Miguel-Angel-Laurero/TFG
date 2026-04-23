@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-cols-[2fr_3fr_2fr] items-center px-6 w-full max-w-6xl mx-auto">
-    <div class="w-full">
+  <div class="grid md:grid-cols-2 lg:grid-cols-[2fr_6fr_2fr] items-center px-6 w-full max-w-6xl mx-auto">
+    <div>
       <img :src="characterImage" alt="estado personaje" class="w-full h-auto">
 
       <!-- Bonus: pasa las monedas base para el desglose -->
