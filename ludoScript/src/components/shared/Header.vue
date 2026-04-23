@@ -21,10 +21,10 @@
             <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Home
             </RouterLink>
-            <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
+            <RouterLink to="/clase" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Clase
             </RouterLink>
-            <RouterLink to="/" class="text-white/50 hover:text-yellow-400 transition-colors">
+            <RouterLink to="/admin" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Panel de Administracion
             </RouterLink>
         </div>
