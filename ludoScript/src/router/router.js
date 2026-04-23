@@ -73,6 +73,12 @@ const router = createRouter({
       // Sin requiresAuth: acceso público para espectadores sin cuenta
     },
     {
+      path: "/learning-area/",
+      name: "learningArea",
+      component: () => import("../views/LearningAreaView.vue"),
+      // Ruta pública: no requiere autenticación
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "NotFound",
       component: () => import("../views/NotFoundView.vue"),

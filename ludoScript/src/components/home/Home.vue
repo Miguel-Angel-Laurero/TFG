@@ -1,43 +1,37 @@
 <template>
-  <main class="h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag" @mouseleave="stopDrag">
-    <aside 
-      :style="isMobile ? {} : { width: panelWidth + 'px' }"
-      class=" w-full md:shrink-0 border-b md:border-b-0 md:border-r bg-blue-900/20 border-blue-900/40 
+  <main class="h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag"
+    @mouseleave="stopDrag">
+    <aside :style="isMobile ? {} : { width: panelWidth + 'px' }" class=" w-full md:shrink-0 border-b md:border-b-0 md:border-r bg-blue-900/20 border-blue-900/40 
              px-4 py-4 md:py-6 overflow-y-auto flex flex-col transition-all
-             max-h-[40vh] md:max-h-full" 
-    >
+             max-h-[40vh] md:max-h-full">
       <div class="flex items-center justify-between md:mb-4 mb-2">
         <h3 class="text-indigo-300 text-sm font-bold uppercase tracking-wider">Configuración</h3>
         <span class="md:hidden text-xs text-slate-500">Desliza para ver más</span>
       </div>
-      
-      <HomePdfPanel 
-        v-model:selectedFiles="selectedFiles" 
-        v-model:pdfCount="pdfCount"
-        v-model:selectedPredefined="selectedPredefined" 
-      />
+
+      <HomePdfPanel v-model:selectedFiles="selectedFiles" v-model:pdfCount="pdfCount"
+        v-model:selectedPredefined="selectedPredefined" />
     </aside>
 
-    <div 
+    <div
       class="hidden md:block w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
-      @mousedown.prevent="startDrag" 
-    />
+      @mousedown.prevent="startDrag" />
 
     <section class="flex-1 flex-col justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20"">
-      <div class="w-full max-w-2xl m-auto px-4 md:px-8">
-        <h2 class="text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Minijuegos</h2>
+      <div class=" w-full max-w-2xl m-auto px-4 md:px-8">
+      <h2 class="text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos de juego</h2>
 
-        <div :class="[
-          'mb-8 px-5 py-3 rounded-2xl text-sm font-medium flex items-center gap-3 border transition-all shadow-lg',
-          selectedFiles.length > 0 || selectedPredefined
-            ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
-            : 'bg-amber-500/10 border-amber-500/40 text-amber-200'
-        ]">
-          <span class="text-xl">{{ modeIcon }}</span>
-          <p class="leading-tight">{{ modeLabel }}</p>
-        </div>
+      <div :class="[
+        'mb-8 px-5 py-3 rounded-2xl text-sm font-medium flex items-center gap-3 border transition-all shadow-lg',
+        selectedFiles.length > 0 || selectedPredefined
+          ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
+          : 'bg-amber-500/10 border-amber-500/40 text-amber-200'
+      ]">
+        <span class="text-xl">{{ modeIcon }}</span>
+        <p class="leading-tight">{{ modeLabel }}</p>
+      </div>
 
-        <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined" />
+      <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined" />
       </div>
     </section>
 
@@ -95,7 +89,7 @@ const modeLabel = computed(() => {
 // ─── Panel redimensionable ───────────────────────────────────────────────────
 const MIN_WIDTH = 240
 const MAX_WIDTH = 600
-const panelWidth = ref(300) 
+const panelWidth = ref(300)
 let dragging = false
 
 function startDrag() { if (!isMobile.value) dragging = true }

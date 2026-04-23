@@ -82,6 +82,11 @@ const items = computed(() => {
             label: 'Mi Clase',
             icon: 'pi pi-users',
             command: () => router.push('/clase/')
+        },
+        {
+            label: 'Área de aprendizaje',
+            icon: 'pi pi-book',
+            command: () => router.push('/learning-area/')
         }
     ];
 
