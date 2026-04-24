@@ -6,7 +6,7 @@ import api from '@/api/axios'
 export const useRewardsStore = defineStore('rewards', () => {
   // --- Configuración ---
   const baseReward = 10
-  const MAX_REWARD = 100
+  const MAX_REWARD = 150
   const BASE_BONUS_PERCENTAGE = 5
   const BONUS_INCREMENT = 5
   const BONUS_MULTIPLIERS = [1.1, 1.2, 1.4, 1.5, 1.8, 2, 2.5, 4, 8]
@@ -28,6 +28,7 @@ export const useRewardsStore = defineStore('rewards', () => {
     reward: todayReward.value,
     claimed: claimed.value,
   }))
+  
 
   const previousReward = computed(() => {
     if (streak.value === 0) return { day: '-', reward: '-' }
@@ -52,6 +53,11 @@ export const useRewardsStore = defineStore('rewards', () => {
       authStore.userData.bonus_percentage = value
     }
   }
+
+  function clearBonus() {
+  hasBonus.value = false
+  currentMultiplier.value = 1
+}
 
   // --- Acciones con API ---
 
@@ -142,12 +148,12 @@ try {
     console.error('Error al guardar monedas:', error)
     throw error
   }
-}
+  }
 
   return {
     streak, claimed, ready, activityCoinsEarned,
     todayReward, rewardClaim, previousReward, nextReward,
     fetchRewards, claimReward, claimActivityReward,
-    hasBonus, currentMultiplier, evaluateBonus, getBonusPercentage
+    hasBonus, currentMultiplier, evaluateBonus, getBonusPercentage,clearBonus
   }
 })

@@ -17,7 +17,6 @@
 import { computed } from 'vue'
 import { useRewardsStore } from '@/stores/rewards.store'
 import { useAuthStore } from '@/stores/auth.store'
-import { IMAGES } from '@/utils/imgBucketStorage'
 
 const props = defineProps({
   baseCoins: { type: Number, default: 0 },

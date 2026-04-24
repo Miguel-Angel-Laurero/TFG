@@ -11,15 +11,12 @@
         <!-- Con bonus activo: muestra desglose base → total -->
         <template v-if="rewardsStore.hasBonus && bonusResult">
           <div class="text-white/30 text-sm line-through">
-            +{{ bonusResult.baseAmount }} monedas base
+            +{{ bonusResult.baseAmount }} monedas
           </div>
-          <div class="reward-chip inline-flex items-center gap-2.5 bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
+          <div class="reward-chip inline-flex items-center gap-2.5 bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold px-12 py-3 rounded-2xl text-lg tracking-tight">
             <span class="text-2xl font-black">+{{ bonusResult.totalAmount }}</span>
             <img :src="IMAGES.coin" alt="moneda" class="w-8"/>
           </div>
-          <p class="text-emerald-400/70 text-xs font-semibold">
-            x{{ bonusResult.multiplier }} bonus aplicado 🎉
-          </p>
         </template>
 
         <!-- Sin bonus: chip normal -->
@@ -95,25 +92,28 @@ const rewardsStore = useRewardsStore()
 // Resultado del bonus tras claimActivityReward: { baseAmount, multiplier, totalAmount }
 const bonusResult = ref(null)
 
-onMounted(async () => {
-  // 1. Evalúa la probabilidad, actualiza hasBonus/currentMultiplier y persiste bonusPercentage en BD
-  await rewardsStore.evaluateBonus()
+const numericScore = computed(() => {
+  const clean = typeof props.heroScore === 'string'
+    ? props.heroScore.replace(/[^0-9.]/g, '')
+    : props.heroScore
+  return parseFloat(clean) || 0
+})
 
-  // 2. Si hay recompensa, aplica el multiplicador y suma las monedas al usuario
+onMounted(async () => {
+  if (numericScore.value >= 5) {
+    await rewardsStore.evaluateBonus()
+  } else {
+    rewardsStore.clearBonus() // ← asegura que no hay bonus residual
+  }
+
   if (props.earnedReward > 0) {
     bonusResult.value = await rewardsStore.claimActivityReward(props.earnedReward)
   }
 })
 
 const characterImage = computed(() => {
-  const cleanScore = typeof props.heroScore === 'string'
-    ? props.heroScore.replace(/[^0-9.]/g, '')
-    : props.heroScore
-
-  const score = parseFloat(cleanScore) || 0
-
-  if (score >= 7) return IMAGES.celebracion
-  if (score >= 5) return IMAGES.aprobado
+  if (numericScore.value >= 7) return IMAGES.celebracion
+  if (numericScore.value >= 5) return IMAGES.aprobado
   return IMAGES.suspenso
 })
 </script>
