@@ -1,4 +1,5 @@
 <template>
+  <div class="w-full">
   <Loading v-if="loadingManual" />
 
   <!-- Calculando puntuación tras la última respuesta -->
@@ -101,6 +102,7 @@
       </button>
     </div>
   </template>
+  </div>
 </template>
 
 <script setup>
@@ -129,7 +131,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 const route = useRoute()
 const router = useRouter()
-const { updateScore } = useGameProgress()
+const { finishGame } = useGameProgress()
 
 // Loading UI guard (mantener comportamiento anterior)
 const loadingManual = ref(true)
@@ -189,15 +191,13 @@ const {
 } = controller
 
 // Estadísticas de UI
-const { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor } =
+const { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor, score } =
   useQuizStats(results, totalItems)
-
-const score = computed(() => Math.max(0, correctCount.value - wrongCount.value / 3))
 
 // Historial y desbloqueo adaptativo
 const { history: quizHistory, canUseAdaptive, remainingGames, gamesSinceLastAdaptive, historyLoading, loadHistory, markAdaptiveUsed, timeAgo } = useAdaptiveHistory('Quiz')
 
-watch(finished, (v) => { if (v) { loadHistory(); updateScore(score.value) } })
+watch(finished, (v) => { if (v) { loadHistory(); finishGame(score.value) } })
 
 function handleAdaptiveClick() {
   markAdaptiveUsed()

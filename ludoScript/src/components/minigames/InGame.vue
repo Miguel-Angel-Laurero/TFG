@@ -25,14 +25,13 @@
       </header>
 
       <main class="w-full p-2 md:p-6 flex flex-col items-center flex-1">
-        <div class="w-full max-w-5xl flex justify-center">
+        <div class=" max-w-5xl flex justify-center">
           <QuizIntro v-if="showIntro" @start="handleQuizStart" />
           <template v-else>
             <component 
               v-if="selectedGame" 
               :is="selectedGame" 
               v-bind="quizProps"
-              class="w-full"
               :key="`${route.query.game}-${route.query.pdfIds ?? route.query.pdfId ?? ''}`" 
             />
             <div v-else class="text-gray-400 mt-10 flex flex-col items-center">
@@ -48,7 +47,7 @@
 </template>
 
 <script setup>
-import { computed, watch, ref, onMounted, defineAsyncComponent } from 'vue'
+import { computed, watch, ref, onUnmounted, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import ProgressBar from 'primevue/progressbar'
 import Quiz from './Quiz.vue'
@@ -67,7 +66,7 @@ const showConfetti = computed(() => gameFinished.value && score.value >= 5)
 
 const showIntro = ref(route.query.game === 'Quiz')
 
-onMounted(() => resetProgress())
+onUnmounted(() => resetProgress())
 
 const games = {
   Quiz,

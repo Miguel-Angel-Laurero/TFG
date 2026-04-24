@@ -33,5 +33,5 @@ const score = computed(() => {
     return 'text-red-400'
   })
 
-  return { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor }
+  return { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor, score }
 }
