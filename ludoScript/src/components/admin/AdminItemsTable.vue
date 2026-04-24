@@ -27,7 +27,7 @@
                     </button>
                 </div>
 
-                <!-- New user -->
+                <!-- New item -->
                 <button
                     @click="$emit('create')"
                     class="flex items-center gap-2 px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm rounded font-medium shadow transition"
@@ -44,14 +44,15 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading && users.length === 0" class="text-center py-10 text-gray-400">
+        <div v-if="loading && items.length === 0" class="text-center py-10 text-gray-400">
             Cargando objetos...
         </div>
 
         <!-- Items Table -->
         <div v-else class="bg-indigo-950/60 rounded-lg shadow overflow-hidden">
+            <div class="overflow-y-auto max-h-[40vh]">
             <table class="w-full text-left border-collapse">
-                <thead>
+                <thead class="sticky top-0 z-10">
                     <tr class="bg-indigo-900 text-gray-300 text-sm uppercase">
                         <th class="p-4 border-b border-gray-600">ID</th>
                         <th class="p-4 border-b border-gray-600">Nombre</th>
@@ -64,36 +65,31 @@
                 </thead>
                 <tbody>
                     <tr
-                        v-for="user in users" :key="user.id"
+                        v-for="item in items" :key="item.id"
                         class="border-b border-gray-700/50 hover:bg-gray-700/30 transition"
                     >
-                        <td class="p-4 text-gray-400">#{{ user.id }}</td>
-                        <td class="p-4 font-medium">{{ user.username }}</td>
-                        <td class="p-4 text-gray-300">{{ user.email }}</td>
+                        <td class="p-4 text-gray-400">#{{ item.id }}</td>
+                        <td class="p-4 font-medium">{{ item.name }}</td>
+                        <td class="p-4 text-gray-300">{{ item.type_id }}</td>
+                        <td class="p-4">{{ item.price }}</td>
                         <td class="p-4">
-                            <span
-                                class="px-2 py-1 text-xs rounded-full"
-                                :class="user.role === 'admin' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'"
-                            >
-                                {{ user.role }}
-                            </span>
+                            <img v-if="item.img" :src="item.img" class="h-10 w-10 object-contain" />
+                            <span v-else class="text-gray-500">—</span>
                         </td>
-                        <td class="p-4 text-gray-400 text-sm">
-                            {{ new Date(user.createdAt).toLocaleDateString() }}
-                        </td>
-                        <td class="p-4 text-gray-400 text-sm">
-                            {{ new Date(user.createdAt).toLocaleDateString() }}
+                        <td class="p-4">
+                            <img v-if="item.equipped_img" :src="item.equipped_img" class="h-10 w-10 object-contain" />
+                            <span v-else class="text-gray-500">—</span>
                         </td>
                         <td class="p-4 text-right space-x-2">
                             <button
-                                @click="$emit('edit', user)"
+                                @click="$emit('edit', item)"
                                 class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded transition"
                                 title="Editar"
                             >
                                 ✏️
                             </button>
                             <button
-                                @click="$emit('delete', user.id)"
+                                @click="$emit('delete', item.id)"
                                 class="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition mx-1"
                                 disabled
                                 title="Eliminar (No disponible en demo)"
@@ -102,14 +98,14 @@
                             </button>
                         </td>
                     </tr>
-                    <tr v-if="users.length === 0">
+                    <tr v-if="items.length === 0">
                         <td colspan="6" class="p-6 text-center text-gray-500">
                             No se encontraron objetos.
                         </td>
                     </tr>
                 </tbody>
             </table>
-
+            </div>
             <!-- Pagination -->
             <div class="p-4 border-t border-gray-700 flex justify-between items-center text-sm text-gray-400">
                 <div>
@@ -120,14 +116,14 @@
                     <button
                         @click="$emit('page-change', pagination.page - 1)"
                         :disabled="pagination.page <= 1"
-                        class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Anterior
                     </button>
                     <button
                         @click="$emit('page-change', pagination.page + 1)"
                         :disabled="pagination.page >= pagination.totalPages"
-                        class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Siguiente
                     </button>
@@ -141,7 +137,7 @@
 import { ref } from 'vue'
 
 defineProps({
-    users:      { type: Array,   required: true },
+    items:      { type: Array,   required: true },
     pagination: { type: Object,  required: true },
     loading:    { type: Boolean, default: false },
     error:      { type: String,  default: null },

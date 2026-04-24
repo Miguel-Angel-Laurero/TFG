@@ -50,8 +50,9 @@
 
         <!-- Users Table -->
         <div v-else class="bg-indigo-950/40 rounded-lg shadow overflow-hidden">
+            <div class="overflow-y-auto max-h-[40vh]">
             <table class="w-full text-left border-collapse">
-                <thead>
+                <thead class="sticky top-0 z-10">
                     <tr class="bg-indigo-700/40 text-gray-300 text-sm uppercase">
                         <th class="p-4 border-b border-gray-600">ID</th>
                         <th class="p-4 border-b border-gray-600">Usuario</th>
@@ -105,7 +106,7 @@
                     </tr>
                 </tbody>
             </table>
-
+            </div>
             <!-- Pagination -->
             <div class="p-4 border-t border-gray-700 flex justify-between items-center text-sm text-gray-400">
                 <div>
@@ -116,14 +117,14 @@
                     <button
                         @click="$emit('page-change', pagination.page - 1)"
                         :disabled="pagination.page <= 1"
-                        class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Anterior
                     </button>
                     <button
                         @click="$emit('page-change', pagination.page + 1)"
                         :disabled="pagination.page >= pagination.totalPages"
-                        class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Siguiente
                     </button>

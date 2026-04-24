@@ -34,7 +34,7 @@
                         :class="{ 'border-red-500': errors.categoryId }"
                     >
                         <option value="" disabled>Selecciona una categoría</option>
-                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                       <option v-for="cat in categories" :key="cat.id" :value="Number(cat.id)">{{ cat.name }}</option>
                     </select>
                     <p v-if="errors.categoryId" class="text-red-400 text-xs mt-1">{{ errors.categoryId }}</p>
                 </div>
@@ -88,17 +88,27 @@ const props = defineProps({
     modelValue: { type: Boolean, required: true },
     item:       { type: Object,  default: null },
     loading:    { type: Boolean, default: false },
+    categories: { type: Array,   default: () => [] },
 })
 
 const emit = defineEmits(['update:modelValue', 'save'])
 
-const form     = reactive({ id: null, name: '', price: 0, img: null, equipped_img: null })
+//                                         ↓ add categoryId
+const form     = reactive({ id: null, name: '', price: 0, categoryId: null, img: null, equipped_img: null })
 const previews = reactive({ img: null, equipped_img: null })
+const errors   = reactive({ categoryId: null }) // ← add this
 
-// Sincroniza el form cuando cambia el item a editar
 watch(() => props.item, (item) => {
     if (item) {
-        Object.assign(form, item)
+        Object.assign(form, {
+            id:           item.id,
+            name:         item.name,
+            price:        item.price,
+            categoryId: item.type_id != null ? Number(item.type_id) : null,
+            img:          item.img,
+            equipped_img: item.equipped_img,
+        })
+        errors.categoryId     = null
         previews.img          = null
         previews.equipped_img = null
     }
@@ -112,10 +122,15 @@ const onFileChange = (field, event) => {
 }
 
 const handleSave = () => {
+    // Basic validation
+    errors.categoryId = form.categoryId ? null : 'La categoría es obligatoria'
+    if (errors.categoryId) return
+
     const payload = new FormData()
-    payload.append('id',    form.id)
-    payload.append('name',  form.name)
-    payload.append('price', form.price)
+    payload.append('id',      form.id)
+    payload.append('name',    form.name)
+    payload.append('price',   form.price)
+    payload.append('type_id', form.categoryId) // ← send back as type_id
     if (form.img          instanceof File) payload.append('img',          form.img)
     if (form.equipped_img instanceof File) payload.append('equipped_img', form.equipped_img)
     emit('save', payload)
@@ -124,6 +139,7 @@ const handleSave = () => {
 const handleClose = () => {
     previews.img          = null
     previews.equipped_img = null
+    errors.categoryId     = null
     emit('update:modelValue', false)
 }
 </script>

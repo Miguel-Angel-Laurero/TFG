@@ -19,5 +19,6 @@ router.use("/sessions", require("./session.routes"));
 
 // Panel de administración general
 router.use("/admin", require("./admin.routes"));
+router.use("/items", require("./adminItem.routes"));
 
 module.exports = router;

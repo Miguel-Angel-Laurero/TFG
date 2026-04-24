@@ -17,6 +17,7 @@
             v-model="isEditOpen"
             :item="selectedItem"
             :loading="itemStore.loading"
+            :categories="itemStore.categories"
             @save="saveItem"
         />
         <CreateItemModal

@@ -24,6 +24,9 @@
             <RouterLink to="/clase" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Clase
             </RouterLink>
+            <RouterLink to="/learning-area" class="text-white/50 hover:text-yellow-400 transition-colors">
+                Area de aprendizaje
+            </RouterLink>
             <RouterLink v-if="auth.user.role === 'admin'" to="/admin" class="text-white/50 hover:text-yellow-400 transition-colors">
                 Panel de Administracion
             </RouterLink>
