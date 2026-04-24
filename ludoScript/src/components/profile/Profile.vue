@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-[1400px] mx-auto p-4 md:p-8 flex flex-col gap-8 bg-blue-950">
+  <div class="w-full mx-auto p-4 md:p-8 flex flex-col gap-8 bg-blue-950">
     
     <header class="relative w-full">
       <Banner />
