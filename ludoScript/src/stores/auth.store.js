@@ -72,7 +72,9 @@ export const useAuthStore = defineStore("auth", () => {
 
       router.push("/");
     } catch (e) {
-      error.value = e.response?.data?.message ?? "Error al registrarse";
+      const data = e.response?.data;
+      error.value =
+        data?.message ?? data?.errors?.[0]?.msg ?? "Error al registrarse";
     } finally {
       loading.value = false;
     }
