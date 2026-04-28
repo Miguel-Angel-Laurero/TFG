@@ -17,9 +17,9 @@
             <!-- ── idle: selección crear vs unirse ── -->
             <template v-if="mp.status === 'idle'">
                 <template v-if="!subView">
-                    <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-6">
                         <div class="flex justify-center">
-                            <img :src="IMAGES.multi" alt="multijugador" class="max-w-[240px] w-full md:max-w-full">
+                            <img :src="IMAGES.multi" alt="multijugador" class="max-w-[240px] w-full md:max-w-full lg:ml-96">
                         </div>
                         <div class="flex flex-col items-center gap-8 max-w-md w-full mx-auto">
                             <div class="text-center ">
