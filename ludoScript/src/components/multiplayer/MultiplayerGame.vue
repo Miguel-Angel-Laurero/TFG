@@ -1,5 +1,9 @@
 <template>
     <div class="flex flex-col items-center gap-6 w-full max-w-3xl mx-auto p-4">
+        <div class="w-full h-6 bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-1000" :class="timerBarColor"
+                :style="{ width: timerPercent + '%' }" />
+        </div>
         <!-- Controles de partida: Abandonar / Información -->
         <div class="w-full flex justify-between items-center text-white/60 text-sm font-medium">
             <button @click="mp.leaveRoom()" class="flex items-center gap-1.5 text-red-400/70 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer group">
@@ -12,10 +16,7 @@
             </div>
         </div>
 
-        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-1000" :class="timerBarColor"
-                :style="{ width: timerPercent + '%' }" />
-        </div>
+     
         <div class="text-white font-black text-4xl tabular-nums" :class="timerTextColor">
             {{ mp.timerRemaining }}
         </div>
