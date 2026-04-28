@@ -1,7 +1,15 @@
 <template>
     <div class="relative p-2 rounded-2xl mb-2 overflow-hidden" :style="bannerStyle">
        <div class="relative overflow-hidden rounded-lg mb-5" :style="profileBannerStyle">
-            
+
+            <!-- Botón editar: esquina superior derecha del banner -->
+            <RouterLink
+                to="/edit-profile-view"
+                class="absolute top-2 right-2 border rounded-full w-8 h-8 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors z-10"
+            >
+                <i class="pi pi-pen-to-square text-white text-sm"></i>
+            </RouterLink>
+
             <div class="relative flex items-center gap-4 bg-gray-100/20 rounded-2xl p-4">
                 <img
                     v-if="auth.user?.avatar"
@@ -23,9 +31,9 @@
         </div>
     </div>
 </template>
+
 <script setup>
 import { computed } from 'vue'
-import { Avatar } from 'primevue';
 import { useAuthStore } from '@/stores/auth.store';
 
 const auth = useAuthStore();
@@ -38,4 +46,3 @@ const bannerStyle = computed(() => ({
     height: '100px',
 }))
 </script>
-
