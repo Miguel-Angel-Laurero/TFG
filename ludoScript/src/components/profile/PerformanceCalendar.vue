@@ -1,5 +1,5 @@
 <template>
-    <div class=" rounded-[2rem] overflow-hidden">
+    <div class="border border-white/5 rounded-[2rem] overflow-hidden">
         <!-- v-calendar -->
         <VCalendar
             :attributes="calendarAttributes"

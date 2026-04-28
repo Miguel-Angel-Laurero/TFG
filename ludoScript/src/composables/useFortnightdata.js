@@ -29,6 +29,7 @@ export function useFortnightData() {
         try {
             const res = await sessionService.getRecentSessions(14)
             recentSessions.value = res.data ?? []
+            console.log('primera sesión:', JSON.stringify(recentSessions.value[0], null, 2))
         } catch (_) {
             try {
                 const cutoff = Date.now() - HISTORY_MS
@@ -36,6 +37,7 @@ export function useFortnightData() {
                     .filter(s => s.timestamp >= cutoff)
             } catch {
                 recentSessions.value = []
+                console.log('primera sesión:', JSON.stringify(recentSessions.value[0], null, 2))
             }
         }
     })
@@ -44,7 +46,7 @@ export function useFortnightData() {
     const sessionsByDate = computed(() => {
         const agg = {}
         for (const session of recentSessions.value) {
-            const key = toDateKey(startOfDay(new Date(session.timestamp)))
+            const key = toDateKey(startOfDay(Number(new Date(Number(session.timestamp)))))
             if (!agg[key]) agg[key] = { correct: 0, total: 0, sessions: 0 }
             agg[key].sessions++
             for (const stat of Object.values(session.stats ?? {})) {
