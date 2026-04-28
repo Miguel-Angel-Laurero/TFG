@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 gap-6">
         <div class="flex flex-col items-center gap-3">
             <h3 class="font-bold text-lg text-white">Icono actual</h3>
             <div class="w-24 h-24 rounded-full border-2 border-dashed border-slate-500/80 bg-slate-700/60 flex items-center justify-center overflow-hidden">

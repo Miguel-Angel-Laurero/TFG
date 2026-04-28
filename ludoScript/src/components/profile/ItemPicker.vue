@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-up">
-        <div v-if="open && slotId" class="w-1/2 h-1/2 z-50 absolute bg-slate-700/80 rounded-xl p-3 border border-white/10 flex-shrink-0">
+        <div v-if="open && slotId" class="w-full h-1/2 z-50 absolute bg-slate-700/80 rounded-xl p-3 border border-white/10 flex-shrink-0">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-white font-semibold text-sm">Elige {{ slotNames[slotId] }}</span>
                 <button class="text-white/40 hover:text-white text-xs" @click="$emit('close')">✕ cerrar</button>

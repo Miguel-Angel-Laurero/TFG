@@ -1,7 +1,7 @@
 <template>
-    <div class="min-h-full bg-gray-900">
+    <div class="min-h-full bg-blue-950/20">
         <!-- Page header -->
-        <div class="bg-gradient-to-r from-gray-800/80 to-gray-900 border-b border-white/10 px-6 py-8">
+        <div class="bg-gradient-to-r from-blue-900/40 to-blue-900/60 border-b border-white/10 px-6 py-8">
             <div class="max-w-6xl mx-auto text-center relative">
                 <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                     🎓 Área de aprendizaje

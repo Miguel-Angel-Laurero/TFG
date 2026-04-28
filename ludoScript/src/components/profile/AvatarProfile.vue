@@ -1,6 +1,6 @@
 <template>
     <section ref="containerRef"
-        class="bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-2 flex flex-col items-center justify-center gap-3 h-full w-full overflow-hidden"
+        class="backdrop-blur-sm rounded-lg shadow-2xl p-2 flex flex-col items-center justify-center gap-3 h-full w-full overflow-hidden"
     >
         <div class="flex gap-2 sm:gap-4 items-center justify-center w-full max-w-2xl mx-auto p-2">
     
