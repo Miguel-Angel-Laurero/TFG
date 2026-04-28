@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-2xl bg-indigo-950 border border-white/10 p-8 w-96 flex flex-col items-center gap-6">
+  <div class="rounded-2xl bg-blue-950 border border-white/10 p-8 w-96 flex flex-col items-center gap-6">
 
     <div class="flex flex-col items-center gap-2 text-center">
       <div class="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-4xl">🔥</div>

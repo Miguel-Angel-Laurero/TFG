@@ -5,7 +5,7 @@
             <UserInfo />
         </div>
         <!-- Chart arriba -->
-        <div class="flex-shrink-0 flex flex-col mb-6 pb-6 border-b" style="height: 220px;">
+        <div class="flex-shrink-0 flex flex-col ">
             <h3 class="text-lg text-gray-50 font-semibold mb-3">Actividad semanal</h3>
             <div class="flex-1 min-h-0">
                 <Chart />

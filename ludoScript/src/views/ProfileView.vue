@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-slate-950 overflow-hidden">
+  <div class="flex flex-col h-screen bg-slate-900/20 overflow-hidden">
     <Header class="shrink-0" />
     
     <main class="flex-1 overflow-y-auto">

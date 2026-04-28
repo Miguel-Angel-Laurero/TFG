@@ -1,6 +1,6 @@
 ﻿<template>
     <Header/>
-    <div class="w-full min-h-screen p-2 md:p-4 bg-blue-950/20">
+    <div class="w-full min-h-[80vh] p-2 md:p-4 bg-blue-950/20">
         <!-- Volver al inicio -->
         <!-- <div class="max-w-4xl mx-auto mb-3">
             <button @click="router.push('/')"

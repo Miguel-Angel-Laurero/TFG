@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-full bg-slate-950/40 border border-white/[0.08] rounded-2xl">
+    <div class="w-full h-full bg-slate-950/40 rounded-2xl">
         <Chart type="bar" :data="chartData" :options="chartOptions" />
     </div>
 </template>

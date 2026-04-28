@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-[80vh] flex items-center justify-center px-4 py-8">
+  <div class="min-h-[80vh] max-w-[600] flex items-center justify-center px-4">
     
-    <div class="w-full max-w-md bg-indigo-950/30 backdrop-blur-sm border border-white/10 p-6 md:p-10 rounded-3xl shadow-2xl">
+    <div class="w-full max-w-lg bg-blue-900/60 backdrop-blur-sm border border-white/10 p-6 md:p-10 rounded-3xl shadow-2xl">
       
       <div class="text-center mb-8">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-50 font-righteous">Bienvenido de nuevo</h1>
