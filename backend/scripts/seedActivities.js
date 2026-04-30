@@ -24,6 +24,14 @@ async function seed() {
     await sequelize.authenticate();
     console.log("✅ Conectado a la base de datos");
 
+    await sequelize.query(`
+      SELECT setval(
+        pg_get_serial_sequence('item', 'id'),
+        (SELECT MAX(id) FROM item)
+      );
+    `)
+    console.log('Secuencia de item sincronizada.')
+
     for (const data of DEFAULT_ACTIVITIES) {
       const [activity, created] = await Activity.findOrCreate({
         where: { name: data.name },

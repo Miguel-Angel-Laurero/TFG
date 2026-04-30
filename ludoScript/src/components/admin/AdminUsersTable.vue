@@ -92,7 +92,6 @@
                             <button
                                 @click="$emit('delete', user.id)"
                                 class="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition mx-1 cursor-pointer"
-                                disabled
                                 title="Eliminar (No disponible en demo)"
                             >
                                 🗑️

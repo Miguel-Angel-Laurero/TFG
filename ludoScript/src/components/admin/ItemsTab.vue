@@ -62,8 +62,8 @@ const openEdit = (item) => {
     selectedItem.value = { ...item }
     isEditOpen.value = true
 }
-const saveItem = async (formData) => {
-    const ok = await itemStore.updateItem(formData.id, formData)
+const saveItem = async ({ id, formData }) => {
+    const ok = await itemStore.updateItem(id, formData)
     if (ok) {
         toast?.add({ severity: 'success', summary: 'Éxito', detail: 'Item actualizado', life: 3000 })
         isEditOpen.value = false

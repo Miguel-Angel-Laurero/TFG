@@ -130,10 +130,11 @@ const handleSave = () => {
     payload.append('id',      form.id)
     payload.append('name',    form.name)
     payload.append('price',   form.price)
-    payload.append('type_id', form.categoryId) // ← send back as type_id
+    // EditItemModal.vue — handleSave
+    payload.append('categoryId', form.categoryId)  // ← cambiar type_id por categoryId
     if (form.img          instanceof File) payload.append('img',          form.img)
     if (form.equipped_img instanceof File) payload.append('equipped_img', form.equipped_img)
-    emit('save', payload)
+    emit('save', { id: form.id, formData: payload })
 }
 
 const handleClose = () => {
