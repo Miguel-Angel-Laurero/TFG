@@ -183,43 +183,6 @@ function onDayClick({ date }) {
 </script>
 
 <style scoped>
-CSS
-/* --- Personalización del Scrollbar --- */
-.custom-scroll {
-    /* Forzamos el comportamiento de scroll vertical */
-    overflow-y: auto !important;
-    overflow-x: hidden;
-    
-    /* Firefox */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-}
-
-/* Chrome, Edge, Safari y Brave */
-.custom-scroll::-webkit-scrollbar {
-    width: 6px !important; /* Forzar ancho */
-    display: block !important;
-}
-
-.custom-scroll::-webkit-scrollbar-track {
-    background: transparent !important;
-}
-
-.custom-scroll::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    border-radius: 20px !important;
-    border: 1px solid transparent; /* Padding sutil */
-}
-
-.custom-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-/* IMPORTANTE: Si el scroll lo está haciendo un elemento interno de VCalendar */
-.custom-scroll :deep(*) {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-}
 :deep(.vc-container) {
     background: transparent !important;
     border: none !important;
