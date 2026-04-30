@@ -1,6 +1,6 @@
 <template>
-    <div class="border border-white/5 rounded-[2rem] overflow-hidden">
-        <!-- v-calendar -->
+    <div class="border border-white/5 rounded-[2rem] overflow-y-auto max-h-[500px] custom-scroll">
+        
         <VCalendar
             :attributes="calendarAttributes"
             :min-date="rangeStart"
@@ -12,7 +12,6 @@
             @dayclick="onDayClick"
         />
 
-        <!-- Detalle del día seleccionado -->
         <transition
             enter-active-class="transition-all duration-200 ease-out"
             enter-from-class="opacity-0 -translate-y-1"
@@ -21,7 +20,8 @@
         >
             <div
                 v-if="selectedDay"
-                class="mx-4 mb-4 bg-white/[0.05] border border-white/10 rounded-[14px] p-4"
+                id="day-detail"
+                class="mx-4 mb-4 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4"
             >
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-semibold text-white">{{ selectedDay.dateLabel }}</span>
@@ -120,6 +120,7 @@ function dotHexColor(percent, total) {
     return '#f87171'                    // rose-400
 }
 
+
 const toDateKey = (date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 
@@ -170,10 +171,55 @@ function onDayClick({ date }) {
     }
 
     emit('day-selected', selectedDay.value)
+
+    // AUTO-SCROLL: Hace que el detalle sea visible suavemente
+    setTimeout(() => {
+        const el = document.getElementById('day-detail');
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, 100);
 }
 </script>
 
 <style scoped>
+CSS
+/* --- Personalización del Scrollbar --- */
+.custom-scroll {
+    /* Forzamos el comportamiento de scroll vertical */
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* Chrome, Edge, Safari y Brave */
+.custom-scroll::-webkit-scrollbar {
+    width: 6px !important; /* Forzar ancho */
+    display: block !important;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 20px !important;
+    border: 1px solid transparent; /* Padding sutil */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* IMPORTANTE: Si el scroll lo está haciendo un elemento interno de VCalendar */
+.custom-scroll :deep(*) {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
 :deep(.vc-container) {
     background: transparent !important;
     border: none !important;
