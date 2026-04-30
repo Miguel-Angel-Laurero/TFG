@@ -9,7 +9,7 @@
                 <i class="pi pi-pen-to-square text-white text-sm"></i>
             </RouterLink>
 
-            <div class="relative flex flex-col items-center justify-center mx-auto gap-4 bg-gray-100/20 rounded-2xl p-6">
+            <div class="relative flex flex-col items-center justify-center mx-auto gap-4 rounded-2xl p-6">
                 
                 <img
                     v-if="auth.user?.avatar"
@@ -48,6 +48,11 @@ const bannerStyle = computed(() => ({
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundColor: '#1e293b',
-    height: '300px',
+    height: 'auto',          // Permite que crezca con el contenido
+    minHeight: '100px',      // Altura mínima para que no se vea colapsado si no hay datos
+    maxHeight: '300px',
+    display: 'flex',         // Recomendado para asegurar que el contenido interno se comporte bien
+    flexDirection: 'column',
+    justifyContent: 'center'
 }))
 </script>
