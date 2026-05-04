@@ -5,7 +5,7 @@
     </header>
     <main class="flex-grow">
       <div v-if="showAuthenticatedHome" class="h-full">
-        <DailyReward v-if="rewards.ready && !rewards.claimed"/>  <!-- ← espera a ready -->
+        <DailyReward v-if="showDailyReward"/>  <!-- ← espera a ready y oculta durante tutorial -->
         <Home/>
       </div>
       <HomeNoLogin v-else-if="showGuestHome"/>
@@ -27,11 +27,16 @@ import FooterNoLogin from '@/components/shared/FooterNoLogin.vue'
 import DailyReward from '@/components/home/DailyReward.vue'
 import { useAuthStore } from '@/stores/auth.store'
 import { useRewardsStore } from '@/stores/rewards.store'
+import { useTutorialStore } from '@/stores/tutorial.store'
 
-const auth    = useAuthStore()
-const rewards = useRewardsStore()
+const auth     = useAuthStore()
+const rewards  = useRewardsStore()
+const tutorial = useTutorialStore()
 const showAuthenticatedHome = computed(() => auth.ready && auth.isLoggedIn)
 const showGuestHome = computed(() => auth.ready && !auth.isLoggedIn)
+const showDailyReward = computed(
+  () => rewards.ready && !rewards.claimed && !tutorial.isVisible
+)
 
 onMounted(async () => {
   if (auth.isLoggedIn) {
