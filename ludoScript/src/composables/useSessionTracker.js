@@ -74,3 +74,11 @@ export function getSessionSummary() {
     maxStreak: data.maxStreak,
   };
 }
+
+export function resetSessionTracker() {
+  try {
+    sessionStorage.removeItem(SS_KEY);
+  } catch (_) {
+    /* ignore */
+  }
+}

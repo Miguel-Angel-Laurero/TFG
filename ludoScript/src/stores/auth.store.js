@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { authService } from "@/api/auth.service";
 import router from "@/router/router";
+import { resetSessionTracker } from "@/composables/useSessionTracker";
 
 export const useAuthStore = defineStore("auth", () => {
   const user = ref(null);
@@ -104,6 +105,7 @@ export const useAuthStore = defineStore("auth", () => {
     token.value = null;
     ready.value = true;
     localStorage.removeItem("token");
+    resetSessionTracker();
     router.push("/login-view/");
   }
 

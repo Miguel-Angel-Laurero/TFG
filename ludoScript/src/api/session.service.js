@@ -6,9 +6,9 @@ export const sessionService = {
   saveSession: (sessionData) => api.post("/sessions", sessionData),
 
   // Devuelve la sesión más reciente del usuario autenticado
-  getLastSession() {
+  async getLastSession() {
     try {
-      const response = api.get("/sessions/last");
+      const response = await api.get("/sessions/last");
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 404) {

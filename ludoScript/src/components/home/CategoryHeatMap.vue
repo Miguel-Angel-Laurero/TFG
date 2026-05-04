@@ -79,12 +79,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getSessionSummary } from '@/composables/useSessionTracker'
 import { formatCategoryLabel } from '@/composables/useAdaptiveSelection'
 import { gameService } from '@/api/game.service'
 import { sessionService } from '@/api/session.service'
+import { userScopedStorageKey } from '@/utils/storageKeys'
 
 
 const router = useRouter()
@@ -94,15 +94,45 @@ const CIRCUMFERENCE = 2 * Math.PI * 24
 // r=14 → circunferencia = 2π×14
 const MINI_CIRCUMFERENCE = 2 * Math.PI * 14
 
-const summary = getSessionSummary()
+const summary = ref(null)
 
-const ringColor = !summary
-    ? '#374151'
-    : summary.accuracy > 70
-        ? '#22c55e'
-        : summary.accuracy > 40
-            ? '#f97316'
-            : '#ef4444'
+function buildSummary(session) {
+    if (!session || typeof session !== 'object') return null
+
+    const hasSummary =
+        session.summary &&
+        typeof session.summary === 'object' &&
+        session.summary.accuracy != null &&
+        session.summary.totalQuestions != null &&
+        session.summary.maxStreak != null
+
+    if (hasSummary) return session.summary
+
+    const stats = session.stats || {}
+    const totalQuestions = Object.values(stats).reduce(
+        (sum, item) => sum + (item?.total ?? 0),
+        0,
+    )
+    const totalCorrect = Object.values(stats).reduce(
+        (sum, item) => sum + (item?.correct ?? 0),
+        0,
+    )
+    const accuracy = totalQuestions ? Math.round((totalCorrect / totalQuestions) * 100) : 0
+
+    return {
+        accuracy,
+        elapsedMin: session.elapsedMin ?? 0,
+        totalQuestions,
+        maxStreak: session.maxStreak ?? 0,
+    }
+}
+
+const ringColor = computed(() => {
+    if (!summary.value) return '#374151'
+    if (summary.value.accuracy > 70) return '#22c55e'
+    if (summary.value.accuracy > 40) return '#f97316'
+    return '#ef4444'
+})
 
 function categoryRingColor(accuracy) {
     if (accuracy >= 80) return '#22c55e'   // verde
@@ -135,19 +165,28 @@ const historyLoading = ref(true)
 const recentGames = ref([])
 
 onMounted(async () => {
-    // Cargar anillos de categorías desde la API, fallback a localStorage
+    let lastSession = null
+
     try {
-        const res = await sessionService.getLastSession()
-        const stats = res.data?.stats ?? {}
-        categoryRings.value = parseCategoryRings(stats)
+        lastSession = await sessionService.getLastSession()
     } catch (_) {
+        lastSession = null
+    }
+
+    if (lastSession) {
+        summary.value = buildSummary(lastSession)
+        categoryRings.value = parseCategoryRings(lastSession.stats ?? {})
+    } else {
         try {
-            const raw = localStorage.getItem(LS_LAST_SESSION)
+            const raw = localStorage.getItem(userScopedStorageKey(LS_LAST_SESSION))
             if (raw) {
-                const { stats } = JSON.parse(raw)
-                categoryRings.value = parseCategoryRings(stats)
+                const sessionData = JSON.parse(raw)
+                summary.value = buildSummary(sessionData)
+                categoryRings.value = parseCategoryRings(sessionData.stats ?? {})
             }
-        } catch (__) { /* ignorar */ }
+        } catch (__) {
+            /* ignorar */
+        }
     }
 
     // Cargar historial de partidas

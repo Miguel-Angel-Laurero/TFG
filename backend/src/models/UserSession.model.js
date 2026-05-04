@@ -29,6 +29,11 @@ const UserSession = sequelize.define(
       allowNull: false,
       defaultValue: {},
     },
+    summary: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {},
+    },
   },
   {
     tableName: "user_sessions",

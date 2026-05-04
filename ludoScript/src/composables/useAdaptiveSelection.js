@@ -7,6 +7,8 @@ const lsPdfQuestions = (id) => `ludoscript_pdf_questions_${id}`;
 const lsPdfActiveIds = (id) => `ludoscript_pdf_active_ids_${id}`;
 const lsPdfCloudSaved = (id) => `ludoscript_pdf_cloud_saved_${id}`;
 
+import { userScopedStorageKey } from '@/utils/storageKeys'
+
 const LS_TUTORIAL_TOPIC_STATS = "ludoscript_tutorial_topic_stats";
 const LS_TUTORIAL_RECENT_IDS = "ludoscript_tutorial_recent_ids";
 
@@ -78,16 +80,27 @@ function writeJsonToStorage(key, value) {
   }
 }
 
+function getTutorialTopicStatsKey() {
+  return userScopedStorageKey(LS_TUTORIAL_TOPIC_STATS)
+}
+
+function getTutorialRecentIdsKey() {
+  return userScopedStorageKey(LS_TUTORIAL_RECENT_IDS)
+}
+
 function readTutorialTopicStats() {
-  return readJsonFromStorage(LS_TUTORIAL_TOPIC_STATS, {});
+  return readJsonFromStorage(getTutorialTopicStatsKey(), {});
 }
 
 function readTutorialRecentIds() {
-  return readJsonFromStorage(LS_TUTORIAL_RECENT_IDS, []);
+  return readJsonFromStorage(getTutorialRecentIdsKey(), []);
 }
 
 function writeTutorialRecentIds(ids) {
-  writeJsonToStorage(LS_TUTORIAL_RECENT_IDS, ids.slice(0, RECENT_IDS_LIMIT));
+  writeJsonToStorage(
+    getTutorialRecentIdsKey(),
+    ids.slice(0, RECENT_IDS_LIMIT),
+  );
 }
 
 function rememberTutorialQuestionIds(questionIds) {

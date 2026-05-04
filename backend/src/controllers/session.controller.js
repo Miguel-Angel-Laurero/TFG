@@ -34,6 +34,7 @@ const saveSession = async (req, res, next) => {
       timestamp,
       pdfId: pdfId ? String(pdfId) : null,
       stats,
+      summary: req.body.summary || {},
     });
 
     res.status(201).json(session);
@@ -48,7 +49,7 @@ const getLastSession = async (req, res, next) => {
     const session = await UserSession.findOne({
       where: { userId: req.user.id },
       order: [["timestamp", "DESC"]],
-      attributes: ["id", "timestamp", "pdfId", "stats"],
+      attributes: ["id", "timestamp", "pdfId", "stats", "summary"],
     });
 
     if (!session) return res.status(404).json({ message: "Sin sesiones" });

@@ -52,6 +52,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { QUIZ_CATEGORIES } from '@/utils/quizCategories'
 import { sessionService } from '@/api/session.service'
+import { userScopedStorageKey } from '@/utils/storageKeys'
 const router = useRouter()
 const LS_WEEKLY = 'ludoscript_weeklySessions'
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
@@ -89,7 +90,9 @@ onMounted(async () => {
         weeklySessions.value = (res.data ?? []).filter(s => s.timestamp > cutoff)
     } catch (_) {
         try {
-            const all = JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
+            const all = JSON.parse(
+              localStorage.getItem(userScopedStorageKey(LS_WEEKLY)) || '[]',
+            )
             const cutoff = Date.now() - ONE_WEEK_MS
             weeklySessions.value = all.filter(s => s.timestamp > cutoff)
         } catch (__) {

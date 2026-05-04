@@ -107,6 +107,7 @@ import Header from '@/components/shared/Header.vue'
 import Footer from '@/components/shared/Footer.vue'
 import { getQuizCategoryLabel } from '@/utils/quizCategories'
 import { sessionService } from '@/api/session.service'
+import { userScopedStorageKey } from '@/utils/storageKeys'
 
 const route = useRoute()
 const categoryKey = computed(() => route.query.category ?? '')
@@ -151,11 +152,12 @@ const failedQuestions = computed(() => {
 onMounted(async () => {
   // Cargar la última sesión desde la API, fallback a localStorage
   try {
-    const res = await sessionService.getLastSession()
-    lastSession.value = res.data ?? null
+    lastSession.value = await sessionService.getLastSession()
   } catch (_) {
     try {
-      lastSession.value = JSON.parse(localStorage.getItem(LS_LAST_SESSION) || 'null')
+      lastSession.value = JSON.parse(
+        localStorage.getItem(userScopedStorageKey(LS_LAST_SESSION)) || 'null',
+      )
     } catch (__) { /* ignorar */ }
   }
 

@@ -12,8 +12,10 @@
 import { ref } from "vue";
 import { categoryStatsService } from "@/api/categoryStats.service";
 import { sessionService } from "@/api/session.service";
-import { recordAnswer } from "@/composables/useSessionTracker";
+import { recordAnswer, getSessionSummary, resetSessionTracker } from "@/composables/useSessionTracker";
 import { trackTutorialQuestionResult } from "@/composables/useAdaptiveSelection";
+
+import { userScopedStorageKey } from '@/utils/storageKeys'
 
 const LS_LAST_SESSION = "ludoscript_lastSession";
 const LS_WEEKLY = "ludoscript_weeklySessions";
@@ -93,14 +95,23 @@ export function useCategoryStats() {
           { correct: s.correct, total: s.total, failedIds: [...s.failedIds] },
         ]),
       ),
+      summary: getSessionSummary(),
     };
     try {
-      localStorage.setItem(LS_LAST_SESSION, JSON.stringify(sessionData));
-      const stored = JSON.parse(localStorage.getItem(LS_WEEKLY) || "[]");
+      localStorage.setItem(
+        userScopedStorageKey(LS_LAST_SESSION),
+        JSON.stringify(sessionData),
+      );
+      const stored = JSON.parse(
+        localStorage.getItem(userScopedStorageKey(LS_WEEKLY)) || "[]",
+      );
       const cutoff = Date.now() - SESSION_HISTORY_MS;
       const pruned = stored.filter((s) => s.timestamp > cutoff);
       pruned.push(sessionData);
-      localStorage.setItem(LS_WEEKLY, JSON.stringify(pruned));
+      localStorage.setItem(
+        userScopedStorageKey(LS_WEEKLY),
+        JSON.stringify(pruned),
+      );
     } catch (_) {
       /* storage quota exceeded – silently ignore */
     }
@@ -122,6 +133,8 @@ export function useCategoryStats() {
         "[useCategoryStats] Error al guardar sesión en la nube:",
         err,
       );
+    } finally {
+      resetSessionTracker();
     }
   }
 

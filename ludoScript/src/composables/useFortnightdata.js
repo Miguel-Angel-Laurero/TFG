@@ -1,5 +1,6 @@
 import { computed, ref, onMounted } from 'vue'
 import { sessionService } from '@/api/session.service'
+import { userScopedStorageKey } from '@/utils/storageKeys'
 
 // ── Constantes ────────────────────────────────────────────────────
 const LS_WEEKLY      = 'ludoscript_weeklySessions'
@@ -33,7 +34,9 @@ export function useFortnightData() {
         } catch (_) {
             try {
                 const cutoff = Date.now() - HISTORY_MS
-                recentSessions.value = JSON.parse(localStorage.getItem(LS_WEEKLY) || '[]')
+                recentSessions.value = JSON.parse(
+              localStorage.getItem(userScopedStorageKey(LS_WEEKLY)) || '[]',
+            )
                     .filter(s => s.timestamp >= cutoff)
             } catch {
                 recentSessions.value = []
