@@ -1,17 +1,12 @@
 <template>
     <div class="border border-white/5 rounded-[2rem] overflow-hidden">
-        <div
-            v-if="!hasActivity"
-            class="mx-3 mt-3 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4"
-        >
+        <div v-if="!hasActivity" class="mx-3 mt-3 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4">
             <p class="text-sm font-bold text-white">Aún no tienes actividad reciente.</p>
             <p class="mt-1 text-xs text-indigo-100/65">
                 Completa tu primer reto para empezar a ver tu progreso aquí.
             </p>
-            <RouterLink
-                to="/learning-area/"
-                class="mt-3 inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-yellow-400 px-3 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-yellow-300"
-            >
+            <RouterLink to="/learning-area/"
+                class="mt-3 inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-yellow-400 px-3 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-yellow-300">
                 Ir al área de aprendizaje
             </RouterLink>
         </div>
@@ -21,35 +16,19 @@
         </p>
 
         <div class="overflow-y-auto max-h-[500px] custom-scroll">
-            <VCalendar
-                :attributes="calendarAttributes"
-                :min-date="rangeStart"
-                :max-date="rangeEnd"
-                :first-day-of-week="2"
-                :masks="{ weekdays: 'WWW' }"
-                expanded
-                borderless
-                @dayclick="onDayClick"
-            />
+            <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
+                :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless @dayclick="onDayClick" />
 
-            <transition
-                enter-active-class="transition-all duration-200 ease-out"
-                enter-from-class="opacity-0 -translate-y-1"
-                leave-active-class="transition-all duration-150 ease-in"
-                leave-to-class="opacity-0 -translate-y-1"
-            >
-                <div
-                    v-if="selectedDay"
-                    id="day-detail"
-                    class="mx-4 mb-4 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4"
-                >
+            <transition enter-active-class="transition-all duration-200 ease-out"
+                enter-from-class="opacity-0 -translate-y-1" leave-active-class="transition-all duration-150 ease-in"
+                leave-to-class="opacity-0 -translate-y-1">
+                <div v-if="selectedDay" id="day-detail"
+                    class="mx-4 mb-4 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-sm font-semibold text-white">{{ selectedDay.dateLabel }}</span>
                         <button
                             class="text-white/35 hover:text-white/70 text-xs px-1.5 py-0.5 rounded-md transition-colors cursor-pointer"
-                            aria-label="Cerrar detalle del día"
-                            @click="selectedDay = null"
-                        >
+                            aria-label="Cerrar detalle del día" @click="selectedDay = null">
                             <i class="pi pi-times text-xs"></i>
                         </button>
                     </div>
@@ -57,13 +36,11 @@
                     <template v-if="selectedDay.total > 0">
                         <div class="flex flex-col gap-2.5">
                             <div class="flex items-baseline gap-2">
-                                <span
-                                    class="text-[2rem] font-extrabold leading-none"
-                                    :class="accuracyColorClass(selectedDay.percent)"
-                                >
+                                <span class="text-[2rem] font-extrabold leading-none"
+                                    :class="accuracyColorClass(selectedDay.percent)">
                                     {{ selectedDay.percent }}%
                                 </span>
-                                <span class="text-[0.72rem] text-white/40">precisión</span>
+                                <span class="text-[0.72rem] text-white/40">de acierto</span>
                             </div>
                             <div class="flex justify-between text-[0.78rem] text-white/50">
                                 <span>Respuestas</span>
@@ -72,15 +49,13 @@
                                 </span>
                             </div>
                             <div class="flex justify-between text-[0.78rem] text-white/50">
-                                <span>Sesiones</span>
+                                <span>Número de test</span>
                                 <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
                             </div>
                             <div class="h-1.5 bg-black/30 rounded-full overflow-hidden">
-                                <div
-                                    class="h-full rounded-full transition-[width] duration-500 ease-out"
+                                <div class="h-full rounded-full transition-[width] duration-500 ease-out"
                                     :class="accuracyBgClass(selectedDay.percent)"
-                                    :style="{ width: selectedDay.percent + '%' }"
-                                />
+                                    :style="{ width: selectedDay.percent + '%' }" />
                             </div>
                         </div>
                     </template>
