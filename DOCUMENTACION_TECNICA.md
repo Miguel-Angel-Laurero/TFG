@@ -76,7 +76,7 @@ En `backend/config/database.js` se configura Sequelize con PostgreSQL:
 Modelos principales:
 
 - `User`: usuarios con `username`, `email`, `password`, `avatar`, `banner`, `role`
-- `UserData`: progreso y economía del usuario con `coins`, `timeSpent`, `streak`, `accuracy`, `last_claimed_at`, `first_login`, `bonus_percentage`
+- `UserData`: progreso y economía del usuario con `coins`, `timeSpent`, `streak`, `accuracy`, `last_claimed_at`, `first_login` (booleano que controla el tutorial interactivo), `bonus_percentage`
 - `Game`: partidas jugadas con `gameName`, `score`, `duration`, `result`, `playedAt`
 - `Item`: elementos de la tienda con `name`, `type_id`, `price`, `img`, `equipped_img`
 - `ItemCategory`: categorías de ítems para equipamiento visual
@@ -85,7 +85,7 @@ Modelos principales:
 - `CategoryStat`: estadísticas por categoría de quiz y dificultades desbloqueadas
 - `Activities`: catálogo de actividades educativas
 - `Group` / `GroupMember`: sistema de clases/grupos con invitaciones y gestión de miembros
-- `UserSession`: sesiones de quiz con estadísticas detalladas por categoría
+- `UserSession`: sesiones de quiz con `timestamp`, `pdfId` (opcional), `stats` (JSON por categoría) y `summary` (resumen general: accuracy, elapsedMin, totalQuestions, maxStreak)
 
 ### 3.4 Middleware clave
 
@@ -99,9 +99,10 @@ Todas las rutas se montan bajo `/api`.
 
 #### Autenticación
 
-- `POST /api/auth/register` → registra una nueva cuenta, hashea la contraseña y crea el registro inicial en `UserData`.
-- `POST /api/auth/login` → valida credenciales, genera un JWT y, en el primer login, marca `first_login=false` en `UserData`.
-- `GET /api/auth/me` → devuelve el perfil del usuario, incluyendo `UserData` con coins, streak, accuracy y bonus.
+- `POST /api/auth/register` → registra una nueva cuenta, hashea la contraseña y crea el registro inicial en `UserData` con `first_login=true` para activar el tutorial.
+- `POST /api/auth/login` → valida credenciales y genera un JWT; el flag `first_login` de `UserData` persiste hasta que el usuario complete el tutorial.
+- `GET /api/auth/me` → devuelve el perfil del usuario, incluyendo `UserData` con coins, streak, accuracy, bonus y el flag `first_login`.
+- `POST /api/auth/complete-tutorial` → marca `first_login=false` en `UserData` tras completar el tutorial interactivo.
 
 #### Usuarios
 
@@ -112,9 +113,9 @@ Todas las rutas se montan bajo `/api`.
 #### Juegos y sesiones
 
 - `POST /api/games` / `GET /api/games` → historial de partidas con score, duración y resultado.
-- `POST /api/sessions` → guarda una sesión completa de quiz en `UserSession` con `timestamp`, `pdfId` opcional y `stats` JSON.
-- `GET /api/sessions/last` → devuelve la última sesión del usuario.
-- `GET /api/sessions/recent` → devuelve las sesiones más recientes con un límite configurable hasta 50.
+- `POST /api/sessions` → guarda una sesión completa de quiz en `UserSession` (por usuario autenticado) con `timestamp`, `pdfId` opcional, `stats` JSON desglosado por categoría y `summary` (resumen general de la sesión).
+- `GET /api/sessions/last` → devuelve la última sesión del usuario autenticado; usada por el home para mostrar estadísticas generales de la última actividad.
+- `GET /api/sessions/recent` → devuelve las sesiones más recientes del usuario con un límite configurable hasta 50; usado para análisis histórico.
 
 #### Tienda y economía
 
@@ -131,10 +132,12 @@ Todas las rutas se montan bajo `/api`.
 - `PUT /api/pdfs/:id/questions` → guarda en la nube las preguntas y flashcards que el usuario conserva en localStorage, permitiendo sincronizar cambios.
 - `DELETE /api/pdfs/:id` → elimina la metadata y el contenido generado asociado.
 
-#### Estadísticas adaptativas
+#### Estadísticas adaptativas y sesiones por usuario
 
 - `GET /api/category-stats` → devuelve los stats acumulados por categoría temática para el usuario autenticado.
 - `POST /api/category-stats/batch` → ingresa un lote de resultados por categoría; acumula `correct` y `total`, y actualiza el progreso por dificultad cuando se recibe `difficultyBreakdown`.
+- Las estadísticas de sesión (`UserSession`) están asociadas al usuario autenticado, garantizando que cada usuario vea solo sus propias sesiones.
+- El frontend carga la última sesión del usuario desde la API; si falla, recurre a `localStorage` con una clave específica del usuario (derivada de `user.id`).
 - El backend usa umbrales de desbloqueo: si en el nivel actual el usuario alcanza al menos 70 % de aciertos y 5 intentos, sube al siguiente nivel de dificultad hasta un máximo de 3.
 
 #### Grupos / Clases
@@ -270,9 +273,10 @@ Stores clave:
 `auth.store.js` gestiona:
 
 - el token JWT en `localStorage`
-- el usuario y `userData`
+- el usuario y `userData` (incluyendo el flag `first_login` del tutorial)
 - la carga de datos del usuario tras login/registro
 - la recarga del estado de recompensas y PDFs almacenados en servidor
+- el reseteo del tracker de sesión local (`sessionStorage`) al hacer logout para evitar filtraciones de datos entre usuarios
 
 El token se usa también para la conexión Socket.IO en `ludoScript/src/api/socket.service.js`.
 
@@ -330,7 +334,16 @@ El token se usa también para la conexión Socket.IO en `ludoScript/src/api/sock
 El frontend agrupa componentes por dominio en `ludoScript/src/components/`.
 La aplicación usa `PrimeVue` para componentes avanzados y `Tailwind` para utilidades de diseño.
 
-### 4.10 Flujos clave
+### 4.10 Sistema de tutorial interactivo
+
+El tutorial activa automáticamente tras el primer registro o login:
+
+- `tutorial.store.js` gestiona la visibilidad del tutorial basado en `userData.first_login`
+- `completeTutorial()` llama a `POST /api/auth/complete-tutorial` para marcar el tutorial como completado en la base de datos
+- El tracker de sesión local (`useSessionTracker()`) persiste durante el tutorial y se limpia al finalizar la sesión o al cambiar de usuario
+- El frontend usa `resetSessionTracker()` tras cada cierre de sesión de quiz y al hacer logout para evitar que datos del tutorial anterior contaminen sesiones nuevas
+
+### 4.11 Flujos clave
 
 - Autenticación
   - `auth.store.js` maneja login y registro con `auth.service.js`.
@@ -342,10 +355,16 @@ La aplicación usa `PrimeVue` para componentes avanzados y `Tailwind` para utili
   - `pdfService.syncAll()` hidrata la UI con todos los PDFs ya procesados.
   - `saveToCloud()` permite persistir en la base de datos las preguntas/flashcards que el usuario haya modificado en su sesión local.
 
-- Estadísticas por categoría y sesiones
+- Estadísticas por categoría y sesiones (por usuario)
   - `useCategoryStats()` rastrea aciertos y errores por categoría mientras se responde un quiz.
-  - Al finalizar se llama a `submitSession()`, que guarda la sesión en localStorage, envía el batch a `categoryStatsService.submitBatch()` y crea un registro de sesión en `sessionService.saveSession()`.
-  - Esto permite tener análisis de progreso por categoría, desbloqueo de dificultad y un historial de sesiones recientes.
+  - Al finalizar se llama a `submitSession()`, que:
+    1. Captura el resumen de la sesión actual con `getSessionSummary()` (accuracy, elapsedMin, totalQuestions, maxStreak).
+    2. Guarda la sesión en localStorage con una clave específica del usuario (`userScopedStorageKey()`).
+    3. Envía el batch a `categoryStatsService.submitBatch()` (acumulativo).
+    4. Crea un registro de sesión en la base de datos mediante `sessionService.saveSession()` incluyendo el `summary`.
+    5. Limpia el tracker de sesión local con `resetSessionTracker()` para evitar que datos de sesiones anteriores persistan.
+  - El home carga la última sesión del usuario desde la API (`/sessions/last`); si falla, usa localStorage pero solo la clave específica del usuario.
+  - Esto permite tener análisis de progreso por categoría, desbloqueo de dificultad, un historial de sesiones recientes y estadísticas correctas por usuario.
 
 - Recompensas diarias y bonos
   - `rewards.store.js` obtiene el estado del streak y si el usuario ya reclamó hoy mediante `GET /api/rewards`.
@@ -386,10 +405,24 @@ La aplicación usa `PrimeVue` para componentes avanzados y `Tailwind` para utili
 
 ## 6. Notas importantes de diseño
 
+### Almacenamiento y privacidad
+
 - El backend usa `sequelize.sync({ alter: true })` en desarrollo para adaptar el esquema sin migraciones manuales.
 - JWT se almacena en `localStorage` y se inyecta vía interceptor de Axios.
 - `UserPdf` guarda solo el contenido generado, no el archivo PDF original.
 - `CategoryStat` acumula estadísticas por categoría y niveles de dificultad.
+- `UserSession` asocia todas las sesiones de quiz al usuario autenticado, garantizando aislamiento de datos entre cuentas.
+- El frontend usa claves de localStorage con scope por usuario (`userScopedStorageKey()`) para estadísticas, sesiones y configuración adaptativa, evitando fugas de datos entre sesiones de usuario en el mismo navegador.
+- El sessionStorage (`ludoscript_session`) se limpia al cambiar de usuario (logout) con `resetSessionTracker()` para prevenir contaminación de sesiones.
+
+### Flujo de tutorial
+
+- El campo `first_login` en `UserData` persiste hasta que el usuario complete el tutorial interactivo mediante `POST /api/auth/complete-tutorial`.
+- El tutorial solo es visible si `userData.first_login === true`; tras completarlo, se marca como `false` en la base de datos.
+- El tracker de sesión local se limpia automáticamente al finalizar la sesión del tutorial y al logout.
+
+### Grupo y multijugador
+
 - El sistema de grupos permite un solo grupo por usuario a través de `GroupMember` con restricción única en `userId`.
 - Socket.IO valida el JWT antes de aceptar conexiones y permite invitados como espectadores.
 
