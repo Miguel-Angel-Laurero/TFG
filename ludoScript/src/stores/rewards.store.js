@@ -5,8 +5,8 @@ import api from '@/api/axios'
 
 export const useRewardsStore = defineStore('rewards', () => {
   // --- Configuración ---
-  const baseReward = 10
-  const MAX_REWARD = 150
+  const baseReward = 25
+  const MAX_REWARD = 350
   const BASE_BONUS_PERCENTAGE = 5
   const BONUS_INCREMENT = 5
   const BONUS_MULTIPLIERS = [1.1, 1.2, 1.4, 1.5, 1.8, 2, 2.5, 4, 8]
