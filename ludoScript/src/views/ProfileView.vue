@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col h-screen bg-slate-900/20 overflow-hidden">
+  <div class="flex flex-col min-h-screen md:h-screen bg-slate-900/20 md:overflow-hidden">
     <Header class="shrink-0" />
     
-    <main class="flex-1 overflow-y-auto max-h-[90vh] w-full ">
+    <main class="flex-1 w-full overflow-visible md:overflow-y-auto md:min-h-0">
       <Profile />
     </main>
     
