@@ -13,4 +13,11 @@ router.post("/login", validateLogin, validate, authController.login);
 // GET /api/auth/me  (requiere token)
 router.get("/me", authMiddleware, authController.me);
 
+// POST /api/auth/complete-tutorial
+router.post(
+  "/complete-tutorial",
+  authMiddleware,
+  authController.completeTutorial,
+);
+
 module.exports = router;

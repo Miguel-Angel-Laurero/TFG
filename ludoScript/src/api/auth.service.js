@@ -9,4 +9,7 @@ export const authService = {
 
   // GET /api/auth/me  → user (requiere token)
   me: () => api.get('/auth/me'),
+
+  // POST /api/auth/complete-tutorial
+  completeTutorial: () => api.post('/auth/complete-tutorial'),
 }

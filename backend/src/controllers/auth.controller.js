@@ -51,9 +51,8 @@ const login = async (req, res, next) => {
     }
 
     const userData = await UserData.findOne({ where: { user_id: user.id } });
-    if (userData?.first_login) {
-      await userData.update({ first_login: false });
-    }
+    // No marcamos first_login como falso aquí, porque el tutorial solo debe
+    // terminarse cuando el frontend lo cierra o el usuario lo descarta.
     
     const token = generateToken({
       id: user.id,
@@ -70,6 +69,19 @@ const login = async (req, res, next) => {
         role: user.role,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const completeTutorial = async (req, res, next) => {
+  try {
+    const userData = await UserData.findOne({ where: { user_id: req.user.id } });
+    if (!userData)
+      return res.status(404).json({ message: "UserData no encontrado" });
+
+    await userData.update({ first_login: false });
+    res.json({ success: true });
   } catch (err) {
     next(err);
   }
@@ -94,4 +106,4 @@ const me = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, me };
+module.exports = { register, login, me, completeTutorial };

@@ -87,6 +87,10 @@ export const useAuthStore = defineStore("auth", () => {
       const { data } = await authService.me();
       user.value = data;
       userData.value = data.userData;
+      console.log(userData.value)
+      const tutorial = useTutorialStore();
+      // Usamos el campo 'first_login' que viene de la BBDD
+      tutorial.initTutorial(userData.value?.first_login);
     } catch (e) {
       if (e.response?.status === 401) logout();
     } finally {

@@ -1,22 +1,23 @@
 <template>
   <main class="h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag"
     @mouseleave="stopDrag">
+    <Tutorial class="w-full"/>
     <aside :style="isMobile ? {} : { width: panelWidth + 'px' }" class=" w-full md:shrink-0 border-b md:border-b-0 md:border-r bg-blue-900/20 border-blue-900/40 
              px-4 py-4 md:py-6 overflow-y-auto flex flex-col transition-all
-             max-h-[40vh] md:max-h-full">
+             max-h-[40vh] md:max-h-full" id="seccion-documentos">
       <div class="flex items-center justify-between md:mb-4 mb-2">
         <h3 class="text-indigo-300 text-sm font-bold uppercase tracking-wider">Configuración</h3>
         <span class="md:hidden text-xs text-slate-500">Desliza para ver más</span>
       </div>
 
-      <HomePdfPanel v-model:selectedFiles="selectedFiles" v-model:pdfCount="pdfCount"
+      <HomePdfPanel v-model:selectedFiles="selectedFiles" v-model:pdfCount="pdfCount " 
         v-model:selectedPredefined="selectedPredefined" />
     </aside>
       <div
       class="hidden md:block w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
       @mousedown.prevent="startDrag" />
 
-      <section class="flex-1 flex-col justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20"">
+      <section class="flex-1 flex-col justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20" id="seccion-juegos">
         <div class=" w-full max-w-2xl m-auto px-4 md:px-8">
           <h2 class="text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos de juego</h2>
           <div :class="[
@@ -33,7 +34,7 @@
       </section>
 
       <aside class="w-full md:w-80 shrink-0 border-t md:border-t-0 md:border-l border-blue-900/40 
-                    px-6 py-8 overflow-y-auto bg-blue-900/20 shadow-inner">
+                    px-6 py-8 overflow-y-auto bg-blue-900/20 shadow-inner" id="seccion-estadisticas">
         <div class="max-w-2xl mx-auto md:w-full">
           <h3 class="text-white mb-6 text-center md:text-left text-lg font-righteous flex items-center gap-2">
             <span class="text-indigo-400">📊</span> Estadísticas de Uso
@@ -50,6 +51,30 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import GameGrid from '@/components/home/GameGrid.vue'
 import CategoryHeatMap from '@/components/home/CategoryHeatMap.vue'
 import HomePdfPanel from '@/components/home/HomePdfPanel.vue'
+import Tutorial from '../tutorial/Tutorial.vue'
+import { useTutorialStore } from '@/stores/tutorial.store'
+import { useAuthStore } from '@/stores/auth.store' // Faltaba esta importación
+
+const tutorial = useTutorialStore()
+const auth = useAuthStore() // Faltaba definir la constante auth
+
+
+onMounted(async () => {
+  try {
+    // 1. Si no hay usuario, lo traemos (esto disparará el tutorial si lo configuraste en el store)
+    if (!auth.user) {
+      await auth.fetchMe()
+    } 
+    
+    // 2. Si el usuario ya existe (ej: volviste de otra pestaña), lo activamos manualmente
+    if (auth.userData) {
+      console.log("Estado de first_login en BBDD:", auth.userData.first_login)
+      tutorial.initTutorial(auth.userData.first_login)
+    }
+  } catch (error) {
+    console.error("Error al inicializar tutorial en Home:", error)
+  }
+})
 
 const selectedFiles = ref([])
 const pdfCount = ref(0)
