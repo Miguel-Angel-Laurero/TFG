@@ -64,15 +64,17 @@ const items = computed(() => {
             command: () => router.push('/')
         },
         {
-            label: 'Progreso',
+            label: 'Perfil',
             icon: 'pi pi-chart-line',
             command: () => router.push('/profile-view/')
-        },
-        {
-            label: 'Editar Perfil',
-            icon: 'pi pi-pen-to-square',
-            command: () => router.push('/edit-profile-view/')
-        },
+        }
+        // ,
+        // {
+        //     label: 'Editar Perfil',
+        //     icon: 'pi pi-pen-to-square',
+        //     command: () => router.push('/edit-profile-view/')
+        // }
+        ,
         {
             label: 'Tienda',
             icon: 'pi pi-shop',
