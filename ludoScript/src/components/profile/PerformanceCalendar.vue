@@ -16,46 +16,51 @@
         </p>
 
         <div class="overflow-y-auto max-h-[500px] custom-scroll">
-            <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
-                :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless @dayclick="onDayClick" />
+            <div class="grid grid-cols-[1.7fr_1fr] gap-4 px-4 pb-4 min-w-0">
+                <div class="min-w-0">
+                    <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
+                        :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless @dayclick="onDayClick" />
+                </div>
 
-            <transition enter-active-class="transition-all duration-200 ease-out"
-                enter-from-class="opacity-0 -translate-y-1" leave-active-class="transition-all duration-150 ease-in"
-                leave-to-class="opacity-0 -translate-y-1">
-                <div v-if="selectedDay" id="day-detail"
-                    class="mx-4 mb-4 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4">
+                <transition enter-active-class="transition-all duration-200 ease-out"
+                    enter-from-class="opacity-0 -translate-y-1" leave-active-class="transition-all duration-150 ease-in"
+                    leave-to-class="opacity-0 -translate-y-1">
+                    <div v-if="selectedDay" id="day-detail"
+                        class="min-w-0 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-sm font-semibold text-white">{{ selectedDay.dateLabel }}</span>
-                        <button
-                            class="text-white/35 hover:text-white/70 text-xs px-1.5 py-0.5 rounded-md transition-colors cursor-pointer"
-                            aria-label="Cerrar detalle del día" @click="selectedDay = null">
-                            <i class="pi pi-times text-xs"></i>
-                        </button>
                     </div>
 
                     <template v-if="selectedDay.total > 0">
-                        <div class="flex flex-col gap-2.5">
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-[2rem] font-extrabold leading-none"
-                                    :class="accuracyColorClass(selectedDay.percent)">
-                                    {{ selectedDay.percent }}%
-                                </span>
-                                <span class="text-[0.72rem] text-white/40">de acierto</span>
+                        <div class="flex flex-row flex-nowrap gap-4 items-center">
+                            <div class="flex-1 space-y-3 min-w-0">
+                                <div class="flex justify-between text-[0.78rem] text-white/50">
+                                    <span>Número de tests</span>
+                                    <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
+                                </div>
+                                <div class="flex justify-between text-[0.78rem] text-white/50">
+                                    <span>Respuestas acertadas</span>
+                                    <span class="text-white/80 font-medium">
+                                        {{ selectedDay.correct }}/{{ selectedDay.total }}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="flex justify-between text-[0.78rem] text-white/50">
-                                <span>Respuestas</span>
-                                <span class="text-white/80 font-medium">
-                                    {{ selectedDay.correct }}/{{ selectedDay.total }}
-                                </span>
-                            </div>
-                            <div class="flex justify-between text-[0.78rem] text-white/50">
-                                <span>Número de test</span>
-                                <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
-                            </div>
-                            <div class="h-1.5 bg-black/30 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full transition-[width] duration-500 ease-out"
-                                    :class="accuracyBgClass(selectedDay.percent)"
-                                    :style="{ width: selectedDay.percent + '%' }" />
+                            <div class="flex items-center justify-center">
+                                <div class="relative w-40 h-40">
+                                    <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                        <!-- Círculo de fondo -->
+                                        <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" />
+                                        <!-- Círculo de progreso -->
+                                        <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="none"
+                                            :stroke-dasharray="`${selectedDay.percent * 2.827} 282.7`"
+                                            :class="ringColorClass(selectedDay.percent)"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                        <span class="text-[2.5rem] font-black text-white">{{ selectedDay.percent }}%</span>
+                                        <span class="text-[0.7rem] uppercase tracking-[0.26em] text-white/50 mt-1">Precisión</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -64,10 +69,11 @@
             </transition>
         </div>
     </div>
+</div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Calendar as VCalendar } from 'v-calendar'
 import 'v-calendar/style.css'
 
@@ -110,6 +116,14 @@ function accuracyBgClass(percent) {
     if (percent >= 65) return 'bg-cyan-400'
     if (percent >= 45) return 'bg-amber-400'
     return 'bg-rose-400'
+}
+
+function ringColorClass(percent) {
+    if (percent == null) return 'text-zinc-600'
+    if (percent >= 85) return 'text-emerald-400'
+    if (percent >= 65) return 'text-cyan-400'
+    if (percent >= 45) return 'text-amber-400'
+    return 'text-rose-400'
 }
 
 function dotHexColor(percent, total) {
@@ -156,19 +170,21 @@ const calendarAttributes = computed(() =>
 
 const selectedDay = ref(null)
 
-function onDayClick({ date }) {
+function getDayData(date) {
     const key = toDateKey(date)
     const data = props.sessionsByDate[key] ?? { correct: 0, total: 0, sessions: 0 }
 
-    selectedDay.value = {
+    return {
         ...data,
         percent: getAccuracy(data.correct, data.total),
         dateKey: key,
         dateLabel: fmt.format(date),
     }
+}
 
+function selectDay(date) {
+    selectedDay.value = getDayData(date)
     emit('day-selected', selectedDay.value)
-
     setTimeout(() => {
         const el = document.getElementById('day-detail')
         if (el) {
@@ -176,6 +192,22 @@ function onDayClick({ date }) {
         }
     }, 100)
 }
+
+function onDayClick({ date }) {
+    selectDay(date)
+}
+
+function initCurrentDay() {
+    const today = new Date()
+    const todayKey = toDateKey(today)
+    const inRange = props.rangeDays.some(date => toDateKey(date) === todayKey)
+    if (inRange) {
+        selectDay(today)
+    }
+}
+
+onMounted(initCurrentDay)
+watch(() => props.rangeDays, initCurrentDay, { immediate: true })
 </script>
 
 <style scoped>
