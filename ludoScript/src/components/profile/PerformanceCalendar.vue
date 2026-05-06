@@ -57,8 +57,8 @@
                                             stroke-linecap="round" />
                                     </svg>
                                     <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                        <span class="text-[2.5rem] font-black text-white">{{ selectedDay.percent }}%</span>
-                                        <span class="text-[0.7rem] uppercase tracking-[0.26em] text-white/50 mt-1">Precisión</span>
+                                        <span class="text-[2.2rem] font-black text-white">{{ selectedDay.percent }}%</span>
+                                        <span class="text-[0.5rem] uppercase tracking-[0.26em] text-white/50 mt-1">Precisión</span>
                                     </div>
                                 </div>
                             </div>

@@ -4,38 +4,37 @@
         <p class="text-xs text-indigo-300/60 mt-1 mb-4">
             Aquí puedes ver tu constancia, tests completados y recompensas.
         </p>
-
         <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
+            <!-- Racha -->
             <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl md:rounded-3xl p-3 sm:p-4 transition-all duration-300">
-                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">Racha</p>
-                <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors">
-                    {{ auth.userData?.streak ?? 0 }}
-                </p>
-                <p class="text-[10px] text-white/35 mt-1.5 font-medium">días seguidos</p>
+                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-3">Racha</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors shrink-0">
+                        <i class="pi pi-bolt text-orange-400 text-xl" />
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none">
+                            {{ auth.userData?.streak ?? 0 }}
+                        </p>
+                        <p class="text-[11px] text-white/55 mt-1 font-medium">días seguidos</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Tests -->
             <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl md:rounded-3xl p-3 sm:p-4 transition-all duration-300">
-                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">Tests</p>
-                <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors">
-                    {{ totalGames }}
-                </p>
-                <p class="text-[10px] text-white/35 mt-1.5 font-medium">completados</p>
-            </div>
-
-            <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl md:rounded-3xl p-3 sm:p-4 transition-all duration-300">
-                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">Monedas</p>
-                <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors">
-                    {{ auth.userData?.coins ?? 0 }}
-                </p>
-                <p class="text-[10px] text-white/35 mt-1.5 font-medium">disponibles</p>
-            </div>
-
-            <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl md:rounded-3xl p-3 sm:p-4 transition-all duration-300">
-                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">Categorías</p>
-                <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors">
-                    {{ categoriesPlayed }}
-                </p>
-                <p class="text-[10px] text-white/35 mt-1.5 font-medium">practicadas</p>
+                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-3">Tests</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors shrink-0">
+                        <i class="pi pi-book text-indigo-400 text-xl" />
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none">
+                            {{ totalGames }}
+                        </p>
+                        <p class="text-[11px] text-white/55 mt-1 font-medium">completados</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -55,12 +54,10 @@ onMounted(async () => {
     if (!auth.userData) {
         await auth.fetchMe()
     }
-
     try {
         const { data } = await gameService.getMine()
         totalGames.value = data.filter(g => g.gameName === 'Quiz').length
     } catch (_) {}
-
     try {
         const { data } = await categoryStatsService.getAll()
         categoriesPlayed.value = data.filter(s => s.total > 0).length
