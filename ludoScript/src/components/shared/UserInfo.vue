@@ -1,38 +1,38 @@
+<!-- UserInfo.vue -->
 <template>
     <div class="h-full">
         <h2 class="text-xl sm:text-2xl text-white font-bold">Tu Progreso</h2>
-        <p class="text-xs text-indigo-300/60 mt-1 mb-4">
+        <p class="text-xs text-indigo-300/60 mt-1 mb-3">
             Aquí puedes ver tu constancia, tests completados y recompensas.
         </p>
         <div class="grid grid-cols-2 md:grid-cols-1 gap-3">
             <!-- Racha -->
-            <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl md:rounded-3xl p-3 sm:p-4 transition-all duration-300">
-                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-3">Racha</p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors shrink-0">
-                        <i class="pi pi-bolt text-orange-400 text-xl" />
+            <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl p-3 transition-all duration-300">
+                <p class="text-[9px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">Racha</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors shrink-0">
+                        <i class="pi pi-bolt text-orange-400 text-base" />
                     </div>
                     <div>
-                        <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none">
+                        <p class="text-xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none">
                             {{ auth.userData?.streak ?? 0 }}
                         </p>
-                        <p class="text-[11px] text-white/55 mt-1 font-medium">días seguidos</p>
+                        <p class="text-[10px] text-white/55 mt-0.5 font-medium">días seguidos</p>
                     </div>
                 </div>
             </div>
-
             <!-- Tests -->
-            <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl md:rounded-3xl p-3 sm:p-4 transition-all duration-300">
-                <p class="text-[10px] uppercase font-black text-indigo-300/50 tracking-widest mb-3">Tests</p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors shrink-0">
-                        <i class="pi pi-book text-indigo-400 text-xl" />
+            <div class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl p-3 transition-all duration-300">
+                <p class="text-[9px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">Tests</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors shrink-0">
+                        <i class="pi pi-book text-indigo-400 text-base" />
                     </div>
                     <div>
-                        <p class="text-2xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none">
+                        <p class="text-xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none">
                             {{ totalGames }}
                         </p>
-                        <p class="text-[11px] text-white/55 mt-1 font-medium">completados</p>
+                        <p class="text-[10px] text-white/55 mt-0.5 font-medium">completados</p>
                     </div>
                 </div>
             </div>

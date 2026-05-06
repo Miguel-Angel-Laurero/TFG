@@ -135,11 +135,6 @@ export function useFortnightData() {
         helper: `${totals.value.correct}/${totals.value.total} respuestas correctas`,
       },
       {
-        label: "Días activos",
-        value: totals.value.activeDays,
-        helper: `de ${recentSessions.value.length} tests analizados`,
-      },
-      {
         label: "Número de test",
         value: totals.value.sessions,
         helper: "intentos de quiz registrados",
