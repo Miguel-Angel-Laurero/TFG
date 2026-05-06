@@ -19,7 +19,8 @@
             <div class="grid grid-cols-[1.7fr_1fr] gap-4 px-4 pb-4 min-w-0">
                 <div class="min-w-0">
                     <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
-                        :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless @dayclick="onDayClick" />
+                        :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless
+                        @dayclick="onDayClick" />
                 </div>
 
                 <transition enter-active-class="transition-all duration-200 ease-out"
@@ -27,49 +28,53 @@
                     leave-to-class="opacity-0 -translate-y-1">
                     <div v-if="selectedDay" id="day-detail"
                         class="min-w-0 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-semibold text-white">{{ selectedDay.dateLabel }}</span>
-                    </div>
+                        <div class="flex justify-between items-center mb-11">
+                            <span class="text-md font-semibold text-white">{{ selectedDay.dateLabel }}</span>
+                        </div>
 
-                    <template v-if="selectedDay.total > 0">
-                        <div class="flex flex-row flex-nowrap gap-4 items-center">
-                            <div class="flex-1 space-y-3 min-w-0">
-                                <div class="flex justify-between text-[0.78rem] text-white/50">
-                                    <span>Número de tests</span>
-                                    <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
+                        <template v-if="selectedDay.total > 0">
+                            <div class="flex flex-row flex-nowrap gap-4 items-center">
+                                <div class="flex-1 space-y-3 min-w-0 align-items">
+                                    <div class="flex justify-between text-[0.78rem] text-white/50">
+                                        <span>Número de tests</span>
+                                        <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-[0.78rem] text-white/50">
+                                        <div>Respuestas acertadas</div>
+                                        <span class="text-white/80 font-medium">
+                                            {{ selectedDay.correct }}/{{ selectedDay.total }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-[0.78rem] text-white/50">
-                                    <span>Respuestas acertadas</span>
-                                    <span class="text-white/80 font-medium">
-                                        {{ selectedDay.correct }}/{{ selectedDay.total }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-center">
-                                <div class="relative w-40 h-40">
-                                    <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                                        <!-- Círculo de fondo -->
-                                        <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" />
-                                        <!-- Círculo de progreso -->
-                                        <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="none"
-                                            :stroke-dasharray="`${selectedDay.percent * 2.827} 282.7`"
-                                            :class="ringColorClass(selectedDay.percent)"
-                                            stroke-linecap="round" />
-                                    </svg>
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                        <span class="text-[2.2rem] font-black text-white">{{ selectedDay.percent }}%</span>
-                                        <span class="text-[0.5rem] uppercase tracking-[0.26em] text-white/50 mt-1">Precisión</span>
+                                <div class="flex items-center justify-center">
+                                    <div class="relative w-40 h-40">
+                                        <svg class="absolute inset-0 w-full h-full transform -rotate-90"
+                                            viewBox="0 0 100 100">
+                                            <!-- Círculo de fondo -->
+                                            <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.08)"
+                                                stroke-width="8" fill="none" />
+                                            <!-- Círculo de progreso -->
+                                            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8"
+                                                fill="none" :stroke-dasharray="`${selectedDay.percent * 2.827} 282.7`"
+                                                :class="ringColorClass(selectedDay.percent)" stroke-linecap="round" />
+                                        </svg>
+                                        <div
+                                            class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                            <span class="text-[2.2rem] font-black text-white">{{ selectedDay.percent
+                                            }}%</span>
+                                            <span
+                                                class="text-[0.6rem] uppercase tracking-[0.26em] text-white/70 -mt-0.5">Aciertos</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </template>
-                    <p v-else class="text-[0.8rem] text-white/30">Sin actividad registrada</p>
-                </div>
-            </transition>
+                        </template>
+                        <p v-else class="text-[0.8rem] text-white/30">Sin actividad registrada</p>
+                    </div>
+                </transition>
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script setup>
@@ -152,15 +157,14 @@ const calendarAttributes = computed(() =>
         return {
             key,
             dates: date,
-            dot: {
-                style: { backgroundColor: color, width: '8px', height: '8px', borderRadius: '50%' },
-            },
             ...(data.total > 0 && {
                 highlight: {
                     style: {
-                        backgroundColor: color + '22',
-                        border: `1px solid ${color}44`,
+                        backgroundColor: color + '4D',
+                        border: `1.5px solid ${color}99`,
                         borderRadius: '8px',
+                        width: '38px',
+                        height: '38px',
                     },
                 },
             }),
@@ -240,6 +244,10 @@ watch(() => props.rangeDays, initCurrentDay, { immediate: true })
     background: rgba(255, 255, 255, 0.08) !important;
 }
 
+:deep(.vc-week:has(.vc-day.is-not-in-month):not(:has(.vc-day:not(.is-not-in-month)))) {
+    display: none !important;
+}
+
 :deep(.vc-weekday) {
     color: rgba(255, 255, 255, 0.3) !important;
     font-size: 0.68rem !important;
@@ -247,7 +255,9 @@ watch(() => props.rangeDays, initCurrentDay, { immediate: true })
 
 :deep(.vc-day-content) {
     color: rgba(255, 255, 255, 0.65) !important;
-    font-size: 0.82rem !important;
+    font-size: 0.95rem !important;
+    width: 50px !important;
+    height: 50px !important;
     border-radius: 8px !important;
     transition: background 0.15s !important;
 }
@@ -261,7 +271,7 @@ watch(() => props.rangeDays, initCurrentDay, { immediate: true })
     color: rgba(255, 255, 255, 0.15) !important;
 }
 
-:deep(.vc-dots) {
-    gap: 3px !important;
+:deep(.vc-week) {
+    margin-bottom: 1px !important;
 }
 </style>

@@ -131,16 +131,13 @@ export function useFortnightData() {
     return [
       {
         label: "Precisión media",
+        icon: "pi-chart-bar",
         value: accuracy !== null ? `${accuracy}%` : "-",
         helper: `${totals.value.correct}/${totals.value.total} respuestas correctas`,
       },
       {
-        label: "Número de test",
-        value: totals.value.sessions,
-        helper: "intentos de quiz registrados",
-      },
-      {
         label: "Mejor día",
+        icon: "pi-star",
         value: bestDay.value ? `${bestDay.value.percent}%` : "-",
         helper: bestDay.value
           ? `${fmt.format(bestDay.value.date)} · ${bestDay.value.correct}/${bestDay.value.total}`
