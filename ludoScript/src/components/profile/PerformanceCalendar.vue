@@ -16,7 +16,7 @@
         </p>
 
         <div class="overflow-y-auto max-h-[500px] custom-scroll">
-            <div class="grid grid-cols-[1.7fr_1fr] gap-4 px-4 pb-4 min-w-0">
+            <div class="grid grid-cols-1 md:grid-cols-[1.7fr_1fr] gap-4 px-4 pb-4 min-w-0">
                 <div class="min-w-0">
                     <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
                         :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless
@@ -28,7 +28,7 @@
                     leave-to-class="opacity-0 -translate-y-1">
                     <div v-if="selectedDay" id="day-detail"
                         class="min-w-0 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4">
-                        <div class="flex justify-between items-center mb-11">
+                        <div class="flex justify-between items-center mb-4">
                             <span class="text-md font-semibold text-white">{{ selectedDay.dateLabel }}</span>
                         </div>
 
@@ -61,7 +61,7 @@
                                         <div
                                             class="absolute inset-0 flex flex-col items-center justify-center text-center">
                                             <span class="text-[2.2rem] font-black text-white">{{ selectedDay.percent
-                                            }}%</span>
+                                                }}%</span>
                                             <span
                                                 class="text-[0.6rem] uppercase tracking-[0.26em] text-white/70 -mt-0.5">Aciertos</span>
                                         </div>
@@ -260,6 +260,17 @@ watch(() => props.rangeDays, initCurrentDay, { immediate: true })
     height: 50px !important;
     border-radius: 8px !important;
     transition: background 0.15s !important;
+}
+
+@media (max-width: 767px) {
+    :deep(.vc-day-content) {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    :deep(.vc-day) {
+        aspect-ratio: 1 !important;
+    }
 }
 
 :deep(.vc-day-content:hover) {
