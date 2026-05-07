@@ -8,22 +8,22 @@
 
             <div v-if="summary" class="flex flex-col items-center gap-4">
                 <!-- <div class="grid grid-cols-2"> -->
-                    <!-- Anillo SVG grande con precisión global -->
-                    <div class="relative w-24 h-24">
-                        <svg viewBox="0 0 60 60" class="w-full h-full -rotate-90">
-                            <!-- Track de fondo -->
-                            <circle cx="30" cy="30" r="24" fill="none" stroke="#1e293b" stroke-width="5" />
-                            <!-- Arco de progreso -->
-                            <circle cx="30" cy="30" r="24" fill="none" :stroke="ringColor" stroke-width="5"
-                                stroke-linecap="round" :stroke-dasharray="CIRCUMFERENCE"
-                                :stroke-dashoffset="CIRCUMFERENCE * (1 - summary.accuracy / 100)"
-                                class="transition-all duration-700" />
-                        </svg>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-                            <span class="text-lg font-extrabold text-white leading-none">{{ summary.accuracy }}%</span>
-                            <span class="text-[9px] text-slate-400 leading-none">precisión</span>
-                        </div>
+                <!-- Anillo SVG grande con precisión global -->
+                <div class="relative w-24 h-24">
+                    <svg viewBox="0 0 60 60" class="w-full h-full -rotate-90">
+                        <!-- Track de fondo -->
+                        <circle cx="30" cy="30" r="24" fill="none" stroke="#1e293b" stroke-width="5" />
+                        <!-- Arco de progreso -->
+                        <circle cx="30" cy="30" r="24" fill="none" :stroke="ringColor" stroke-width="5"
+                            stroke-linecap="round" :stroke-dasharray="CIRCUMFERENCE"
+                            :stroke-dashoffset="CIRCUMFERENCE * (1 - summary.accuracy / 100)"
+                            class="transition-all duration-700" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+                        <span class="text-lg font-extrabold text-white leading-none">{{ summary.accuracy }}%</span>
+                        <span class="text-[9px] text-slate-400 leading-none">aciertos</span>
                     </div>
+                </div>
                 <!-- </div> -->
 
                 <!-- Stats en fila -->

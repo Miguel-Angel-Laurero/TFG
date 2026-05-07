@@ -32,7 +32,7 @@
         <!-- Info -->
         <div class="flex-1 min-w-0">
           <p class="text-xl font-bold bg-clip-text text-transparent
-                    bg-gradient-to-r from-white to-slate-400 font-righteous" >
+                    bg-gradient-to-r from-white to-slate-400 font-righteous">
             {{ minigame.name }}
           </p>
           <p class="text-sm text-slate-400 mt-0.5">{{ minigame.description }}</p>
@@ -54,7 +54,7 @@
                hover:shadow-[0_8px_32px_rgba(234,179,8,0.18)]" @click="goToMultiplayer">
         <span class="text-4xl select-none transition-all duration-300
                  group-hover:brightness-125 group-hover:scale-110 shrink-0">
-           <img :src="IMAGES.multi" alt="" class="w-24">
+          <img :src="IMAGES.multi" alt="" class="w-24">
         </span>
         <div class="flex-1 min-w-0">
           <p class="text-xl font-bold bg-clip-text text-transparent
@@ -137,7 +137,7 @@ function gameButtonText(name) {
   const hasPredefined = props.selectedPredefined
   if (hasPdfs && hasPredefined) return 'Estudiar Mixto →'
   if (hasPdfs) return 'Estudiar mis PDFs →'
-  if (hasPredefined) return 'Estudiar General →'
+  if (hasPredefined) return 'Estudiar →'
   return 'Selecciona contenido →'
 }
 
