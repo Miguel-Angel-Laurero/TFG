@@ -2,8 +2,8 @@
   <main class="relative h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag"
     @mouseleave="stopDrag">
     <Tutorial class="w-full" />
-    <div class="md:hidden shrink-0 border-b border-blue-900/40 bg-slate-950/95 px-4 py-3 z-20">
-      <div class="relative flex items-center justify-between">
+    <div class="flex md:hidden shrink-0 border-b border-blue-900/40 bg-slate-950/95 px-4 py-3 z-20">
+      <div class="relative flex w-full items-center justify-between">
         <h2 class="text-sm font-righteous text-white">Modos de estudio</h2>
         <button
           type="button"
@@ -67,17 +67,18 @@
       class="hidden md:block w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
       @mousedown.prevent="startDrag" />
 
-    <section class="flex-1 flex-col justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20"
+    <section class="flex-1 flex flex-col justify-center overflow-y-auto items-center py-4 md:py-8 min-w-0 bg-[radial-gradient(circle_at_top,#1e1b4b_0%,#0f172a_42%,#020617_100%)] md:bg-slate-900/20"
       id="seccion-juegos">
-      <div class=" w-full max-w-2xl m-auto px-4 md:px-8">
+      <div class="w-full max-w-[430px] md:max-w-2xl m-auto px-3.5 md:px-8">
+        <h2 class="md:hidden text-xl font-righteous text-white mb-3 leading-none">Modos de estudio</h2>
         <h2 class="hidden md:block text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos de estudio</h2>
         <div :class="[
-          'mb-8 px-5 py-3 rounded-2xl text-sm font-medium flex items-center gap-3 border transition-all shadow-lg',
+          'mb-3 md:mb-8 px-3.5 md:px-5 py-2 md:py-3 rounded-2xl text-sm font-medium flex items-center gap-2.5 md:gap-3 border transition-all shadow-lg',
           selectedFiles.length > 0 || selectedPredefined
             ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
             : 'bg-amber-500/10 border-amber-500/40 text-amber-200'
         ]">
-          <span class="text-xl">{{ modeIcon }}</span>
+          <span class="text-lg md:text-xl">{{ modeIcon }}</span>
           <p class="leading-tight">{{ modeLabel }}</p>
         </div>
         <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined" />

@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { authService } from "@/api/auth.service";
 import router from "@/router/router";
 import { resetSessionTracker } from "@/composables/useSessionTracker";
+import { useTutorialStore } from "@/stores/tutorial.store";
 
 export const useAuthStore = defineStore("auth", () => {
   const user = ref(null);
