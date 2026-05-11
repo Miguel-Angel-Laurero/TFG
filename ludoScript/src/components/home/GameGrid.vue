@@ -144,6 +144,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['view-progress'])
+
 const router = useRouter()
 
 const isLoading = ref(true)
@@ -188,7 +190,7 @@ onMounted(() => {
 })
 
 function goToProgress() {
-  document.getElementById('seccion-estadisticas')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  emit('view-progress')
 }
 
 function goToMultiplayer() {

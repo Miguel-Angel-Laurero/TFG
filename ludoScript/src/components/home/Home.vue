@@ -81,7 +81,12 @@
           <span class="text-lg md:text-xl">{{ modeIcon }}</span>
           <p class="leading-tight">{{ modeLabel }}</p>
         </div>
-        <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined" />
+        <GameGrid
+          :selectedFiles="selectedFiles"
+          :pdfCount="pdfCount"
+          :selectedPredefined="selectedPredefined"
+          @view-progress="showProgressPanel"
+        />
       </div>
     </section>
 
@@ -166,6 +171,21 @@ function openMobilePanel(panelId) {
 
 function closeMobilePanel() {
   openMobilePanelId.value = null
+}
+
+function showProgressPanel() {
+  mobileMenuOpen.value = false
+
+  if (isMobile.value) {
+    openMobilePanelId.value = 'stats'
+    return
+  }
+
+  document.getElementById('seccion-estadisticas')?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'nearest',
+    inline: 'end',
+  })
 }
 
 
