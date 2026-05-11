@@ -1,11 +1,61 @@
 <template>
-  <main class="h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag"
+  <main class="relative h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag"
     @mouseleave="stopDrag">
     <Tutorial class="w-full" />
-    <aside :style="isMobile ? {} : { width: panelWidth + 'px' }" class=" w-full md:shrink-0 border-b md:border-b-0 md:border-r bg-blue-900/20 border-blue-900/40 
-             px-4 py-4 md:py-6 overflow-y-auto flex flex-col transition-all
-             max-h-[40vh] md:max-h-full" id="seccion-documentos">
-      <div class="flex items-center justify-between md:mb-4 mb-2">
+    <div class="md:hidden shrink-0 border-b border-blue-900/40 bg-slate-950/95 px-4 py-3 z-20">
+      <div class="relative flex items-center justify-between">
+        <h2 class="text-sm font-righteous text-white">Modos de estudio</h2>
+        <button
+          type="button"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-indigo-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          aria-label="Abrir menu de paneles"
+          :aria-expanded="mobileMenuOpen"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <i class="pi pi-bars text-base" />
+        </button>
+
+        <div
+          v-show="mobileMenuOpen"
+          class="absolute right-0 top-12 z-40 w-56 overflow-hidden rounded-lg border border-blue-900/50 bg-slate-950 shadow-xl shadow-black/30"
+        >
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-indigo-500/15"
+            @click="openMobilePanel('documents')"
+          >
+            <i class="pi pi-cog text-indigo-300" />
+            Configuracion
+          </button>
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-indigo-500/15"
+            @click="openMobilePanel('stats')"
+          >
+            <i class="pi pi-chart-line text-indigo-300" />
+            Tu progreso
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <aside
+      :style="isMobile ? {} : { width: panelWidth + 'px' }"
+      :class="[
+        'fixed inset-y-0 left-0 z-30 w-full border-b border-blue-900/40 bg-slate-950 px-4 py-4 overflow-y-auto flex flex-col transition-transform duration-300 ease-out md:static md:z-auto md:shrink-0 md:border-b-0 md:border-r md:bg-blue-900/20 md:py-6 md:transition-all md:max-h-full',
+        openMobilePanelId === 'documents' ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+      ]"
+      id="seccion-documentos"
+    >
+      <button
+        type="button"
+        class="md:hidden absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-slate-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+        aria-label="Ocultar configuracion"
+        @click="closeMobilePanel"
+      >
+        <i class="pi pi-times text-sm" />
+      </button>
+      <div class="flex items-center justify-between pr-12 md:pr-0 md:mb-4 mb-2">
         <h3 class="text-indigo-300 text-sm font-bold uppercase tracking-wider">Configuración</h3>
         <span class="md:hidden text-xs text-slate-500">Desliza para ver más</span>
       </div>
@@ -20,7 +70,7 @@
     <section class="flex-1 flex-col justify-center overflow-y-auto  items-center py-6 md:py-8 min-w-0 bg-slate-900/20"
       id="seccion-juegos">
       <div class=" w-full max-w-2xl m-auto px-4 md:px-8">
-        <h2 class="text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos de estudio</h2>
+        <h2 class="hidden md:block text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos de estudio</h2>
         <div :class="[
           'mb-8 px-5 py-3 rounded-2xl text-sm font-medium flex items-center gap-3 border transition-all shadow-lg',
           selectedFiles.length > 0 || selectedPredefined
@@ -34,9 +84,22 @@
       </div>
     </section>
 
-    <aside class="w-full md:w-80 shrink-0 border-t md:border-t-0 md:border-l border-blue-900/40
-                    px-5 py-6 overflow-y-auto bg-blue-900/20 shadow-inner" id="seccion-estadisticas">
-      <div class="max-w-2xl mx-auto md:w-full">
+    <aside
+      :class="[
+        'fixed inset-y-0 right-0 z-30 w-full shrink-0 border-t border-blue-900/40 px-5 py-6 overflow-y-auto bg-slate-950 shadow-inner transition-transform duration-300 ease-out md:static md:z-auto md:w-80 md:border-t-0 md:border-l md:bg-blue-900/20 md:translate-x-0',
+        openMobilePanelId === 'stats' ? 'translate-x-0' : 'translate-x-full md:translate-x-0',
+      ]"
+      id="seccion-estadisticas"
+    >
+      <button
+        type="button"
+        class="md:hidden absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-slate-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+        aria-label="Ocultar progreso"
+        @click="closeMobilePanel"
+      >
+        <i class="pi pi-times text-sm" />
+      </button>
+      <div class="max-w-2xl mx-auto pr-12 md:w-full md:pr-0">
         <h3 class="text-white mb-5 text-center md:text-left text-base font-righteous flex items-center gap-2">
           <span class="text-indigo-400">📈</span> Tu Progreso
         </h3>
@@ -80,6 +143,8 @@ onMounted(async () => {
 const selectedFiles = ref([])
 const pdfCount = ref(0)
 const selectedPredefined = ref(true)
+const mobileMenuOpen = ref(false)
+const openMobilePanelId = ref(null)
 
 // Lógica para detectar si es móvil
 const isMobile = ref(false)
@@ -92,6 +157,15 @@ onMounted(() => {
   window.addEventListener('resize', checkMobile)
 })
 onUnmounted(() => window.removeEventListener('resize', checkMobile))
+
+function openMobilePanel(panelId) {
+  openMobilePanelId.value = panelId
+  mobileMenuOpen.value = false
+}
+
+function closeMobilePanel() {
+  openMobilePanelId.value = null
+}
 
 
 const modeIcon = computed(() => {

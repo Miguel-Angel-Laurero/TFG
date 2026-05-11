@@ -58,7 +58,7 @@
 
                 <div class="flex items-baseline gap-2 mb-3">
                     <span class="text-5xl font-extrabold text-white tabular-nums leading-none">{{ globalAccuracy
-                        }}</span>
+                    }}</span>
                     <span class="text-2xl font-bold text-slate-500">%</span>
                     <span v-if="sessionComparison" class="text-[11px] font-medium ml-0.5"
                         :class="sessionComparison.diff > 0 ? 'text-emerald-400' : 'text-red-400'">
@@ -108,17 +108,6 @@
                             <p class="text-[11px] text-slate-400 mt-0.5">{{ weakestCat.accuracy }}% · sigue practicando
                             </p>
                         </div>
-                    </div>
-
-                    <!-- Siguiente paso -->
-                    <div v-if="weakestCat" class="bg-indigo-500/5 border border-indigo-500/15 rounded-xl px-4 py-3.5">
-                        <p class="text-[10px] text-indigo-400/60 uppercase tracking-widest font-semibold mb-1.5">
-                            Siguiente paso</p>
-                        <p class="text-[12px] text-slate-300 leading-snug">
-                            Completa 5 preguntas de
-                            <span class="text-white font-semibold">{{ weakestCat.label }}</span>
-                            para subir de nivel
-                        </p>
                     </div>
                 </div>
             </section>
