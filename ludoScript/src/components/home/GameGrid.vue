@@ -1,61 +1,114 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-5">
+    <header class="flex flex-col gap-2">
+      <p class="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">Modos de estudio</p>
+      <h2 class="font-righteous text-2xl font-black leading-tight text-white sm:text-3xl">
+        ¿Cómo quieres avanzar hoy?
+      </h2>
+      <p class="text-sm leading-relaxed text-indigo-100/80 sm:text-base">
+        Elige según tu objetivo: practicar, repasar o competir.
+      </p>
+    </header>
+
     <template v-if="isLoading">
-      <div
-        v-for="n in 2"
-        :key="n"
-        class="animate-pulse h-28 rounded-2xl bg-slate-800/50 border border-slate-700/30 backdrop-blur-md"
-      >
-        <div class="flex items-center gap-6 px-7 py-6 h-full">
-          <div class="w-10 h-10 rounded-full bg-slate-700/60 shrink-0"></div>
-          <div class="flex-1 flex flex-col gap-2.5">
-            <div class="h-4 w-28 rounded-md bg-slate-700/60"></div>
-            <div class="h-3 w-44 rounded-md bg-slate-700/40"></div>
+      <div class="animate-pulse min-h-[260px] rounded-3xl bg-slate-800/50 border border-yellow-500/25 backdrop-blur-md">
+        <div class="flex h-full min-h-[260px] flex-col justify-between px-5 py-5 sm:px-7 sm:py-7">
+          <div class="flex justify-between gap-4">
+            <div class="h-8 w-44 rounded-full bg-slate-700/60"></div>
+            <div class="h-5 w-20 rounded-md bg-slate-700/40"></div>
           </div>
-          <div class="w-24 h-9 rounded-xl bg-slate-700/60 shrink-0"></div>
+          <div class="flex items-center gap-4">
+            <div class="h-20 w-20 rounded-3xl bg-slate-700/60"></div>
+            <div class="flex flex-1 flex-col gap-3">
+              <div class="h-7 w-32 rounded-md bg-slate-700/60"></div>
+              <div class="h-4 w-full max-w-72 rounded-md bg-slate-700/40"></div>
+            </div>
+          </div>
+          <div class="h-14 rounded-2xl bg-slate-700/60"></div>
         </div>
       </div>
     </template>
 
     <template v-else>
-      <div
-        v-for="minigame in minigames"
-        :key="minigame.id"
-        class="group relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 items-center px-4 sm:px-7 py-6 rounded-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700/50 font-lexend cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/60 hover:shadow-[0_8px_32px_rgba(99,102,241,0.18)]"
-        @click="goToGame(minigame.name)"
+      <article
+        class="group relative overflow-hidden rounded-3xl border border-yellow-400/45 bg-slate-900/80 px-5 py-5 shadow-[0_18px_44px_rgba(2,6,23,0.38)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-yellow-300/75 hover:shadow-[0_18px_52px_rgba(234,179,8,0.18)] sm:px-7 sm:py-7"
       >
-        <span class="text-4xl select-none transition-all duration-300 group-hover:brightness-125 group-hover:scale-110 shrink-0">
-          <img :src="gameIcon(minigame.name)" alt="" class="w-24">
-        </span>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(250,204,21,0.16),transparent_32%),linear-gradient(135deg,rgba(99,102,241,0.12),transparent_42%)]"></div>
 
-        <div class="flex-1 min-w-0">
-          <p class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 font-righteous">
-            {{ minigame.name }}
-          </p>
-          <p class="text-sm text-slate-400 mt-0.5">{{ minigame.description }}</p>
+        <div class="relative flex min-h-[250px] flex-col justify-between gap-7">
+          <div class="flex items-start gap-4">
+            <span class="inline-flex items-center rounded-full border border-yellow-400/35 bg-yellow-400/10 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-wide text-yellow-200">
+              Recomendado para ti
+            </span>
+          </div>
+
+          <div class="flex items-center gap-4 sm:gap-5">
+            <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/8 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24">
+              <img :src="IMAGES.quiz" alt="" class="h-14 w-14 object-contain sm:h-16 sm:w-16" />
+            </div>
+
+            <div class="min-w-0">
+              <h3 class="font-righteous text-2xl font-black leading-tight text-white sm:text-3xl">Quiz</h3>
+              <p class="mt-2 max-w-md text-sm leading-relaxed text-indigo-100/85 sm:text-base">
+                Pon a prueba tu conocimiento del tema.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="inline-flex h-14 w-full items-center justify-center rounded-2xl bg-indigo-600 px-5 text-center font-righteous text-base font-bold text-white shadow-lg shadow-indigo-950/30 transition-colors duration-200 hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 active:scale-[0.99] sm:text-lg"
+            @click="goToGame('Quiz')"
+          >
+            {{ gameButtonText('Quiz') }}
+          </button>
         </div>
+      </article>
 
-        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold font-righteous bg-indigo-600/80 hover:bg-indigo-500 text-white transition-colors duration-200 pointer-events-none">
-          {{ gameButtonText(minigame.name) }}
+      <div class="flex items-center justify-between gap-3 pt-2">
+        <h3 class="font-righteous text-sm font-bold text-indigo-200 sm:text-base">Todos los modos</h3>
+        <button
+          type="button"
+          class="inline-flex h-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-4 font-righteous text-sm font-bold text-white transition-colors duration-200 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+          @click="goToProgress"
+        >
+          Ver progreso
         </button>
       </div>
 
-      <div
-        class="group relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 items-center px-4 sm:px-7 py-6 rounded-2xl bg-slate-800/50 backdrop-blur-md border border-yellow-500/40 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-yellow-400/70 hover:shadow-[0_8px_32px_rgba(234,179,8,0.18)]"
-        @click="goToMultiplayer"
-      >
-        <span class="text-4xl select-none transition-all duration-300 group-hover:brightness-125 group-hover:scale-110 shrink-0">
-          <img :src="IMAGES.multi" alt="" class="w-24">
-        </span>
-        <div class="flex-1 min-w-0">
-          <p class="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-yellow-300 to-amber-400 font-righteous">
-            Multijugador
-          </p>
-          <p class="text-sm text-slate-400 mt-0.5">Compite con otros jugadores en tiempo real.</p>
-        </div>
-        <button class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold font-righteous bg-yellow-500/80 hover:bg-yellow-400 text-gray-900 transition-colors duration-200 pointer-events-none">
-          Jugar ->
-        </button>
+      <div class="flex flex-col gap-3">
+        <article
+          v-for="mode in modes"
+          :key="mode.name"
+          class="group relative grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-3xl border px-4 py-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 sm:gap-4 sm:px-5 sm:py-5"
+          :class="mode.cardClass"
+          @click="mode.action"
+        >
+          <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/8 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 sm:h-[72px] sm:w-[72px]">
+            <img :src="mode.image" alt="" class="h-11 w-11 object-contain sm:h-12 sm:w-12" />
+          </div>
+
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <h4 class="font-righteous text-lg font-black leading-tight text-white sm:text-xl">{{ mode.name }}</h4>
+              <span
+                v-if="mode.badge"
+                class="rounded-full bg-emerald-400/15 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-300"
+              >
+                {{ mode.badge }}
+              </span>
+            </div>
+            <p class="mt-1 text-xs leading-snug text-indigo-100/75 sm:text-sm">{{ mode.description }}</p>
+          </div>
+
+          <button
+            type="button"
+            class="pointer-events-none inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-600/45 text-xl font-bold text-white transition-colors duration-200 group-hover:bg-indigo-500/70"
+            aria-hidden="true"
+          >
+            ->
+          </button>
+        </article>
       </div>
 
       <div
@@ -74,7 +127,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '@/api/axios'
 import { IMAGES } from '@/utils/imgBucketStorage'
 
 const props = defineProps({
@@ -94,79 +146,73 @@ const props = defineProps({
 
 const router = useRouter()
 
-const DEFAULT_MINIGAMES = [
-  { id: 1, name: 'Quiz', description: 'Pon a prueba tu conocimiento del tema.' },
-  { id: 2, name: 'FlashCards', description: 'Practica y repasa mediante tarjetas sobre el tema que prefieras.' },
-]
-
-const minigames = ref([])
 const isLoading = ref(true)
 const noSelectionWarning = ref(false)
 
-const PDF_GAMES = ['Quiz', 'FlashCards']
+const modes = [
+  {
+    name: 'Quiz',
+    description: 'Pon a prueba tu conocimiento del tema.',
+    image: IMAGES.quiz,
+    badge: 'mejor hoy',
+    cardClass: 'border-yellow-400/40 bg-slate-900/70 hover:border-yellow-300/70 hover:shadow-[0_12px_34px_rgba(234,179,8,0.15)]',
+    action: () => goToGame('Quiz'),
+  },
+  {
+    name: 'FlashCards',
+    description: 'Practica y repasa mediante tarjetas sobre el tema que prefieras.',
+    image: IMAGES.cards,
+    cardClass: 'border-slate-700/55 bg-slate-900/60 hover:border-indigo-400/55 hover:shadow-[0_12px_34px_rgba(99,102,241,0.14)]',
+    action: () => goToGame('FlashCards'),
+  },
+  {
+    name: 'Multijugador',
+    description: 'Compite con otros jugadores en tiempo real.',
+    image: IMAGES.multi,
+    cardClass: 'border-slate-700/55 bg-slate-900/60 hover:border-yellow-400/55 hover:shadow-[0_12px_34px_rgba(234,179,8,0.14)]',
+    action: () => goToMultiplayer(),
+  },
+]
 
-function gameIcon(name) {
-  switch (name) {
-    case 'Quiz':
-      return IMAGES.quiz
-    case 'FlashCards':
-      return IMAGES.cards
-    case 'Multiplayer':
-      return IMAGES.multi
-    default:
-      return IMAGES.defaultIcon
-  }
-}
-
-function isPdfGame(name) {
-  return PDF_GAMES.includes(name)
-}
-
-function gameButtonText(name) {
-  if (!isPdfGame(name)) return 'Empezar ->'
+function gameButtonText() {
   const hasPdfs = props.selectedFiles.length > 0
   const hasPredefined = props.selectedPredefined
   if (hasPdfs && hasPredefined) return 'Estudiar Mixto ->'
   if (hasPdfs) return 'Estudiar mis PDFs ->'
-  if (hasPredefined) return 'Estudiar ->'
+  if (hasPredefined) return 'Empezar quiz ->'
   return 'Selecciona contenido ->'
 }
 
-onMounted(async () => {
-  try {
-    const res = await api.get('/activities')
-    minigames.value = res.data?.length ? res.data : DEFAULT_MINIGAMES
-  } catch (err) {
-    console.error('Error al cargar los minijuegos, usando datos por defecto', err)
-    minigames.value = DEFAULT_MINIGAMES
-  } finally {
-    isLoading.value = false
-  }
+onMounted(() => {
+  isLoading.value = false
 })
 
+function goToProgress() {
+  document.getElementById('seccion-estadisticas')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 function goToMultiplayer() {
+  isLoading.value = true
   router.push({ path: '/multiplayer/' })
 }
 
 function goToGame(name) {
-  if (isPdfGame(name)) {
-    const hasPdfs = props.selectedFiles.length > 0
-    const hasPredefined = props.selectedPredefined
-    if (!hasPdfs && !hasPredefined) {
-      noSelectionWarning.value = true
-      return
-    }
-    noSelectionWarning.value = false
-    isLoading.value = true
-    const query = { game: name }
-    if (hasPdfs) {
-      query.pdfIds = props.selectedFiles.join(',')
-      if (hasPredefined) query.includePredefined = 'true'
-    }
-    router.push({ path: '/in-game-view/', query })
-  } else {
-    isLoading.value = true
-    router.push({ path: '/in-game-view/', query: { game: name } })
+  const hasPdfs = props.selectedFiles.length > 0
+  const hasPredefined = props.selectedPredefined
+  if (!hasPdfs && !hasPredefined) {
+    noSelectionWarning.value = true
+    return
   }
+
+  noSelectionWarning.value = false
+  isLoading.value = true
+
+  const query = { game: name }
+  if (hasPdfs) {
+    query.pdfIds = props.selectedFiles.join(',')
+    if (hasPredefined) query.includePredefined = 'true'
+  }
+
+  router.push({ path: '/in-game-view/', query })
 }
 </script>
