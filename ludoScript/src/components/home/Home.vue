@@ -4,7 +4,6 @@
     <Tutorial class="w-full" />
     <div class="flex md:hidden border-b border-blue-900/40 bg-slate-950/95 px-4 py-3 z-20">
       <div class="relative flex w-full items-center justify-between">
-        <h2 class="text-sm font-righteous text-white">Modos de estudio</h2>
         <button type="button"
           class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-indigo-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           aria-label="Abrir menu de paneles" :aria-expanded="mobileMenuOpen" @click="mobileMenuOpen = !mobileMenuOpen">
@@ -56,15 +55,7 @@
       <div class="w-full max-w-[430px] md:max-w-2xl px-3.5 md:px-8">
         <h2 class="hidden md:block text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos
           de estudio</h2>
-        <div :class="[
-          'mb-3 md:mb-8 px-3.5 md:px-5 py-2 md:py-3 rounded-2xl text-sm font-medium flex items-center gap-2.5 md:gap-3 border transition-all shadow-lg',
-          selectedFiles.length > 0 || selectedPredefined
-            ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
-            : 'bg-amber-500/10 border-amber-500/40 text-amber-200'
-        ]">
-          <span class="text-lg md:text-xl">{{ modeIcon }}</span>
-          <p class="leading-tight">{{ modeLabel }}</p>
-        </div>
+
         <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined"
           @view-progress="showProgressPanel" />
       </div>
