@@ -2,36 +2,26 @@
   <main class="relative h-full w-full overflow-hidden flex flex-col md:flex-row" @mousemove="onDrag" @mouseup="stopDrag"
     @mouseleave="stopDrag">
     <Tutorial class="w-full" />
-    <div class="flex md:hidden shrink-0 border-b border-blue-900/40 bg-slate-950/95 px-4 py-3 z-20">
+    <div class="flex md:hidden border-b border-blue-900/40 bg-slate-950/95 px-4 py-3 z-20">
       <div class="relative flex w-full items-center justify-between">
         <h2 class="text-sm font-righteous text-white">Modos de estudio</h2>
-        <button
-          type="button"
+        <button type="button"
           class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-indigo-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-          aria-label="Abrir menu de paneles"
-          :aria-expanded="mobileMenuOpen"
-          @click="mobileMenuOpen = !mobileMenuOpen"
-        >
+          aria-label="Abrir menu de paneles" :aria-expanded="mobileMenuOpen" @click="mobileMenuOpen = !mobileMenuOpen">
           <i class="pi pi-bars text-base" />
         </button>
 
-        <div
-          v-show="mobileMenuOpen"
-          class="absolute right-0 top-12 z-40 w-56 overflow-hidden rounded-lg border border-blue-900/50 bg-slate-950 shadow-xl shadow-black/30"
-        >
-          <button
-            type="button"
+        <div v-show="mobileMenuOpen"
+          class="absolute right-0 top-12 z-40 w-56 overflow-hidden rounded-lg border border-blue-900/50 bg-slate-950 shadow-xl shadow-black/30">
+          <button type="button"
             class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-indigo-500/15"
-            @click="openMobilePanel('documents')"
-          >
+            @click="openMobilePanel('documents')">
             <i class="pi pi-cog text-indigo-300" />
-            Configuracion
+            Configuración
           </button>
-          <button
-            type="button"
+          <button type="button"
             class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-indigo-500/15"
-            @click="openMobilePanel('stats')"
-          >
+            @click="openMobilePanel('stats')">
             <i class="pi pi-chart-line text-indigo-300" />
             Tu progreso
           </button>
@@ -39,20 +29,13 @@
       </div>
     </div>
 
-    <aside
-      :style="isMobile ? {} : { width: panelWidth + 'px' }"
-      :class="[
-        'fixed inset-y-0 left-0 z-30 w-full border-b border-blue-900/40 bg-slate-950 px-4 py-4 overflow-y-auto flex flex-col transition-transform duration-300 ease-out md:static md:z-auto md:shrink-0 md:border-b-0 md:border-r md:bg-blue-900/20 md:py-6 md:transition-all md:max-h-full',
-        openMobilePanelId === 'documents' ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-      ]"
-      id="seccion-documentos"
-    >
-      <button
-        type="button"
+    <aside :style="isMobile ? {} : { width: panelWidth + 'px' }" :class="[
+      'fixed inset-y-0 left-0 z-30 w-full border-b border-blue-900/40 bg-slate-950 px-4 py-4 overflow-y-auto flex flex-col transition-transform duration-300 ease-out md:static md:z-auto md:shrink-0 md:border-b-0 md:border-r md:bg-blue-900/20 md:py-6 md:transition-all md:max-h-full',
+      openMobilePanelId === 'documents' ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+    ]" id="seccion-documentos">
+      <button type="button"
         class="md:hidden absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-slate-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-        aria-label="Ocultar configuracion"
-        @click="closeMobilePanel"
-      >
+        aria-label="Ocultar configuracion" @click="closeMobilePanel">
         <i class="pi pi-times text-sm" />
       </button>
       <div class="flex items-center justify-between pr-12 md:pr-0 md:mb-4 mb-2">
@@ -67,11 +50,12 @@
       class="hidden md:block w-1.5 shrink-0 cursor-col-resize hover:bg-indigo-500/40 active:bg-indigo-500/70 transition-colors"
       @mousedown.prevent="startDrag" />
 
-    <section class="flex-1 flex flex-col justify-center overflow-y-auto items-center py-4 md:py-8 min-w-0 bg-[radial-gradient(circle_at_top,#1e1b4b_0%,#0f172a_42%,#020617_100%)] md:bg-slate-900/20"
+    <section
+      class="flex-1 flex flex-col overflow-y-auto items-center py-4 md:py-8 min-w-0 bg-[radial-gradient(circle_at_top,#1e1b4b_0%,#0f172a_42%,#020617_100%)] md:bg-slate-900/20"
       id="seccion-juegos">
-      <div class="w-full max-w-[430px] md:max-w-2xl m-auto px-3.5 md:px-8">
-        <h2 class="md:hidden text-xl font-righteous text-white mb-3 leading-none">Modos de estudio</h2>
-        <h2 class="hidden md:block text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos de estudio</h2>
+      <div class="w-full max-w-[430px] md:max-w-2xl px-3.5 md:px-8">
+        <h2 class="hidden md:block text-2xl md:text-3xl font-righteous text-white mb-6 text-center md:text-left">Modos
+          de estudio</h2>
         <div :class="[
           'mb-3 md:mb-8 px-3.5 md:px-5 py-2 md:py-3 rounded-2xl text-sm font-medium flex items-center gap-2.5 md:gap-3 border transition-all shadow-lg',
           selectedFiles.length > 0 || selectedPredefined
@@ -81,28 +65,18 @@
           <span class="text-lg md:text-xl">{{ modeIcon }}</span>
           <p class="leading-tight">{{ modeLabel }}</p>
         </div>
-        <GameGrid
-          :selectedFiles="selectedFiles"
-          :pdfCount="pdfCount"
-          :selectedPredefined="selectedPredefined"
-          @view-progress="showProgressPanel"
-        />
+        <GameGrid :selectedFiles="selectedFiles" :pdfCount="pdfCount" :selectedPredefined="selectedPredefined"
+          @view-progress="showProgressPanel" />
       </div>
     </section>
 
-    <aside
-      :class="[
-        'fixed inset-y-0 right-0 z-30 w-full shrink-0 border-t border-blue-900/40 px-5 py-6 overflow-y-auto bg-slate-950 shadow-inner transition-transform duration-300 ease-out md:static md:z-auto md:w-80 md:border-t-0 md:border-l md:bg-blue-900/20 md:translate-x-0',
-        openMobilePanelId === 'stats' ? 'translate-x-0' : 'translate-x-full md:translate-x-0',
-      ]"
-      id="seccion-estadisticas"
-    >
-      <button
-        type="button"
+    <aside :class="[
+      'fixed inset-y-0 right-0 z-30 w-full shrink-0 border-t border-blue-900/40 px-5 py-6 overflow-y-auto bg-slate-950 shadow-inner transition-transform duration-300 ease-out md:static md:z-auto md:w-80 md:border-t-0 md:border-l md:bg-blue-900/20 md:translate-x-0',
+      openMobilePanelId === 'stats' ? 'translate-x-0' : 'translate-x-full md:translate-x-0',
+    ]" id="seccion-estadisticas">
+      <button type="button"
         class="md:hidden absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-blue-900/50 bg-blue-900/30 text-slate-200 transition-colors hover:bg-blue-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-        aria-label="Ocultar progreso"
-        @click="closeMobilePanel"
-      >
+        aria-label="Ocultar progreso" @click="closeMobilePanel">
         <i class="pi pi-times text-sm" />
       </button>
       <div class="max-w-2xl mx-auto pr-12 md:w-full md:pr-0">
