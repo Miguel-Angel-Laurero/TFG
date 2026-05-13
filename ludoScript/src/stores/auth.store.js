@@ -3,7 +3,6 @@ import { ref, computed } from "vue";
 import { authService } from "@/api/auth.service";
 import router from "@/router/router";
 import { resetSessionTracker } from "@/composables/useSessionTracker";
-import { useTutorialStore } from "@/stores/tutorial.store";
 
 export const useAuthStore = defineStore("auth", () => {
   const user = ref(null);
@@ -89,10 +88,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { data } = await authService.me();
       user.value = data;
       userData.value = data.userData;
-      console.log(userData.value)
-      const tutorial = useTutorialStore();
-      // Usamos el campo 'first_login' que viene de la BBDD
-      tutorial.initTutorial(userData.value?.first_login);
+      console.log(userData.value);
     } catch (e) {
       if (e.response?.status === 401) logout();
     } finally {
