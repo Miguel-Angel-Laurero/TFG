@@ -61,9 +61,10 @@
       </div>
 
       <div class="flex flex-col gap-3">
-        <article v-for="mode in modes" :key="mode.name"
-          class="group relative grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-3xl border px-4 py-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 sm:gap-4 sm:px-5 sm:py-5"
-          :class="mode.cardClass" @click="mode.action">
+        <article v-for="mode in modes" :key="mode.name" role="button" tabindex="0"
+          class="group relative grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-3 rounded-3xl border px-4 py-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-yellow-300/70 focus:ring-offset-2 focus:ring-offset-slate-950 sm:gap-4 sm:px-5 sm:py-5"
+          :class="mode.cardClass" @click="mode.action" @keydown.enter.prevent="mode.action"
+          @keydown.space.prevent="mode.action">
           <div
             class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/8 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 sm:h-[72px] sm:w-[72px]">
             <img :src="mode.image" alt="" class="h-11 w-11 object-contain sm:h-12 sm:w-12" />
@@ -80,11 +81,11 @@
             <p class="mt-1 text-xs leading-snug text-indigo-100/75 sm:text-sm">{{ mode.description }}</p>
           </div>
 
-          <button type="button"
-            class="pointer-events-none inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-600/45 text-xl font-bold text-white transition-colors duration-200 group-hover:bg-indigo-500/70"
+          <div
+            class="pointer-events-none inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-600/45 text-white ring-1 ring-white/10 transition-all duration-200 group-hover:translate-x-1 group-hover:bg-indigo-500/70 group-hover:ring-indigo-200/30"
             aria-hidden="true">
-            ->
-          </button>
+            <i class="pi pi-arrow-right text-base"></i>
+          </div>
         </article>
       </div>
 

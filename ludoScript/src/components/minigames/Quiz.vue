@@ -34,28 +34,45 @@
 
       <!-- Botón adaptativo: visible siempre, desbloqueado tras 3 partidas desde el último uso -->
       <div class="flex flex-col gap-2">
-        <!-- Progreso hacia el desbloqueo -->
-        <div v-if="!canUseAdaptive" class="bg-white/10 rounded-xl px-4 py-3">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-white/70 text-xs font-medium">Desbloquear modo adaptativo</span>
-            <span class="text-white font-bold text-sm">
-              {{ historyLoading ? '…' : gamesSinceLastAdaptive }}<span class="text-white/50 font-normal">/3
-                partidas</span>
+        <button class="adaptive-btn" :class="{ 'adaptive-btn--locked': !canUseAdaptive }" @click="handleAdaptiveClick"
+          :disabled="!canUseAdaptive"
+          aria-label="Empezar modo refuerzo con preguntas según tus errores recientes">
+          <span class="adaptive-top">
+            <span class="adaptive-badge">
+              <i :class="canUseAdaptive ? 'pi pi-bullseye' : 'pi pi-clock'"></i>
+              {{ canUseAdaptive ? 'Adaptativo' : 'Recarga' }}
+            </span>
+            <span class="adaptive-arrow">
+              <span aria-hidden="true">→</span>
+            </span>
+          </span>
+
+          <h2 class="adaptive-title">
+            {{ canUseAdaptive ? 'Modo refuerzo' : 'Refuerzo en recarga' }}
+          </h2>
+
+          <p class="adaptive-copy">
+            {{ canUseAdaptive
+              ? 'Preguntas elegidas según tus errores recientes.'
+              : 'Juega 3 partidas normales para volver a usarlo.' }}
+          </p>
+
+          <div v-if="!canUseAdaptive" class="adaptive-recharge">
+            <div class="adaptive-recharge-row">
+              <span>Recarga: {{ adaptiveRechargeLabel }}</span>
+              <span>{{ adaptiveRechargePercent }}%</span>
+            </div>
+            <div class="adaptive-recharge-track">
+              <div class="adaptive-recharge-fill" :style="{ width: `${adaptiveRechargePercent}%` }" />
+            </div>
+          </div>
+
+          <div class="adaptive-foot">
+            <span class="adaptive-dot"></span>
+            <span>
+              {{ canUseAdaptive ? 'No cambia tus partidas normales' : 'El modo normal sigue usando preguntas aleatorias' }}
             </span>
           </div>
-          <div class="w-full bg-white/10 rounded-full h-2">
-            <div class="bg-indigo-400 h-2 rounded-full transition-all duration-500"
-              :style="{ width: historyLoading ? '0%' : `${Math.min(100, (gamesSinceLastAdaptive / 3) * 100)}%` }" />
-          </div>
-        </div>
-
-        <button @click="handleAdaptiveClick" :disabled="!canUseAdaptive" :class="[
-          'w-full py-3 px-8 rounded-xl font-bold transition-all',
-          canUseAdaptive
-            ? 'bg-indigo-800 hover:bg-indigo-500 text-white cursor-pointer'
-            : 'bg-white/10 text-white/40 cursor-not-allowed'
-        ]">
-          🎯 Practicar categorías débiles
         </button>
       </div>
     </template>
@@ -197,6 +214,15 @@ const { correctCount, wrongCount, unansweredCount, scoreFormatted, scoreColor, s
 // Historial y desbloqueo adaptativo
 const { history: quizHistory, canUseAdaptive, remainingGames, gamesSinceLastAdaptive, historyLoading, loadHistory, markAdaptiveUsed, timeAgo } = useAdaptiveHistory('Quiz')
 
+const adaptiveRechargeGames = computed(() => {
+  if (historyLoading.value) return 0
+  return Math.min(3, Math.max(0, gamesSinceLastAdaptive.value ?? 0))
+})
+const adaptiveRechargeLabel = computed(() => historyLoading.value
+  ? '.../3 partidas normales'
+  : `${adaptiveRechargeGames.value}/3 partidas normales`)
+const adaptiveRechargePercent = computed(() => Math.min(100, Math.round((adaptiveRechargeGames.value / 3) * 100)))
+
 watch(finished, (v) => { if (v) { loadHistory(); finishGame(score.value) } })
 
 function handleAdaptiveClick() {
@@ -225,3 +251,153 @@ async function devSkipToResults() {
 }
 // ─────────────────────────────────────────────────────────────────────────────
 </script>
+
+<style scoped>
+.adaptive-btn {
+  position: relative;
+  width: 100%;
+  min-height: 150px;
+  border: 0;
+  border-radius: 18px;
+  padding: 18px 18px 16px;
+  cursor: pointer;
+  text-align: left;
+  color: white;
+  background:
+    radial-gradient(circle at 85% 18%, rgba(125, 249, 203, .26), transparent 22%),
+    linear-gradient(145deg, #4f46e5, #312eaa);
+  box-shadow: 0 18px 42px rgba(49, 46, 170, .34);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  overflow: hidden;
+}
+
+.adaptive-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 52px rgba(49, 46, 170, .45);
+  filter: brightness(1.04);
+}
+
+.adaptive-btn:active {
+  transform: translateY(0);
+}
+
+.adaptive-btn--locked {
+  cursor: not-allowed;
+  background:
+    radial-gradient(circle at 85% 18%, rgba(148, 163, 184, .16), transparent 22%),
+    linear-gradient(145deg, #4338ca, #1e1b4b);
+  opacity: .78;
+}
+
+.adaptive-btn--locked:hover {
+  transform: none;
+  box-shadow: 0 18px 42px rgba(49, 46, 170, .34);
+  filter: none;
+}
+
+.adaptive-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.adaptive-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .13);
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: #dbeafe;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.adaptive-badge i {
+  color: #fda4af;
+  font-size: 10px;
+}
+
+.adaptive-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, .15);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.adaptive-title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.05;
+  font-weight: 950;
+  letter-spacing: -.03em;
+}
+
+.adaptive-copy {
+  margin: 10px 0 0;
+  max-width: 190px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, .78);
+  font-weight: 650;
+}
+
+.adaptive-foot {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #bbf7d0;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.adaptive-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #86efac;
+  box-shadow: 0 0 14px #86efac;
+  flex: 0 0 auto;
+}
+
+.adaptive-recharge {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adaptive-recharge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, .8);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adaptive-recharge-track {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .15);
+}
+
+.adaptive-recharge-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #86efac;
+  transition: width .5s ease;
+}
+</style>
