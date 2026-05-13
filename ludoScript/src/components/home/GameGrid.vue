@@ -30,10 +30,31 @@
     </template>
 
     <template v-else>
-      <div class="flex items-center justify-between gap-3 pt-2">
-        <h3 class="font-righteous text-sm font-bold text-indigo-200 sm:text-base">Todos los modos</h3>
+      <div
+        class="flex flex-col gap-3 rounded-2xl border border-indigo-400/20 bg-indigo-500/10 p-3 shadow-lg shadow-indigo-950/20 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex min-w-0 items-center gap-3">
+          <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-xl ring-1 ring-indigo-300/20">
+            {{ modeIcon }}
+          </div>
+
+          <div class="min-w-0">
+            <h3 class="font-righteous text-base font-bold text-white">
+              Todos los modos
+            </h3>
+
+            <span
+              class="mt-1 inline-flex max-w-full items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide truncate"
+              :class="!props.selectedPredefined && props.selectedFiles.length === 0
+                ? 'bg-amber-500/10 border-amber-500/25 text-amber-300'
+                : 'bg-indigo-500/20 border-indigo-400/30 text-indigo-200'">
+              <span class="truncate">{{ modeLabel }}</span>
+            </span>
+          </div>
+        </div>
+
         <button type="button"
-          class="inline-flex h-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-4 font-righteous text-sm font-bold text-white transition-colors duration-200 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+          class="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 font-righteous text-sm font-bold text-white shadow-md shadow-indigo-950/30 transition hover:bg-indigo-400 active:scale-[0.98] sm:w-auto"
           @click="goToProgress">
           Ver progreso
         </button>
@@ -79,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { IMAGES } from '@/utils/imgBucketStorage'
 
@@ -104,6 +125,21 @@ const router = useRouter()
 
 const isLoading = ref(true)
 const noSelectionWarning = ref(false)
+
+const modeLabel = computed(() => {
+  const hasPdfs = props.selectedFiles.length > 0
+  const n = props.selectedFiles.length
+  if (!hasPdfs && !props.selectedPredefined) return 'Selecciona contenido'
+  if (hasPdfs && props.selectedPredefined) return `Mixto (${n} PDF)`
+  if (hasPdfs) return `Personalizado (${n})`
+  return 'Modo General'
+})
+
+const modeIcon = computed(() => {
+  const hasPdfs = props.selectedFiles.length > 0
+  if (!hasPdfs && !props.selectedPredefined) return '⚠️'
+  return hasPdfs ? '📂' : '📚'
+})
 
 const modes = [
   {
