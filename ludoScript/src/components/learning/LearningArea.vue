@@ -30,15 +30,13 @@
         </div>
 
         <!-- Mobile Navigation Header -->
-        <div
-            class="lg:hidden w-full border-b border-white/10 bg-gray-800/40 px-4 py-3 flex items-center justify-between">
-            <span class="text-white font-medium flex items-center gap-2">
-                <span>{{ selectedConcept?.emoji }}</span>
-                {{ selectedConcept?.title }}
-            </span>
-            <button @click="isMobileMenuOpen = true" class="text-gray-400 hover:text-white p-2">
+        <div class="lg:hidden w-full border-b border-white/10 bg-gray-800/40 px-4 py-3 flex items-center relative">
+            <button @click="isMobileMenuOpen = true" class="text-gray-400 hover:text-white p-2 relative z-10">
                 <i class="pi pi-bars text-xl"></i>
             </button>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span class="text-white font-medium">Conceptos</span>
+            </div>
         </div>
 
         <!-- Mobile Full-Screen Sidebar Modal -->

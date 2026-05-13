@@ -11,7 +11,7 @@
         </button>
 
         <div v-show="mobileMenuOpen"
-          class="absolute right-0 top-12 z-40 w-56 overflow-hidden rounded-lg border border-blue-900/50 bg-slate-950 shadow-xl shadow-black/30">
+          class="absolute left-0 top-12 z-40 w-56 overflow-hidden rounded-lg border border-blue-900/50 bg-slate-950 shadow-xl shadow-black/30">
           <button type="button"
             class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-indigo-500/15"
             @click="openMobilePanel('documents')">
