@@ -2,7 +2,7 @@
   <div class="relative h-full w-full overflow-x-hidden">
 
     <component :is="ConfettiBackground" v-if="showConfetti"
-      style="position: absolute; inset: 0; z-index: 0; pointer-events: none;" />
+      style="position: fixed; inset: 0; z-index: 0; pointer-events: none;" />
 
     <div class="relative z-10 flex flex-col">
 
