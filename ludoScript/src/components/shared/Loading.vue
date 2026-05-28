@@ -1,9 +1,14 @@
 <template>
   <div class="loading-overlay">
     <div class="character-container">
-      <div class="loader-sprite" :style="{ backgroundImage: `url(${IMAGES.sprite})` }"></div>
+      <div
+        class="loader-sprite"
+        :style="{ backgroundImage: `url(${IMAGES.sprite})` }"
+      />
     </div>
-    <p class="loading-text">Cargando<span>...</span></p>
+    <p class="loading-text">
+      Cargando<span>...</span>
+    </p>
   </div>
 </template>
 <script setup>

@@ -1,25 +1,41 @@
 <template>
   <div>
     <Loading v-if="loadingManual" />
-    <ActivityFinished v-else-if="finished" title="¡Repaso Completado!"
+    <ActivityFinished
+      v-else-if="finished"
+      title="¡Repaso Completado!"
       message="Has terminado todas las preguntas del temario. Sigue practicando para afianzar el contenido."
-      restart-label="Volver al principio" :earned-reward="earnedReward" @restart="handleRestart">
+      restart-label="Volver al principio"
+      :earned-reward="earnedReward"
+      @restart="handleRestart"
+    >
       <template #extra>
         <!-- Stats: cajas glassmorphism con colores intensos -->
         <div class="grid grid-cols-2 gap-3 text-white">
           <div class="bg-emerald-500/20 border border-emerald-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
-            <p class="text-3xl font-black text-emerald-300 tracking-tight">{{ correctCount }}</p>
-            <p class="text-[0.6rem] uppercase tracking-widest text-emerald-400/70">Sabías</p>
+            <p class="text-3xl font-black text-emerald-300 tracking-tight">
+              {{ correctCount }}
+            </p>
+            <p class="text-[0.6rem] uppercase tracking-widest text-emerald-400/70">
+              Sabías
+            </p>
           </div>
           <div class="bg-red-500/20 border border-red-400/25 rounded-2xl p-4 flex flex-col items-center gap-1">
-            <p class="text-3xl font-black text-red-300 tracking-tight">{{ wrongCount }}</p>
-            <p class="text-[0.6rem] uppercase tracking-widest text-red-400/70">A repasar</p>
+            <p class="text-3xl font-black text-red-300 tracking-tight">
+              {{ wrongCount }}
+            </p>
+            <p class="text-[0.6rem] uppercase tracking-widest text-red-400/70">
+              A repasar
+            </p>
           </div>
         </div>
 
         <!-- Botón adaptativo -->
         <div class="flex flex-col gap-2">
-          <div v-if="!canUseAdaptive" class="bg-white/10 rounded-xl px-4 py-3">
+          <div
+            v-if="!canUseAdaptive"
+            class="bg-white/10 rounded-xl px-4 py-3"
+          >
             <div class="flex items-center justify-between mb-2">
               <span class="text-white/70 text-xs font-medium">Desbloquea el modo adaptativo</span>
               <span class="text-white font-bold text-sm">
@@ -28,24 +44,38 @@
               </span>
             </div>
             <div class="w-full bg-white/10 rounded-full h-2">
-              <div class="bg-violet-400 h-2 rounded-full transition-all duration-500"
-                :style="{ width: historyLoading ? '0%' : `${Math.min(100, (gamesSinceLastAdaptive / 3) * 100)}%` }" />
+              <div
+                class="bg-violet-400 h-2 rounded-full transition-all duration-500"
+                :style="{ width: historyLoading ? '0%' : `${Math.min(100, (gamesSinceLastAdaptive / 3) * 100)}%` }"
+              />
             </div>
           </div>
-          <button @click="handleAdaptiveClick" :disabled="!canUseAdaptive" :class="[
-            'w-full py-3 px-8 rounded-xl font-bold transition-all',
-            canUseAdaptive
-              ? 'bg-violet-600 hover:bg-violet-500 text-white cursor-pointer'
-              : 'bg-white/10 text-white/40 cursor-not-allowed'
-          ]">
+          <button
+            :disabled="!canUseAdaptive"
+            :class="[
+              'w-full py-3 px-8 rounded-xl font-bold transition-all',
+              canUseAdaptive
+                ? 'bg-violet-600 hover:bg-violet-500 text-white cursor-pointer'
+                : 'bg-white/10 text-white/40 cursor-not-allowed'
+            ]"
+            @click="handleAdaptiveClick"
+          >
             🎯 Repasar categorías débiles
           </button>
         </div>
       </template>
     </ActivityFinished>
-    <FlashCardDeck v-else :card="currentItem" :current-index="currentIndex" :total-items="totalItems"
-      :is-flipped="isFlipped" :is-last-item="isLastItem" @flip="toggleFlip" @mark-correct="handleMarkCorrect"
-      @mark-wrong="handleMarkWrong" />
+    <FlashCardDeck
+      v-else
+      :card="currentItem"
+      :current-index="currentIndex"
+      :total-items="totalItems"
+      :is-flipped="isFlipped"
+      :is-last-item="isLastItem"
+      @flip="toggleFlip"
+      @mark-correct="handleMarkCorrect"
+      @mark-wrong="handleMarkWrong"
+    />
   </div>
 </template>
 

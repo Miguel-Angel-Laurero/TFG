@@ -1,7 +1,6 @@
 <template>
   <section class="py-20 px-6">
     <div class="max-w-3xl mx-auto text-center flex flex-col items-center gap-6">
-
       <!-- Icono decorativo -->
       <div class="w-20 h-20 rounded-full bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center text-4xl">
         ✨
@@ -35,7 +34,6 @@
       <p class="text-white/30 text-sm">
         Sin tarjeta de crédito · Gratis para empezar
       </p>
-
     </div>
   </section>
 </template>

@@ -1,24 +1,27 @@
 <template>
-    <div class="relative w-full h-full flex items-center justify-center">
-        <!-- Imagen base del personaje -->
-        <img
-            :src="IMAGES.pj"
-            alt="plantilla-pj"
-            class="max-w-full max-h-full object-contain block mx-auto"
-        />
-        <!-- Spinner mientras carga -->
-        <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
-            <div class="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-        </div>
-        <!-- Una imagen por cada slot equipado, superpuesta absolutamente -->
-        <img
-            v-for="(item, slot) in equippedItems"
-            :key="slot"
-            :src="item.equipped_img"
-            :alt="item.name"
-            class="absolute max-w-full max-h-full object-contain block mx-auto"
-        />
+  <div class="relative w-full h-full flex items-center justify-center">
+    <!-- Imagen base del personaje -->
+    <img
+      :src="IMAGES.pj"
+      alt="plantilla-pj"
+      class="max-w-full max-h-full object-contain block mx-auto"
+    >
+    <!-- Spinner mientras carga -->
+    <div
+      v-if="isLoading"
+      class="absolute inset-0 flex items-center justify-center"
+    >
+      <div class="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
     </div>
+    <!-- Una imagen por cada slot equipado, superpuesta absolutamente -->
+    <img
+      v-for="(item, slot) in equippedItems"
+      :key="slot"
+      :src="item.equipped_img"
+      :alt="item.name"
+      class="absolute max-w-full max-h-full object-contain block mx-auto"
+    >
+  </div>
 </template>
 
 <script setup>

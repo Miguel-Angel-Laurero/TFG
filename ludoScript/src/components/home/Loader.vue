@@ -1,80 +1,139 @@
 <template>
-    <div class="loader-card h-full rounded-xl mx-6 mt-6 p-6 flex flex-col gap-5">
-        
-        <!-- Header -->
-        <div>
-            <h1 class="text-white font-bold text-lg">Subida de Archivos</h1>
-            <span class="text-slate-400 text-sm">Carga tus documentos y empieza a aprender</span>
-        </div>
-
-        <Toast />
-
-        <!-- Prompt opcional -->
-        <div>
-            <label class="text-slate-400 text-xs mb-1 block">Instrucción para Gemini <span class="text-slate-600">(opcional)</span></label>
-            <textarea
-                v-model="userPrompt"
-                rows="2"
-                placeholder="Ej: Extrae las preguntas y respuestas de este documento en formato JSON"
-                class="prompt-input w-full rounded-lg px-3 py-2 text-sm text-slate-200 resize-none"
-            />
-        </div>
-
-        <!-- Drop Zone -->
-        <div
-            class="drop-zone flex-1 rounded-xl border-2 border-dashed border-slate-600 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-200"
-            :class="{ 'border-green-400 bg-green-400/5': isDragging, 'hover:border-slate-400': !isDragging }"
-            @dragover.prevent="isDragging = true"
-            @dragleave.prevent="isDragging = false"
-            @drop.prevent="onDrop"
-            @click="triggerFileInput"
-        >
-            <input ref="hiddenInput" type="file" class="hidden" @change="onFileChange" />
-
-            <template v-if="!selectedFile">
-                <div class="upload-icon-wrap rounded-2xl p-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                    </svg>
-                </div>
-                <div class="text-center">
-                    <p class="text-slate-300 text-sm font-medium">Arrastra tu archivo aquí</p>
-                    <p class="text-slate-500 text-xs mt-1">o haz clic para explorar</p>
-                </div>
-            </template>
-
-            <!-- Preview -->
-            <template v-else>
-                <div class="file-preview flex flex-col items-center gap-2">
-                    <div class="file-icon-wrap rounded-xl p-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                    </div>
-                    <p class="text-slate-200 text-sm font-semibold text-center px-2 truncate max-w-[160px]">{{ selectedFile.name }}</p>
-                    <p class="text-slate-500 text-xs">{{ (selectedFile.size / 1024).toFixed(1) }} KB</p>
-                    <button class="text-xs text-slate-500 hover:text-red-400 transition-colors" @click.stop="clearFile">✕ Quitar</button>
-                </div>
-            </template>
-        </div>
-
-        <!-- Upload Button -->
-        <button
-            class="upload-btn w-full py-3 rounded-xl font-bold text-sm transition-all duration-200"
-            :disabled="!selectedFile || isUploading"
-            @click="upload"
-        >
-            <span v-if="isUploading" class="flex items-center justify-center gap-2">
-                <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                </svg>
-                Subiendo...
-            </span>
-            <span v-else>Subir archivo</span>
-        </button>
-
+  <div class="loader-card h-full rounded-xl mx-6 mt-6 p-6 flex flex-col gap-5">
+    <!-- Header -->
+    <div>
+      <h1 class="text-white font-bold text-lg">
+        Subida de Archivos
+      </h1>
+      <span class="text-slate-400 text-sm">Carga tus documentos y empieza a aprender</span>
     </div>
+
+    <Toast />
+
+    <!-- Prompt opcional -->
+    <div>
+      <label class="text-slate-400 text-xs mb-1 block">Instrucción para Gemini <span class="text-slate-600">(opcional)</span></label>
+      <textarea
+        v-model="userPrompt"
+        rows="2"
+        placeholder="Ej: Extrae las preguntas y respuestas de este documento en formato JSON"
+        class="prompt-input w-full rounded-lg px-3 py-2 text-sm text-slate-200 resize-none"
+      />
+    </div>
+
+    <!-- Drop Zone -->
+    <div
+      class="drop-zone flex-1 rounded-xl border-2 border-dashed border-slate-600 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-200"
+      :class="{ 'border-green-400 bg-green-400/5': isDragging, 'hover:border-slate-400': !isDragging }"
+      @dragover.prevent="isDragging = true"
+      @dragleave.prevent="isDragging = false"
+      @drop.prevent="onDrop"
+      @click="triggerFileInput"
+    >
+      <input
+        ref="hiddenInput"
+        type="file"
+        class="hidden"
+        @change="onFileChange"
+      >
+
+      <template v-if="!selectedFile">
+        <div class="upload-icon-wrap rounded-2xl p-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-8 h-8 text-slate-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+            />
+          </svg>
+        </div>
+        <div class="text-center">
+          <p class="text-slate-300 text-sm font-medium">
+            Arrastra tu archivo aquí
+          </p>
+          <p class="text-slate-500 text-xs mt-1">
+            o haz clic para explorar
+          </p>
+        </div>
+      </template>
+
+      <!-- Preview -->
+      <template v-else>
+        <div class="file-preview flex flex-col items-center gap-2">
+          <div class="file-icon-wrap rounded-xl p-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-7 h-7 text-purple-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+              />
+            </svg>
+          </div>
+          <p class="text-slate-200 text-sm font-semibold text-center px-2 truncate max-w-[160px]">
+            {{ selectedFile.name }}
+          </p>
+          <p class="text-slate-500 text-xs">
+            {{ (selectedFile.size / 1024).toFixed(1) }} KB
+          </p>
+          <button
+            class="text-xs text-slate-500 hover:text-red-400 transition-colors"
+            @click.stop="clearFile"
+          >
+            ✕ Quitar
+          </button>
+        </div>
+      </template>
+    </div>
+
+    <!-- Upload Button -->
+    <button
+      class="upload-btn w-full py-3 rounded-xl font-bold text-sm transition-all duration-200"
+      :disabled="!selectedFile || isUploading"
+      @click="upload"
+    >
+      <span
+        v-if="isUploading"
+        class="flex items-center justify-center gap-2"
+      >
+        <svg
+          class="animate-spin w-4 h-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8z"
+          />
+        </svg>
+        Subiendo...
+      </span>
+      <span v-else>Subir archivo</span>
+    </button>
+  </div>
 </template>
 
 <script setup>

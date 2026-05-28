@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "refactor": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash"
+    }
+  },
+  "permission": {
+    "edit": "allow",
+    "bash": "allow",
+    "skill": {
+      "*": "allow"
+    },
+    "task": {
+      "explore": "allow",
+      "general": "allow",
+      "refactor": "allow"
+    }
+  }
+}

@@ -1,32 +1,32 @@
 <template>
-    <div>
-        <AdminItemsTable
-            :items="itemStore.items"
-            :pagination="itemStore.pagination"
-            :loading="itemStore.loading"
-            :error="itemStore.error"
-            @search="handleSearch"
-            @page-change="changePage"
-            @edit="openEdit"
-            @delete="confirmDelete"
-            @create="isCreateOpen = true"
-            @clear-error="itemStore.clearError"
-        />
+  <div>
+    <AdminItemsTable
+      :items="itemStore.items"
+      :pagination="itemStore.pagination"
+      :loading="itemStore.loading"
+      :error="itemStore.error"
+      @search="handleSearch"
+      @page-change="changePage"
+      @edit="openEdit"
+      @delete="confirmDelete"
+      @create="isCreateOpen = true"
+      @clear-error="itemStore.clearError"
+    />
 
-        <EditItemModal
-            v-model="isEditOpen"
-            :item="selectedItem"
-            :loading="itemStore.loading"
-            :categories="itemStore.categories"
-            @save="saveItem"
-        />
-        <CreateItemModal
-            v-model="isCreateOpen"
-            :loading="itemStore.loading"
-            :categories="itemStore.categories"
-            @save="createItem"
-        />
-    </div>
+    <EditItemModal
+      v-model="isEditOpen"
+      :item="selectedItem"
+      :loading="itemStore.loading"
+      :categories="itemStore.categories"
+      @save="saveItem"
+    />
+    <CreateItemModal
+      v-model="isCreateOpen"
+      :loading="itemStore.loading"
+      :categories="itemStore.categories"
+      @save="createItem"
+    />
+  </div>
 </template>
 
 <script setup>

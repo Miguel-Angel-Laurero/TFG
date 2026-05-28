@@ -1,176 +1,250 @@
 <template>
-    <div class="flex flex-col">
+  <div class="flex flex-col">
+    <!-- Modo contextual (badge sutil) -->
+    <div
+      v-if="modeContext && hasData"
+      class="flex items-center gap-1.5 mb-5"
+    >
+      <span
+        class="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-400/70 uppercase tracking-widest
+                   bg-indigo-500/10 border border-indigo-500/15 rounded-full px-2.5 py-0.5"
+      >
+        {{ modeContext }}
+      </span>
+    </div>
 
-        <!-- Modo contextual (badge sutil) -->
-        <div v-if="modeContext && hasData" class="flex items-center gap-1.5 mb-5">
-            <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-400/70 uppercase tracking-widest
-                   bg-indigo-500/10 border border-indigo-500/15 rounded-full px-2.5 py-0.5">
-                {{ modeContext }}
-            </span>
-        </div>
-
-        <!-- ══════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════
          ESTADO VACÍO — Onboarding
     ══════════════════════════════════════════════ -->
-        <div v-if="!loading && !hasData" class="flex flex-col items-center text-center py-4 gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/15
-                  flex items-center justify-center text-2xl">
-                📈
-            </div>
-            <div>
-                <p class="text-sm font-semibold text-white mb-2">Sin estadísticas aún</p>
-                <p class="text-[12px] text-slate-400 leading-relaxed">
-                    Completa tu primera sesión de estudio para ver cómo evoluciona tu aprendizaje.
-                </p>
-            </div>
-            <div class="w-full flex flex-col gap-2">
-                <div class="flex items-center gap-3 bg-slate-800/40 rounded-xl px-3.5 py-2.5 text-left">
-                    <span class="text-indigo-400 text-sm shrink-0">✦</span>
-                    <span class="text-[11px] text-slate-400">Tu porcentaje de aciertos por tema</span>
-                </div>
-                <div class="flex items-center gap-3 bg-slate-800/40 rounded-xl px-3.5 py-2.5 text-left">
-                    <span class="text-indigo-400 text-sm shrink-0">✦</span>
-                    <span class="text-[11px] text-slate-400">Tu racha de días consecutivos</span>
-                </div>
-                <div class="flex items-center gap-3 bg-slate-800/40 rounded-xl px-3.5 py-2.5 text-left">
-                    <span class="text-indigo-400 text-sm shrink-0">✦</span>
-                    <span class="text-[11px] text-slate-400">Sugerencias personalizadas para ti</span>
-                </div>
-            </div>
+    <div
+      v-if="!loading && !hasData"
+      class="flex flex-col items-center text-center py-4 gap-5"
+    >
+      <div
+        class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/15
+                  flex items-center justify-center text-2xl"
+      >
+        📈
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-white mb-2">
+          Sin estadísticas aún
+        </p>
+        <p class="text-[12px] text-slate-400 leading-relaxed">
+          Completa tu primera sesión de estudio para ver cómo evoluciona tu aprendizaje.
+        </p>
+      </div>
+      <div class="w-full flex flex-col gap-2">
+        <div class="flex items-center gap-3 bg-slate-800/40 rounded-xl px-3.5 py-2.5 text-left">
+          <span class="text-indigo-400 text-sm shrink-0">✦</span>
+          <span class="text-[11px] text-slate-400">Tu porcentaje de aciertos por tema</span>
         </div>
+        <div class="flex items-center gap-3 bg-slate-800/40 rounded-xl px-3.5 py-2.5 text-left">
+          <span class="text-indigo-400 text-sm shrink-0">✦</span>
+          <span class="text-[11px] text-slate-400">Tu racha de días consecutivos</span>
+        </div>
+        <div class="flex items-center gap-3 bg-slate-800/40 rounded-xl px-3.5 py-2.5 text-left">
+          <span class="text-indigo-400 text-sm shrink-0">✦</span>
+          <span class="text-[11px] text-slate-400">Sugerencias personalizadas para ti</span>
+        </div>
+      </div>
+    </div>
 
-        <!-- ══════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════
          CONTENIDO PRINCIPAL
     ══════════════════════════════════════════════ -->
-        <template v-else-if="!loading">
-
-            <!-- HERO: Aciertos -->
-            <section class="mb-7">
-                <div class="flex items-start justify-between mb-2">
-                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Aciertos</p>
-                    <span v-if="weekTrend !== null" :class="weekTrend >= 0
-                        ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-                        : 'text-red-400 bg-red-500/10 border-red-500/20'"
-                        class="text-[10px] font-semibold border rounded-full px-2 py-0.5 leading-none">
-                        {{ weekTrend >= 0 ? '+' : '' }}{{ weekTrend }}% esta semana
-                    </span>
-                </div>
-
-                <div class="flex items-baseline gap-2 mb-3">
-                    <span class="text-5xl font-extrabold text-white tabular-nums leading-none">{{ globalAccuracy
-                    }}</span>
-                    <span class="text-2xl font-bold text-slate-500">%</span>
-                    <span v-if="sessionComparison" class="text-[11px] font-medium ml-0.5"
-                        :class="sessionComparison.diff > 0 ? 'text-emerald-400' : 'text-red-400'">
-                        {{ sessionComparison.text }}
-                    </span>
-                </div>
-
-                <div class="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full transition-all duration-700"
-                        :style="{ width: globalAccuracy + '%', background: heroBarGradient }" />
-                </div>
-
-                <p class="text-[11px] text-slate-500 mt-2.5">{{ accuracyLabel }}</p>
-            </section>
-
-            <div class="border-t border-slate-700/30 mb-7" />
-
-            <!-- ANALISIS: Para ti, hoy -->
-            <section v-if="strongestCat || weakestCat" class="mb-7">
-                <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-5">Para ti, hoy</p>
-
-                <div class="flex flex-col gap-4">
-                    <!-- Punto fuerte -->
-                    <div v-if="strongestCat" class="flex items-start gap-3.5">
-                        <div class="mt-0.5 w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20
-                        flex items-center justify-center shrink-0">
-                            <span class="text-emerald-400 text-sm font-bold">↑</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-[10px] text-emerald-400/70 uppercase tracking-wider font-semibold mb-0.5">Tu
-                                punto fuerte</p>
-                            <p class="text-sm font-semibold text-white leading-tight">{{ strongestCat.label }}</p>
-                            <p class="text-[11px] text-slate-400 mt-0.5">{{ strongestCat.accuracy }}% de aciertos</p>
-                        </div>
-                    </div>
-
-                    <!-- A reforzar -->
-                    <div v-if="weakestCat" class="flex items-start gap-3.5">
-                        <div class="mt-0.5 w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20
-                        flex items-center justify-center shrink-0">
-                            <span class="text-amber-400 text-sm">◈</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-[10px] text-amber-400/70 uppercase tracking-wider font-semibold mb-0.5">A
-                                reforzar</p>
-                            <p class="text-sm font-semibold text-white leading-tight">{{ weakestCat.label }}</p>
-                            <p class="text-[11px] text-slate-400 mt-0.5">{{ weakestCat.accuracy }}% · sigue practicando
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div v-if="categoryBars.length" class="border-t border-slate-700/30 mb-7" />
-
-            <!-- POR TEMA: Barras horizontales -->
-            <section v-if="categoryBars.length" class="mb-7">
-                <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">Por tema</p>
-                <div class="flex flex-col gap-3.5">
-                    <button v-for="cat in categoryBars" :key="cat.slug"
-                        class="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-lg"
-                        @click="goToCategory(cat.slug)">
-                        <div class="flex items-center justify-between mb-1.5">
-                            <span
-                                class="text-[12px] text-slate-300 group-hover:text-white transition-colors truncate mr-2 leading-tight">
-                                {{ cat.label }}
-                            </span>
-                            <span class="text-[11px] font-semibold tabular-nums shrink-0" :style="{ color: cat.color }">
-                                {{ cat.accuracy }}%
-                            </span>
-                        </div>
-                        <div class="h-1.5 w-full bg-slate-700/40 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full transition-all duration-700"
-                                :style="{ width: cat.accuracy + '%', backgroundColor: cat.color, opacity: 0.75 }" />
-                        </div>
-                    </button>
-                </div>
-
-                <button v-if="allCategoryBars.length > 5"
-                    class="mt-4 text-[11px] text-indigo-400/60 hover:text-indigo-300 transition-colors"
-                    @click="showAllCategories = !showAllCategories">
-                    {{ showAllCategories ? 'Ver menos' : `+${allCategoryBars.length - 5} categorías más` }}
-                </button>
-            </section>
-
-            <div class="border-t border-slate-700/30 mb-5" />
-
-            <!-- RACHA: sutil, al final -->
-            <section class="flex items-center gap-4 py-1">
-                <div class="flex flex-col items-center min-w-[40px]">
-                    <span class="text-2xl font-extrabold leading-none"
-                        :class="streak > 0 ? 'text-orange-400' : 'text-slate-600'">
-                        {{ streak }}
-                    </span>
-                    <span class="text-[9px] text-slate-500 mt-0.5 uppercase tracking-widest">días</span>
-                </div>
-                <div class="border-l border-slate-700/50 pl-4 flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-white leading-tight">{{ streakTitle }}</p>
-                    <p class="text-[11px] text-slate-400 mt-0.5 leading-tight">{{ streakMessage }}</p>
-                </div>
-            </section>
-
-        </template>
-
-        <!-- SKELETON DE CARGA -->
-        <div v-if="loading" class="flex flex-col gap-5 animate-pulse">
-            <div class="h-20 bg-slate-800/40 rounded-xl" />
-            <div class="h-28 bg-slate-800/40 rounded-xl" />
-            <div class="h-24 bg-slate-800/40 rounded-xl" />
+    <template v-else-if="!loading">
+      <!-- HERO: Aciertos -->
+      <section class="mb-7">
+        <div class="flex items-start justify-between mb-2">
+          <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+            Aciertos
+          </p>
+          <span
+            v-if="weekTrend !== null"
+            :class="weekTrend >= 0
+              ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+              : 'text-red-400 bg-red-500/10 border-red-500/20'"
+            class="text-[10px] font-semibold border rounded-full px-2 py-0.5 leading-none"
+          >
+            {{ weekTrend >= 0 ? '+' : '' }}{{ weekTrend }}% esta semana
+          </span>
         </div>
 
+        <div class="flex items-baseline gap-2 mb-3">
+          <span class="text-5xl font-extrabold text-white tabular-nums leading-none">{{ globalAccuracy
+          }}</span>
+          <span class="text-2xl font-bold text-slate-500">%</span>
+          <span
+            v-if="sessionComparison"
+            class="text-[11px] font-medium ml-0.5"
+            :class="sessionComparison.diff > 0 ? 'text-emerald-400' : 'text-red-400'"
+          >
+            {{ sessionComparison.text }}
+          </span>
+        </div>
+
+        <div class="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div
+            class="h-full rounded-full transition-all duration-700"
+            :style="{ width: globalAccuracy + '%', background: heroBarGradient }"
+          />
+        </div>
+
+        <p class="text-[11px] text-slate-500 mt-2.5">
+          {{ accuracyLabel }}
+        </p>
+      </section>
+
+      <div class="border-t border-slate-700/30 mb-7" />
+
+      <!-- ANALISIS: Para ti, hoy -->
+      <section
+        v-if="strongestCat || weakestCat"
+        class="mb-7"
+      >
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-5">
+          Para ti, hoy
+        </p>
+
+        <div class="flex flex-col gap-4">
+          <!-- Punto fuerte -->
+          <div
+            v-if="strongestCat"
+            class="flex items-start gap-3.5"
+          >
+            <div
+              class="mt-0.5 w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20
+                        flex items-center justify-center shrink-0"
+            >
+              <span class="text-emerald-400 text-sm font-bold">↑</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-emerald-400/70 uppercase tracking-wider font-semibold mb-0.5">
+                Tu
+                punto fuerte
+              </p>
+              <p class="text-sm font-semibold text-white leading-tight">
+                {{ strongestCat.label }}
+              </p>
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                {{ strongestCat.accuracy }}% de aciertos
+              </p>
+            </div>
+          </div>
+
+          <!-- A reforzar -->
+          <div
+            v-if="weakestCat"
+            class="flex items-start gap-3.5"
+          >
+            <div
+              class="mt-0.5 w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20
+                        flex items-center justify-center shrink-0"
+            >
+              <span class="text-amber-400 text-sm">◈</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-amber-400/70 uppercase tracking-wider font-semibold mb-0.5">
+                A
+                reforzar
+              </p>
+              <p class="text-sm font-semibold text-white leading-tight">
+                {{ weakestCat.label }}
+              </p>
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                {{ weakestCat.accuracy }}% · sigue practicando
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div
+        v-if="categoryBars.length"
+        class="border-t border-slate-700/30 mb-7"
+      />
+
+      <!-- POR TEMA: Barras horizontales -->
+      <section
+        v-if="categoryBars.length"
+        class="mb-7"
+      >
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
+          Por tema
+        </p>
+        <div class="flex flex-col gap-3.5">
+          <button
+            v-for="cat in categoryBars"
+            :key="cat.slug"
+            class="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-lg"
+            @click="goToCategory(cat.slug)"
+          >
+            <div class="flex items-center justify-between mb-1.5">
+              <span
+                class="text-[12px] text-slate-300 group-hover:text-white transition-colors truncate mr-2 leading-tight"
+              >
+                {{ cat.label }}
+              </span>
+              <span
+                class="text-[11px] font-semibold tabular-nums shrink-0"
+                :style="{ color: cat.color }"
+              >
+                {{ cat.accuracy }}%
+              </span>
+            </div>
+            <div class="h-1.5 w-full bg-slate-700/40 rounded-full overflow-hidden">
+              <div
+                class="h-full rounded-full transition-all duration-700"
+                :style="{ width: cat.accuracy + '%', backgroundColor: cat.color, opacity: 0.75 }"
+              />
+            </div>
+          </button>
+        </div>
+
+        <button
+          v-if="allCategoryBars.length > 5"
+          class="mt-4 text-[11px] text-indigo-400/60 hover:text-indigo-300 transition-colors"
+          @click="showAllCategories = !showAllCategories"
+        >
+          {{ showAllCategories ? 'Ver menos' : `+${allCategoryBars.length - 5} categorías más` }}
+        </button>
+      </section>
+
+      <div class="border-t border-slate-700/30 mb-5" />
+
+      <!-- RACHA: sutil, al final -->
+      <section class="flex items-center gap-4 py-1">
+        <div class="flex flex-col items-center min-w-[40px]">
+          <span
+            class="text-2xl font-extrabold leading-none"
+            :class="streak > 0 ? 'text-orange-400' : 'text-slate-600'"
+          >
+            {{ streak }}
+          </span>
+          <span class="text-[9px] text-slate-500 mt-0.5 uppercase tracking-widest">días</span>
+        </div>
+        <div class="border-l border-slate-700/50 pl-4 flex-1 min-w-0">
+          <p class="text-sm font-semibold text-white leading-tight">
+            {{ streakTitle }}
+          </p>
+          <p class="text-[11px] text-slate-400 mt-0.5 leading-tight">
+            {{ streakMessage }}
+          </p>
+        </div>
+      </section>
+    </template>
+
+    <!-- SKELETON DE CARGA -->
+    <div
+      v-if="loading"
+      class="flex flex-col gap-5 animate-pulse"
+    >
+      <div class="h-20 bg-slate-800/40 rounded-xl" />
+      <div class="h-28 bg-slate-800/40 rounded-xl" />
+      <div class="h-24 bg-slate-800/40 rounded-xl" />
     </div>
+  </div>
 </template>
 
 <script setup>

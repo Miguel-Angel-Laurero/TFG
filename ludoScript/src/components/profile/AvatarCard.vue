@@ -1,11 +1,11 @@
 <template>
   <Card
-  class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900
+    class="border-2 !border-gray-50 !bg-radial from-indigo-700 from-20% to-indigo-900
          !rounded-xl !text-gray-50 w-full max-w-[300px]  max-h-[350px] mx-auto overflow-hidden flex flex-col aspect-[3/5]"
->
   >
+    >
     <template #content>
-      <Character/>
+      <Character />
     </template>
   </Card>
 </template>

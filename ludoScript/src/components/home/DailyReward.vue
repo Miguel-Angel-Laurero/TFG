@@ -1,6 +1,9 @@
 <template>
   <Transition name="fade">
-    <div v-if="showStreak" class="fixed inset-0 bg-black/60 z-40" />
+    <div
+      v-if="showStreak"
+      class="fixed inset-0 bg-black/60 z-40"
+    />
   </Transition>
 
   <Transition name="fade">

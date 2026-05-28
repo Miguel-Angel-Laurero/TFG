@@ -14,83 +14,110 @@
       <div class="animate-pulse min-h-[260px] rounded-3xl bg-slate-800/50 border border-yellow-500/25 backdrop-blur-md">
         <div class="flex h-full min-h-[260px] flex-col justify-between px-5 py-5 sm:px-7 sm:py-7">
           <div class="flex justify-between gap-4">
-            <div class="h-8 w-44 rounded-full bg-slate-700/60"></div>
-            <div class="h-5 w-20 rounded-md bg-slate-700/40"></div>
+            <div class="h-8 w-44 rounded-full bg-slate-700/60" />
+            <div class="h-5 w-20 rounded-md bg-slate-700/40" />
           </div>
           <div class="flex items-center gap-4">
-            <div class="h-20 w-20 rounded-3xl bg-slate-700/60"></div>
+            <div class="h-20 w-20 rounded-3xl bg-slate-700/60" />
             <div class="flex flex-1 flex-col gap-3">
-              <div class="h-7 w-32 rounded-md bg-slate-700/60"></div>
-              <div class="h-4 w-full max-w-72 rounded-md bg-slate-700/40"></div>
+              <div class="h-7 w-32 rounded-md bg-slate-700/60" />
+              <div class="h-4 w-full max-w-72 rounded-md bg-slate-700/40" />
             </div>
           </div>
-          <div class="h-14 rounded-2xl bg-slate-700/60"></div>
+          <div class="h-14 rounded-2xl bg-slate-700/60" />
         </div>
       </div>
     </template>
 
     <template v-else>
       <div
-        class="flex flex-col gap-3 rounded-2xl border border-indigo-400/20 bg-indigo-500/10 p-3 shadow-lg shadow-indigo-950/20 sm:flex-row sm:items-center sm:justify-between">
+        class="flex flex-col gap-3 rounded-2xl border border-indigo-400/20 bg-indigo-500/10 p-3 shadow-lg shadow-indigo-950/20 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div class="flex min-w-0 items-center gap-3">
           <div
-            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-xl ring-1 ring-indigo-300/20">
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-xl ring-1 ring-indigo-300/20"
+          >
             {{ modeIcon }}
           </div>
 
           <div class="min-w-0">
             <h3 class="font-righteous text-base font-bold text-white">
-              Todos los modos
+              Modo seleccionado
             </h3>
 
             <span
               class="mt-1 inline-flex max-w-full items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide truncate"
               :class="!props.selectedPredefined && props.selectedFiles.length === 0
                 ? 'bg-amber-500/10 border-amber-500/25 text-amber-300'
-                : 'bg-indigo-500/20 border-indigo-400/30 text-indigo-200'">
+                : 'bg-indigo-500/20 border-indigo-400/30 text-indigo-200'"
+            >
               <span class="truncate">{{ modeLabel }}</span>
             </span>
           </div>
         </div>
 
-        <button type="button"
-          class="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 font-righteous text-sm font-bold text-white shadow-md shadow-indigo-950/30 transition hover:bg-indigo-400 active:scale-[0.98] sm:w-auto"
-          @click="goToProgress">
+        <button
+          type="button"
+          class="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 font-righteous text-sm font-bold text-white shadow-md shadow-indigo-950/30 transition hover:bg-indigo-400 active:scale-[0.98] sm:hidden"
+          @click="goToProgress"
+        >
           Ver progreso
         </button>
       </div>
 
       <div class="flex flex-col gap-3">
-        <article v-for="mode in modes" :key="mode.name" role="button" tabindex="0"
+        <article
+          v-for="mode in modes"
+          :key="mode.name"
+          role="button"
+          tabindex="0"
           class="group relative grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-3 rounded-3xl border px-4 py-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-yellow-300/70 focus:ring-offset-2 focus:ring-offset-slate-950 sm:gap-4 sm:px-5 sm:py-5"
-          :class="mode.cardClass" @click="mode.action" @keydown.enter.prevent="mode.action"
-          @keydown.space.prevent="mode.action">
+          :class="mode.cardClass"
+          @click="mode.action"
+          @keydown.enter.prevent="mode.action"
+          @keydown.space.prevent="mode.action"
+        >
           <div
-            class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/8 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 sm:h-[72px] sm:w-[72px]">
-            <img :src="mode.image" alt="" class="h-11 w-11 object-contain sm:h-12 sm:w-12" />
+            class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/8 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 sm:h-[72px] sm:w-[72px]"
+          >
+            <img
+              :src="mode.image"
+              alt=""
+              class="h-11 w-11 object-contain sm:h-12 sm:w-12"
+            >
           </div>
 
           <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
-              <h4 class="font-righteous text-lg font-black leading-tight text-white sm:text-xl">{{ mode.name }}</h4>
-              <span v-if="mode.badge" class="rounded-full px-2 py-0.5 text-[10px] font-black uppercase"
-                :class="mode.badgeClass ?? 'bg-emerald-400/15 text-emerald-300'">
+              <h4 class="font-righteous text-lg font-black leading-tight text-white sm:text-xl">
+                {{ mode.name }}
+              </h4>
+              <span
+                v-if="mode.badge"
+                class="rounded-full px-2 py-0.5 text-[10px] font-black uppercase"
+                :class="mode.badgeClass ?? 'bg-emerald-400/15 text-emerald-300'"
+              >
                 {{ mode.badge }}
               </span>
             </div>
-            <p class="mt-1 text-xs leading-snug text-indigo-100/75 sm:text-sm">{{ mode.description }}</p>
+            <p class="mt-1 text-xs leading-snug text-indigo-100/75 sm:text-sm">
+              {{ mode.description }}
+            </p>
           </div>
 
           <div
             class="pointer-events-none inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-600/45 text-white ring-1 ring-white/10 transition-all duration-200 group-hover:translate-x-1 group-hover:bg-indigo-500/70 group-hover:ring-indigo-200/30"
-            aria-hidden="true">
-            <i class="pi pi-arrow-right text-base"></i>
+            aria-hidden="true"
+          >
+            <i class="pi pi-arrow-right text-base" />
           </div>
         </article>
       </div>
 
-      <div v-if="noSelectionWarning"
-        class="flex items-start gap-2 bg-amber-900/30 border border-amber-500/40 rounded-lg px-3 py-2">
+      <div
+        v-if="noSelectionWarning"
+        class="flex items-start gap-2 bg-amber-900/30 border border-amber-500/40 rounded-lg px-3 py-2"
+      >
         <span class="text-amber-400 mt-0.5">!</span>
         <p class="text-xs text-amber-300">
           Selecciona al menos un contenido (predefinido o un PDF subido) antes de empezar.
@@ -133,7 +160,7 @@ const modeLabel = computed(() => {
   if (!hasPdfs && !props.selectedPredefined) return 'Selecciona contenido'
   if (hasPdfs && props.selectedPredefined) return `Mixto (${n} PDF)`
   if (hasPdfs) return `Personalizado (${n})`
-  return 'Modo General'
+  return 'Modo General - Apuntes predefinidos'
 })
 
 const modeIcon = computed(() => {

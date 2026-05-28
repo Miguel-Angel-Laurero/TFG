@@ -1,13 +1,14 @@
 <template>
-  <div v-if="tutorial.isVisible" class="fixed inset-0 z-50 overflow-hidden">
-    
+  <div
+    v-if="tutorial.isVisible"
+    class="fixed inset-0 z-50 overflow-hidden"
+  >
     <div 
       class="absolute inset-0 transition-all duration-700 ease-in-out bg-blue-950/60 backdrop-blur-md"
       :style="{ clipPath: spotlightPath }"
-    ></div>
+    />
 
     <div class="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-8">
-      
       <div 
         class="flex flex-col items-center transition-all duration-700 ease-in-out w-full"
         :class="[
@@ -24,36 +25,85 @@
         >
 
         <div class="w-full max-w-md transition-all duration-700">
-          
-          <div v-if="tutorial.step === 0" class="text-center space-y-4 sm:space-y-5">
-            <h1 class="text-2xl sm:text-4xl font-bold text-white font-righteous">¡Hola, soy Ludo!</h1>
+          <div
+            v-if="tutorial.step === 0"
+            class="text-center space-y-4 sm:space-y-5"
+          >
+            <h1 class="text-2xl sm:text-4xl font-bold text-white font-righteous">
+              ¡Hola, soy Ludo!
+            </h1>
             <p class="text-sm sm:text-base text-gray-300">
               Bienvenido a <strong>LudoScript</strong> tu plataforma de aprendizaje. Aquí aprenderás a programar de forma entretenida y dinámica. ¿Quieres ver cómo funciona la plataforma?
             </p>
             <div class="flex flex-col sm:flex-row gap-3">
-              <button @click="tutorial.closeTutorial()" class="order-2 sm:order-1 flex-1 py-3 px-6 rounded-xl bg-gray-800 text-gray-300 cursor-pointer text-sm sm:text-base">Ahora no</button>
-              <button @click="tutorial.nextStep()" class="order-1 sm:order-2 flex-1 py-3 px-6 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer text-sm sm:text-base">¡Enséñame!</button>
+              <button
+                class="order-2 sm:order-1 flex-1 py-3 px-6 rounded-xl bg-gray-800 text-gray-300 cursor-pointer text-sm sm:text-base"
+                @click="tutorial.closeTutorial()"
+              >
+                Ahora no
+              </button>
+              <button
+                class="order-1 sm:order-2 flex-1 py-3 px-6 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer text-sm sm:text-base"
+                @click="tutorial.nextStep()"
+              >
+                ¡Enséñame!
+              </button>
             </div>
           </div>
 
-          <div v-else-if="tutorial.step === 1" class="text-center space-y-4 sm:space-y-5">
-            <h2 class="text-xl sm:text-2xl font-bold text-yellow-500">Documentos y categorías</h2>
-            <p class="text-sm sm:text-base text-gray-300">Aquí elegirás los temas que usarás para realizar las actividades. Selecciona entre las categorías predefinidas o usa tus propios PDFs. ¡Mira cómo se ilumina la zona izquierda!</p>
-            <button @click="tutorial.nextStep()" class="w-full py-3 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer">Siguiente</button>
+          <div
+            v-else-if="tutorial.step === 1"
+            class="text-center space-y-4 sm:space-y-5"
+          >
+            <h2 class="text-xl sm:text-2xl font-bold text-yellow-500">
+              Documentos y categorías
+            </h2>
+            <p class="text-sm sm:text-base text-gray-300">
+              Aquí elegirás los temas que usarás para realizar las actividades. Selecciona entre las categorías predefinidas o usa tus propios PDFs. ¡Mira cómo se ilumina la zona izquierda!
+            </p>
+            <button
+              class="w-full py-3 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer"
+              @click="tutorial.nextStep()"
+            >
+              Siguiente
+            </button>
           </div>
 
-          <div v-else-if="tutorial.step === 2" class="text-center sm:text-justify space-y-4 sm:space-y-5">
-            <h2 class="text-xl sm:text-2xl font-bold text-yellow-500 font-righteous">Resultados en vivo</h2>
-            <p class="text-sm sm:text-base text-gray-300">A la derecha podrás ver las estadísticas de tus últimas actividades para controlar tu progreso.</p>
-            <button @click="tutorial.nextStep()" class="w-full py-3 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer">Siguiente</button>
+          <div
+            v-else-if="tutorial.step === 2"
+            class="text-center sm:text-justify space-y-4 sm:space-y-5"
+          >
+            <h2 class="text-xl sm:text-2xl font-bold text-yellow-500 font-righteous">
+              Resultados en vivo
+            </h2>
+            <p class="text-sm sm:text-base text-gray-300">
+              A la derecha podrás ver las estadísticas de tus últimas actividades para controlar tu progreso.
+            </p>
+            <button
+              class="w-full py-3 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer"
+              @click="tutorial.nextStep()"
+            >
+              Siguiente
+            </button>
           </div>
 
-          <div v-else-if="tutorial.step === 3" class="text-center space-y-4 sm:space-y-5">
-            <h2 class="text-xl sm:text-2xl font-bold text-yellow-500">Modos de juego</h2>
-            <p class="text-sm sm:text-base text-gray-300">En la sección central podrás elegir las actividades, ponte a prueba con los test, repasa con tarjetas de memoria o enfréntate a otros usuarios en el modo multijugador.</p>
-            <button @click="tutorial.closeTutorial()" class="w-full py-3 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer">¡Quiero empezar!</button>
+          <div
+            v-else-if="tutorial.step === 3"
+            class="text-center space-y-4 sm:space-y-5"
+          >
+            <h2 class="text-xl sm:text-2xl font-bold text-yellow-500">
+              Modos de juego
+            </h2>
+            <p class="text-sm sm:text-base text-gray-300">
+              En la sección central podrás elegir las actividades, ponte a prueba con los test, repasa con tarjetas de memoria o enfréntate a otros usuarios en el modo multijugador.
+            </p>
+            <button
+              class="w-full py-3 rounded-xl bg-yellow-500 text-white font-bold cursor-pointer"
+              @click="tutorial.closeTutorial()"
+            >
+              ¡Quiero empezar!
+            </button>
           </div>
-
         </div>
       </div>
     </div>

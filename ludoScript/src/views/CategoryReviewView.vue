@@ -5,12 +5,11 @@
     </header>
 
     <main class="flex-grow max-w-3xl mx-auto w-full px-4 sm:px-6 py-8">
-
       <!-- Breadcrumb / back (Nielsen #3: user control and freedom) -->
       <button
         class="flex items-center gap-2 text-indigo-400 hover:text-indigo-200 transition-colors mb-6 text-sm"
-        @click="$router.back()"
         aria-label="Volver a inicio"
+        @click="$router.back()"
       >
         <span aria-hidden="true">&larr;</span> Volver
       </button>
@@ -22,8 +21,10 @@
             class="w-4 h-4 rounded-sm shrink-0"
             :style="{ backgroundColor: categoryColor }"
             aria-hidden="true"
-          ></span>
-          <h1 class="text-3xl font-righteous">{{ categoryLabel }}</h1>
+          />
+          <h1 class="text-3xl font-righteous">
+            {{ categoryLabel }}
+          </h1>
         </div>
         <p class="text-gray-400 text-sm">
           Repasa las preguntas que fallaste en tu ultima sesion y entiende por que la respuesta correcta es la que es.
@@ -31,7 +32,10 @@
       </div>
 
       <!-- Loading -->
-      <div v-if="loading" class="flex justify-center py-16">
+      <div
+        v-if="loading"
+        class="flex justify-center py-16"
+      >
         <span class="text-gray-500 animate-pulse">Cargando preguntas...</span>
       </div>
 
@@ -40,8 +44,13 @@
         v-else-if="failedQuestions.length === 0"
         class="flex flex-col items-center gap-4 py-20 text-center"
       >
-        <span class="text-5xl" aria-hidden="true">&#127881;</span>
-        <p class="text-xl font-semibold text-emerald-400">Sin errores en esta categoria</p>
+        <span
+          class="text-5xl"
+          aria-hidden="true"
+        >&#127881;</span>
+        <p class="text-xl font-semibold text-emerald-400">
+          Sin errores en esta categoria
+        </p>
         <p class="text-gray-400 text-sm max-w-xs">
           No cometiste ningun fallo en <strong>{{ categoryLabel }}</strong> durante tu ultima sesion.
           Sigue practicando para mantener el nivel.
@@ -55,15 +64,23 @@
       </div>
 
       <!-- Failed questions list -->
-      <ol v-else class="flex flex-col gap-6" aria-label="Preguntas falladas">
+      <ol
+        v-else
+        class="flex flex-col gap-6"
+        aria-label="Preguntas falladas"
+      >
         <li
           v-for="(q, i) in failedQuestions"
           :key="q.id"
           class="rounded-xl border border-indigo-900 bg-gray-900/80 p-6"
         >
           <!-- Question number + text -->
-          <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Pregunta {{ i + 1 }}</p>
-          <p class="font-semibold text-base mb-4 leading-relaxed">{{ q.question }}</p>
+          <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">
+            Pregunta {{ i + 1 }}
+          </p>
+          <p class="font-semibold text-base mb-4 leading-relaxed">
+            {{ q.question }}
+          </p>
 
           <!-- Options: highlight correct in green, others neutral -->
           <ul class="flex flex-col gap-2 mb-5">
@@ -86,12 +103,16 @@
 
           <!-- Explanation (Nielsen #10: help and documentation) -->
           <div class="flex gap-3 bg-indigo-950/60 border border-indigo-800 rounded-lg px-4 py-3">
-            <span class="text-indigo-400 shrink-0 mt-0.5" aria-hidden="true">&#128161;</span>
-            <p class="text-sm text-indigo-100 leading-relaxed">{{ q.explanation }}</p>
+            <span
+              class="text-indigo-400 shrink-0 mt-0.5"
+              aria-hidden="true"
+            >&#128161;</span>
+            <p class="text-sm text-indigo-100 leading-relaxed">
+              {{ q.explanation }}
+            </p>
           </div>
         </li>
       </ol>
-
     </main>
 
     <footer>

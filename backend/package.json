@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "lint": "eslint ../ --config ../eslint.config.js --ext .js --fix",
+    "format": "prettier --write \"src/**/*.js\" \"*.js\" \"config/**/*.js\" \"scripts/**/*.js\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

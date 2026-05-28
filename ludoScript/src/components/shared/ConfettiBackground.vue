@@ -1,6 +1,9 @@
 <template>
   <div class="confetti-wrapper">
-    <canvas ref="canvasRef" class="confetti-canvas" />
+    <canvas
+      ref="canvasRef"
+      class="confetti-canvas"
+    />
     <slot />
   </div>
 </template>

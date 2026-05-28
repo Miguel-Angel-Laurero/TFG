@@ -1,80 +1,123 @@
 <template>
-    <div class="border border-white/5 rounded-[2rem] overflow-hidden">
-        <div v-if="!hasActivity" class="mx-3 mt-3 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4">
-            <p class="text-sm font-bold text-white">Aún no tienes actividad reciente.</p>
-            <p class="mt-1 text-xs text-indigo-100/65">
-                Completa tu primer reto para empezar a ver tu progreso aquí.
-            </p>
-            <RouterLink to="/learning-area/"
-                class="mt-3 inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-yellow-400 px-3 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-yellow-300">
-                Ir al área de aprendizaje
-            </RouterLink>
-        </div>
-
-        <p class="px-4 pt-4 text-[11px] font-medium text-white/40">
-            Los puntos marcan días con práctica; el color indica precisión.
-        </p>
-
-        <div class="overflow-y-auto max-h-[500px] custom-scroll">
-            <div class="grid grid-cols-1 md:grid-cols-[1.7fr_1fr] gap-4 px-4 pb-4 min-w-0">
-                <div class="min-w-0">
-                    <VCalendar :attributes="calendarAttributes" :min-date="rangeStart" :max-date="rangeEnd"
-                        :first-day-of-week="2" :masks="{ weekdays: 'WWW' }" expanded borderless
-                        @dayclick="onDayClick" />
-                </div>
-
-                <transition enter-active-class="transition-all duration-200 ease-out"
-                    enter-from-class="opacity-0 -translate-y-1" leave-active-class="transition-all duration-150 ease-in"
-                    leave-to-class="opacity-0 -translate-y-1">
-                    <div v-if="selectedDay" id="day-detail"
-                        class="min-w-0 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-md font-semibold text-white">{{ selectedDay.dateLabel }}</span>
-                        </div>
-
-                        <template v-if="selectedDay.total > 0">
-                            <div class="flex flex-row flex-nowrap gap-4 items-center">
-                                <div class="flex-1 space-y-3 min-w-0 align-items">
-                                    <div class="flex justify-between text-[0.78rem] text-white/50">
-                                        <span>Número de tests</span>
-                                        <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
-                                    </div>
-                                    <div class="flex justify-between text-[0.78rem] text-white/50">
-                                        <div>Respuestas acertadas</div>
-                                        <span class="text-white/80 font-medium">
-                                            {{ selectedDay.correct }}/{{ selectedDay.total }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-center">
-                                    <div class="relative w-40 h-40">
-                                        <svg class="absolute inset-0 w-full h-full transform -rotate-90"
-                                            viewBox="0 0 100 100">
-                                            <!-- Círculo de fondo -->
-                                            <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.08)"
-                                                stroke-width="8" fill="none" />
-                                            <!-- Círculo de progreso -->
-                                            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8"
-                                                fill="none" :stroke-dasharray="`${selectedDay.percent * 2.827} 282.7`"
-                                                :class="ringColorClass(selectedDay.percent)" stroke-linecap="round" />
-                                        </svg>
-                                        <div
-                                            class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                            <span class="text-[2.2rem] font-black text-white">{{ selectedDay.percent
-                                                }}%</span>
-                                            <span
-                                                class="text-[0.6rem] uppercase tracking-[0.26em] text-white/70 -mt-0.5">Aciertos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                        <p v-else class="text-[0.8rem] text-white/30">Sin actividad registrada</p>
-                    </div>
-                </transition>
-            </div>
-        </div>
+  <div class="border border-white/5 rounded-[2rem] overflow-hidden">
+    <div
+      v-if="!hasActivity"
+      class="mx-3 mt-3 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4"
+    >
+      <p class="text-sm font-bold text-white">
+        Aún no tienes actividad reciente.
+      </p>
+      <p class="mt-1 text-xs text-indigo-100/65">
+        Completa tu primer reto para empezar a ver tu progreso aquí.
+      </p>
+      <RouterLink
+        to="/learning-area/"
+        class="mt-3 inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-yellow-400 px-3 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-yellow-300"
+      >
+        Ir al área de aprendizaje
+      </RouterLink>
     </div>
+
+    <p class="px-4 pt-4 text-[11px] font-medium text-white/40">
+      Los puntos marcan días con práctica; el color indica precisión.
+    </p>
+
+    <div class="overflow-y-auto max-h-[500px] custom-scroll">
+      <div class="grid grid-cols-1 md:grid-cols-[1.7fr_1fr] gap-4 px-4 pb-4 min-w-0">
+        <div class="min-w-0">
+          <VCalendar
+            :attributes="calendarAttributes"
+            :min-date="rangeStart"
+            :max-date="rangeEnd"
+            :first-day-of-week="2"
+            :masks="{ weekdays: 'WWW' }"
+            expanded
+            borderless
+            @dayclick="onDayClick"
+          />
+        </div>
+
+        <transition
+          enter-active-class="transition-all duration-200 ease-out"
+          enter-from-class="opacity-0 -translate-y-1"
+          leave-active-class="transition-all duration-150 ease-in"
+          leave-to-class="opacity-0 -translate-y-1"
+        >
+          <div
+            v-if="selectedDay"
+            id="day-detail"
+            class="min-w-0 bg-white/[0.05] border border-white/10 rounded-[14px] p-4 scroll-mt-4"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-md font-semibold text-white">{{ selectedDay.dateLabel }}</span>
+            </div>
+
+            <template v-if="selectedDay.total > 0">
+              <div class="flex flex-row flex-nowrap gap-4 items-center">
+                <div class="flex-1 space-y-3 min-w-0 align-items">
+                  <div class="flex justify-between text-[0.78rem] text-white/50">
+                    <span>Número de tests</span>
+                    <span class="text-white/80 font-medium">{{ selectedDay.sessions }}</span>
+                  </div>
+                  <div class="flex justify-between text-[0.78rem] text-white/50">
+                    <div>Respuestas acertadas</div>
+                    <span class="text-white/80 font-medium">
+                      {{ selectedDay.correct }}/{{ selectedDay.total }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-center">
+                  <div class="relative w-40 h-40">
+                    <svg
+                      class="absolute inset-0 w-full h-full transform -rotate-90"
+                      viewBox="0 0 100 100"
+                    >
+                      <!-- Círculo de fondo -->
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        stroke="rgba(255,255,255,0.08)"
+                        stroke-width="8"
+                        fill="none"
+                      />
+                      <!-- Círculo de progreso -->
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        stroke="currentColor"
+                        stroke-width="8"
+                        fill="none"
+                        :stroke-dasharray="`${selectedDay.percent * 2.827} 282.7`"
+                        :class="ringColorClass(selectedDay.percent)"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <div
+                      class="absolute inset-0 flex flex-col items-center justify-center text-center"
+                    >
+                      <span class="text-[2.2rem] font-black text-white">{{ selectedDay.percent
+                      }}%</span>
+                      <span
+                        class="text-[0.6rem] uppercase tracking-[0.26em] text-white/70 -mt-0.5"
+                      >Aciertos</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <p
+              v-else
+              class="text-[0.8rem] text-white/30"
+            >
+              Sin actividad registrada
+            </p>
+          </div>
+        </transition>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>

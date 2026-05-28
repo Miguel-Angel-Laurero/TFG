@@ -3,8 +3,8 @@
     <header>
       <Header />
     </header>
-    <main class="flex-grow flex items-center justify-center">
-      <div class="w-full max-w-5xl shadow-xl  border-brand-primary/30 overflow-hidden">
+    <main class="flex-grow flex items-center justify-center px-4">
+      <div class="w-full max-w-lg">
         <Login />
       </div>
     </main>
@@ -15,9 +15,9 @@
 </template>
 
 <script setup>
-  import Header from '@/components/shared/Header.vue'
-  import FooterNoLogin from '@/components/shared/FooterNoLogin.vue'
-  import Login from '@/components/auth/Login.vue'
+import Header from '@/components/shared/Header.vue'
+import FooterNoLogin from '@/components/shared/FooterNoLogin.vue'
+import Login from '@/components/auth/Login.vue'
 </script>
 
 <style scoped>

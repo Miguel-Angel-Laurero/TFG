@@ -1,51 +1,68 @@
 ﻿<template>
-    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
-        <h2 class="text-white font-semibold text-base mb-1">Mapa de progreso por area</h2>
-        <p class="text-white/50 text-xs mb-4">
-            Basado en tus respuestas del Quiz. Verde = dominas el area, rojo = necesitas repasar.
-        </p>
-        <div v-if="loading" class="flex items-center gap-2 text-white/40 text-sm py-4">
-            <span class="animate-spin inline-block w-4 h-4 border-2 border-white/30 border-t-white/80 rounded-full"></span>
-            Cargando estadisticas...
-        </div>
-        <div v-else-if="!hasData" class="text-center py-6 text-white/40 text-sm">
-            Completa el Quiz por primera vez para ver tu mapa de progreso.
-        </div>
-        <div v-else class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div
-                v-for="item in heatData"
-                :key="item.category"
-                :class="['rounded-xl p-3 flex flex-col gap-1 transition-opacity', item.bgClass, item.total === 0 ? 'opacity-40' : 'opacity-100']"
-            >
-                <span class="text-xs font-semibold text-white/90 leading-tight">{{ item.label }}</span>
-                <span v-if="item.total > 0" class="text-2xl font-extrabold text-white">
-                    {{ item.accuracyPct }}%
-                </span>
-                <span v-else class="text-lg font-bold text-white/50">-</span>
-                <span class="text-white/60 text-xs">
-                    <template v-if="item.total > 0">{{ item.correct }}/{{ item.total }} correctas</template>
-                    <template v-else>Sin intentos</template>
-                </span>
-            </div>
-        </div>
-        <div class="mt-4 flex flex-wrap gap-3 text-xs text-white/50">
-            <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>>= 90 %
-            </span>
-            <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-yellow-400 inline-block"></span>70-89 %
-            </span>
-            <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span>50-69 %
-            </span>
-            <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span>&lt; 50 %
-            </span>
-            <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-zinc-600 inline-block"></span>Sin datos
-            </span>
-        </div>
+  <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+    <h2 class="text-white font-semibold text-base mb-1">
+      Mapa de progreso por area
+    </h2>
+    <p class="text-white/50 text-xs mb-4">
+      Basado en tus respuestas del Quiz. Verde = dominas el area, rojo = necesitas repasar.
+    </p>
+    <div
+      v-if="loading"
+      class="flex items-center gap-2 text-white/40 text-sm py-4"
+    >
+      <span class="animate-spin inline-block w-4 h-4 border-2 border-white/30 border-t-white/80 rounded-full" />
+      Cargando estadisticas...
     </div>
+    <div
+      v-else-if="!hasData"
+      class="text-center py-6 text-white/40 text-sm"
+    >
+      Completa el Quiz por primera vez para ver tu mapa de progreso.
+    </div>
+    <div
+      v-else
+      class="grid grid-cols-2 sm:grid-cols-3 gap-3"
+    >
+      <div
+        v-for="item in heatData"
+        :key="item.category"
+        :class="['rounded-xl p-3 flex flex-col gap-1 transition-opacity', item.bgClass, item.total === 0 ? 'opacity-40' : 'opacity-100']"
+      >
+        <span class="text-xs font-semibold text-white/90 leading-tight">{{ item.label }}</span>
+        <span
+          v-if="item.total > 0"
+          class="text-2xl font-extrabold text-white"
+        >
+          {{ item.accuracyPct }}%
+        </span>
+        <span
+          v-else
+          class="text-lg font-bold text-white/50"
+        >-</span>
+        <span class="text-white/60 text-xs">
+          <template v-if="item.total > 0">{{ item.correct }}/{{ item.total }} correctas</template>
+          <template v-else>Sin intentos</template>
+        </span>
+      </div>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-3 text-xs text-white/50">
+      <span class="flex items-center gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block" />>= 90 %
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-yellow-400 inline-block" />70-89 %
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-orange-500 inline-block" />50-69 %
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-red-600 inline-block" />&lt; 50 %
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-zinc-600 inline-block" />Sin datos
+      </span>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue'

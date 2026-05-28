@@ -1,30 +1,30 @@
 <template>
-    <div>
-        <AdminUsersTable
-            :users="adminStore.users"
-            :pagination="adminStore.pagination"
-            :loading="adminStore.loading"
-            :error="adminStore.error"
-            @search="handleSearch"
-            @page-change="changePage"
-            @edit="openEdit"
-            @delete="confirmDelete"
-            @create="isCreateOpen = true"
-            @clear-error="adminStore.clearError"
-        />
+  <div>
+    <AdminUsersTable
+      :users="adminStore.users"
+      :pagination="adminStore.pagination"
+      :loading="adminStore.loading"
+      :error="adminStore.error"
+      @search="handleSearch"
+      @page-change="changePage"
+      @edit="openEdit"
+      @delete="confirmDelete"
+      @create="isCreateOpen = true"
+      @clear-error="adminStore.clearError"
+    />
 
-        <EditUserModal
-            v-model="isEditOpen"
-            :user="selectedUser"
-            :loading="adminStore.loading"
-            @save="saveUser"
-        />
-        <CreateUserModal
-            v-model="isCreateOpen"
-            :loading="adminStore.loading"
-            @save="createUser"
-        />
-    </div>
+    <EditUserModal
+      v-model="isEditOpen"
+      :user="selectedUser"
+      :loading="adminStore.loading"
+      @save="saveUser"
+    />
+    <CreateUserModal
+      v-model="isCreateOpen"
+      :loading="adminStore.loading"
+      @save="createUser"
+    />
+  </div>
 </template>
 
 <script setup>

@@ -1,42 +1,58 @@
 <template>
   <Teleport to="body">
     <Transition name="fade">
-      <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center px-4">
-        
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="$emit('cancel')" />
+      <div
+        v-if="visible"
+        class="fixed inset-0 z-50 flex items-center justify-center px-4"
+      >
+        <div
+          class="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          @click="$emit('cancel')"
+        />
         
         <div class="relative z-10 bg-gray-900 border border-gray-700 rounded-3xl shadow-2xl p-6 w-full max-w-[340px] flex flex-col items-center gap-4 transition-all transform">
-          
           <div class="bg-white/5 p-4 rounded-2xl">
-            <img :src="product?.img" :alt="product?.name" class="w-20 h-20 md:w-24 md:h-24 object-contain" />
+            <img
+              :src="product?.img"
+              :alt="product?.name"
+              class="w-20 h-20 md:w-24 md:h-24 object-contain"
+            >
           </div>
 
           <div class="space-y-1">
-            <h2 class="text-xl font-bold text-white text-center font-righteous">{{ product?.name }}</h2>
+            <h2 class="text-xl font-bold text-white text-center font-righteous">
+              {{ product?.name }}
+            </h2>
             <p class="text-gray-400 text-sm text-center px-2">
               ¿Confirmas la compra por
               <span class="font-bold text-yellow-400 whitespace-nowrap">{{ product?.price }} monedas</span>?
             </p>
           </div>
 
-          <div v-if="errorMsg" class="w-full bg-red-900/30 border border-red-500/50 rounded-xl px-4 py-2 text-red-400 text-xs text-center animate-shake">
+          <div
+            v-if="errorMsg"
+            class="w-full bg-red-900/30 border border-red-500/50 rounded-xl px-4 py-2 text-red-400 text-xs text-center animate-shake"
+          >
             {{ errorMsg }}
           </div>
 
           <div class="flex flex-col sm:flex-row gap-3 w-full mt-2">
             <button
               class="order-2 sm:order-1 flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold transition-all active:scale-95"
-              @click="$emit('cancel')"
               :disabled="loading"
+              @click="$emit('cancel')"
             >
               Cancelar
             </button>
             <button
               class="order-1 sm:order-2 flex-1 py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold transition-all shadow-lg shadow-teal-900/20 active:scale-95 disabled:opacity-50"
-              @click="handleConfirm"
               :disabled="loading"
+              @click="handleConfirm"
             >
-              <i v-if="loading" class="pi pi-spin pi-spinner mr-2"></i>
+              <i
+                v-if="loading"
+                class="pi pi-spin pi-spinner mr-2"
+              />
               {{ loading ? 'Procesando' : 'Comprar' }}
             </button>
           </div>

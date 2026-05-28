@@ -1,5 +1,5 @@
 ﻿<template>
-  <Toast/>
+  <Toast />
   <RouterView />
   <ConfirmDialog />
   <!-- Banner global de invitación a duelo (requiere auth) -->

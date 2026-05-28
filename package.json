@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently --names \"BACKEND,FRONTEND,LINKS\" --prefix-colors \"cyan,magenta,green\" \"npm run dev --prefix backend\" \"npm run dev --prefix ludoScript\" \"node print-urls.cjs\""
+    "dev": "concurrently --names \"BACKEND,FRONTEND,LINKS\" --prefix-colors \"cyan,magenta,green\" \"npm run dev --prefix backend\" \"npm run dev --prefix ludoScript\" \"node print-urls.cjs\"",
+    "lint": "eslint backend/ ludoScript/src/ --ext .js,.vue --fix",
+    "format": "prettier --write \"backend/**/*.js\" \"ludoScript/src/**/*.{js,vue,css}\" \"*.{js,json,cjs}\" \"scripts/**/*.js\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -12,7 +14,14 @@
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "concurrently": "^9.1.2",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.9.1",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "vue-eslint-parser": "^10.4.0",
     "wait-on": "^9.0.4"
   },
   "engines": {

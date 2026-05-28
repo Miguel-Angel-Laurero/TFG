@@ -1,62 +1,118 @@
 <template>
   <div
-    class="flex flex-col lg:grid lg:grid-cols-[2fr_6fr_2fr] items-center gap-4 px-4 md:px-6 py-4 w-full max-w-6xl mx-auto">
-
+    class="flex flex-col lg:grid lg:grid-cols-[2fr_6fr_2fr] items-center gap-4 px-4 md:px-6 py-4 w-full max-w-6xl mx-auto"
+  >
     <!-- Col 1: personaje + recompensa — oculto en móvil, visible en lg -->
     <div class="hidden lg:block">
-      <img :src="characterImage" alt="estado personaje" class="w-full h-auto">
+      <img
+        :src="characterImage"
+        alt="estado personaje"
+        class="w-full h-auto"
+      >
       <Bonus :base-coins="props.earnedReward" />
-      <div v-if="props.earnedReward > 0" class="px-10 mt-7 flex flex-col items-center gap-2">
+      <div
+        v-if="props.earnedReward > 0"
+        class="px-10 mt-7 flex flex-col items-center gap-2"
+      >
         <template v-if="rewardsStore.hasBonus && bonusResult">
-          <div class="text-white/30 text-sm line-through">+{{ bonusResult.baseAmount }} monedas</div>
+          <div class="text-white/30 text-sm line-through">
+            +{{ bonusResult.baseAmount }} monedas
+          </div>
           <div
-            class="reward-chip inline-flex items-center gap-2.5 bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold px-12 py-3 rounded-2xl text-lg tracking-tight">
+            class="reward-chip inline-flex items-center gap-2.5 bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold px-12 py-3 rounded-2xl text-lg tracking-tight"
+          >
             <span class="text-2xl font-black">+{{ bonusResult.totalAmount }}</span>
-            <img :src="IMAGES.coin" alt="moneda" class="w-8" />
+            <img
+              :src="IMAGES.coin"
+              alt="moneda"
+              class="w-8"
+            >
           </div>
         </template>
         <template v-else-if="bonusResult">
           <div
-            class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight">
+            class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-3 rounded-2xl text-lg tracking-tight"
+          >
             <span class="text-2xl font-black">+{{ bonusResult.totalAmount }}</span>
-            <img :src="IMAGES.coin" alt="moneda" class="w-8" />
+            <img
+              :src="IMAGES.coin"
+              alt="moneda"
+              class="w-8"
+            >
           </div>
         </template>
-        <p v-if="rankLabel" class="text-xs font-semibold mt-1" :class="rankColor">{{ rankLabel }}</p>
+        <p
+          v-if="rankLabel"
+          class="text-xs font-semibold mt-1"
+          :class="rankColor"
+        >
+          {{ rankLabel }}
+        </p>
       </div>
     </div>
 
     <!-- Col 2: tarjeta de resultados -->
     <div class="results-card w-full overflow-hidden">
       <div class="px-6 md:px-10 pt-2 pb-2 text-center">
-        <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-tight"
-          style="font-family: 'Righteous', sans-serif;">
+        <h1
+          class="text-xl md:text-2xl font-extrabold text-white tracking-tight"
+          style="font-family: 'Righteous', sans-serif;"
+        >
           {{ title }}
         </h1>
-        <p v-if="message" class="text-white/35 text-xs mt-2 leading-relaxed">{{ message }}</p>
+        <p
+          v-if="message"
+          class="text-white/35 text-xs mt-2 leading-relaxed"
+        >
+          {{ message }}
+        </p>
       </div>
 
       <!-- Recompensa visible solo en móvil (en lg la muestra la col 1) -->
-      <div v-if="props.earnedReward > 0" class="lg:hidden flex flex-col items-center gap-2 pt-3">
+      <div
+        v-if="props.earnedReward > 0"
+        class="lg:hidden flex flex-col items-center gap-2 pt-3"
+      >
         <template v-if="rewardsStore.hasBonus && bonusResult">
-          <div class="text-white/30 text-sm line-through">+{{ bonusResult.baseAmount }} monedas</div>
+          <div class="text-white/30 text-sm line-through">
+            +{{ bonusResult.baseAmount }} monedas
+          </div>
           <div
-            class="reward-chip inline-flex items-center gap-2.5 bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold px-8 py-2.5 rounded-2xl text-base tracking-tight">
+            class="reward-chip inline-flex items-center gap-2.5 bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold px-8 py-2.5 rounded-2xl text-base tracking-tight"
+          >
             <span class="text-xl font-black">+{{ bonusResult.totalAmount }}</span>
-            <img :src="IMAGES.coin" alt="moneda" class="w-7" />
+            <img
+              :src="IMAGES.coin"
+              alt="moneda"
+              class="w-7"
+            >
           </div>
         </template>
         <template v-else-if="bonusResult">
           <div
-            class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-2.5 rounded-2xl text-base tracking-tight">
+            class="reward-chip inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold px-6 py-2.5 rounded-2xl text-base tracking-tight"
+          >
             <span class="text-xl font-black">+{{ bonusResult.totalAmount }}</span>
-            <img :src="IMAGES.coin" alt="moneda" class="w-7" />
+            <img
+              :src="IMAGES.coin"
+              alt="moneda"
+              class="w-7"
+            >
           </div>
         </template>
-        <p v-if="rankLabel" class="text-xs font-semibold" :class="rankColor">{{ rankLabel }}</p>
+        <p
+          v-if="rankLabel"
+          class="text-xs font-semibold"
+          :class="rankColor"
+        >
+          {{ rankLabel }}
+        </p>
       </div>
 
-      <div v-if="heroScore" class="px-6 md:px-10 pt-4 md:pt-5 pb-2 text-center">
+      <div
+        v-if="heroScore"
+        class="px-6 md:px-10 pt-4 md:pt-5 pb-2 text-center"
+      >
         <p class="hero-number leading-none select-none text-white">
           {{ heroScore }}
         </p>
@@ -68,12 +124,16 @@
       <div class="mx-6 md:mx-10 border-t border-white/8 mt-5 md:mt-7 mb-4 md:mb-6" />
 
       <div class="px-6 md:px-10 pb-6 md:pb-10 flex flex-col gap-3">
-        <button @click="emit('restart')"
-          class="bg-white text-gray-950 font-bold py-3.5 px-8 rounded-2xl shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_32px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer w-full text-sm tracking-tight">
+        <button
+          class="bg-white text-gray-950 font-bold py-3.5 px-8 rounded-2xl shadow-[0_4px_24px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_32px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer w-full text-sm tracking-tight"
+          @click="emit('restart')"
+        >
           {{ restartLabel }}
         </button>
-        <button @click="$router.push('/')"
-          class="border border-white/[0.1] text-white/40 font-medium py-3 px-8 rounded-2xl hover:bg-white/[0.05] hover:text-white/60 transition-all cursor-pointer w-full text-sm">
+        <button
+          class="border border-white/[0.1] text-white/40 font-medium py-3 px-8 rounded-2xl hover:bg-white/[0.05] hover:text-white/60 transition-all cursor-pointer w-full text-sm"
+          @click="$router.push('/')"
+        >
           Volver al inicio
         </button>
       </div>
@@ -85,7 +145,6 @@
         <slot name="extra" />
       </div>
     </div>
-
   </div>
 </template>
 

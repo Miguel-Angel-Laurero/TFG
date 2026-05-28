@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col h-full overflow-hidden">
-
     <ConfirmBuyModal
       :visible="confirmVisible"
       :product="pendingProduct"
@@ -17,15 +16,25 @@
             class="flex flex-col transition-all duration-300"
             :class="{ 'opacity-50 grayscale pointer-events-none cursor-not-allowed': product.is_adquired }"
           >
-            <p class="font-bold text-xs sm:text-sm text-center truncate px-1">{{ product.name }}</p>
+            <p class="font-bold text-xs sm:text-sm text-center truncate px-1">
+              {{ product.name }}
+            </p>
 
             <div class="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center p-1 sm:p-2">
-              <img :src="product.img" :alt="product.name" class="max-w-full max-h-full object-contain" />
+              <img
+                :src="product.img"
+                :alt="product.name"
+                class="max-w-full max-h-full object-contain"
+              >
             </div>
 
             <p class="flex items-center justify-center gap-1 text-xs sm:text-sm py-1">
               {{ product.price }}
-              <img :src="IMAGES.coin" alt="Moneda de RAM" class="w-4 h-4 sm:w-5 sm:h-5 object-contain">
+              <img
+                :src="IMAGES.coin"
+                alt="Moneda de RAM"
+                class="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+              >
             </p>
 
             <button
@@ -42,7 +51,11 @@
     </section>
 
     <div class="shrink-0 border-t border-gray-200 bg-white">
-      <Paginator v-model:first="first" :rows="rows" :totalRecords="filteredProducts.length" />
+      <Paginator
+        v-model:first="first"
+        :rows="rows"
+        :total-records="filteredProducts.length"
+      />
     </div>
   </div>
 </template>

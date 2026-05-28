@@ -1,18 +1,17 @@
 <template>
   <div class="w-full border-b border-gray-200 bg-white p-2">
     <div class="flex items-center justify-between gap-4">
-      
       <div class="flex-1 max-w-xl">
         <span class="p-input-icon-left w-full">
           
-        <IconField>
-          <InputIcon class="pi pi-search" />
-          <InputText 
-            v-model="shopStore.searchQuery" 
-            placeholder="Busca un producto..." 
-            class="w-full rounded-xl bg-gray-50 border-gray-200"
-        />
-        </IconField>
+          <IconField>
+            <InputIcon class="pi pi-search" />
+            <InputText 
+              v-model="shopStore.searchQuery" 
+              placeholder="Busca un producto..." 
+              class="w-full rounded-xl bg-gray-50 border-gray-200"
+            />
+          </IconField>
         </span>
       </div>
 
@@ -20,24 +19,27 @@
         <div v-if="isMobile">
           <Button
             icon="pi pi-filter"
-            @click="drawerVisible = true"
             class="md:hidden !bg-indigo-600 !border-none !rounded-xl"
             :badge="activeFiltersCount > 0 ? activeFiltersCount.toString() : null"
+            @click="drawerVisible = true"
           />
         </div>
-        <div v-else class="hidden md:flex items-center gap-2">
+        <div
+          v-else
+          class="hidden md:flex items-center gap-2"
+        >
           <MultiSelect 
             v-model="shopStore.selectedCategories" 
             :options="mappedCategories" 
-            optionLabel="displayName" 
+            option-label="displayName" 
             placeholder="Categorías" 
             class="w-48 lg:w-64"
           />
           <Select
             v-model="shopStore.acquisitionFilter"
             :options="acquisitionOptions"
-            optionLabel="label"
-            optionValue="value"
+            option-label="label"
+            option-value="value"
             class="w-36 lg:w-44"
           />
         </div>
@@ -46,7 +48,11 @@
       <div class="shrink-0">
         <div class="bg-yellow-400 text-black font-extrabold px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-sm border-b-2 border-yellow-600">
           <span class="text-xs sm:text-sm">{{ auth.userData?.coins ?? 0 }}</span>
-          <img :src="IMAGES.coin" alt="Moneda" class="w-5 h-5">
+          <img
+            :src="IMAGES.coin"
+            alt="Moneda"
+            class="w-5 h-5"
+          >
         </div>
       </div>
     </div>
@@ -58,13 +64,12 @@
       class="md:hidden !w-full !h-full !rounded-b-3xl"
     >
       <div class="flex flex-col gap-5 pb-6">
-        
         <div class="flex flex-col gap-2">
           <label class="text-xs font-bold text-gray-400 uppercase">Categorías</label>
           <MultiSelect 
             v-model="shopStore.selectedCategories" 
             :options="mappedCategories" 
-            optionLabel="displayName" 
+            option-label="displayName" 
             placeholder="Categorías" 
             class="w-full lg:w-64"
           />
@@ -75,15 +80,24 @@
           <Select
             v-model="shopStore.acquisitionFilter"
             :options="acquisitionOptions"
-            optionLabel="label"
-            optionValue="value"
+            option-label="label"
+            option-value="value"
             class="w-full"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-3 mt-2">
-          <Button label="Limpiar" @click="clearFilters" variant="text" class="!text-gray-500" />
-          <Button label="Aplicar" @click="drawerVisible = false" class="!bg-indigo-600 !border-none" />
+          <Button
+            label="Limpiar"
+            variant="text"
+            class="!text-gray-500"
+            @click="clearFilters"
+          />
+          <Button
+            label="Aplicar"
+            class="!bg-indigo-600 !border-none"
+            @click="drawerVisible = false"
+          />
         </div>
       </div>
     </Drawer>

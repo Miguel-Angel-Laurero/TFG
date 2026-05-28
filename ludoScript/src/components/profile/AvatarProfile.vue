@@ -1,37 +1,38 @@
 <template>
-    <section ref="containerRef"
-        class="backdrop-blur-sm rounded-lg shadow-2xl p-2 flex flex-col items-center justify-center gap-3 h-full w-full overflow-hidden"
-    >
-        <div class="flex gap-2 sm:gap-4 items-center justify-center w-full max-w-2xl mx-auto p-2">
-    
-    <SlotColumn 
+  <section
+    ref="containerRef"
+    class="backdrop-blur-sm rounded-lg shadow-2xl p-2 flex flex-col items-center justify-center gap-3 h-full w-full overflow-hidden"
+  >
+    <div class="flex gap-2 sm:gap-4 items-center justify-center w-full max-w-2xl mx-auto p-2">
+      <SlotColumn 
         class="flex-1 max-w-[64px] sm:max-w-[80px]"
         :slots="LEFT_SLOTS" 
         :equipped="store.equipped" 
         :selected="store.selectedSlot" 
         @pick="store.openPicker"
-    />
+      />
 
-    <AvatarCard class="flex-2 max-w-50 sm:max-w-70" />
+      <AvatarCard class="flex-2 max-w-50 sm:max-w-70" />
 
-    <SlotColumn 
+      <SlotColumn 
         class="flex-1 max-w-[64px] sm:max-w-[80px]"
         :slots="RIGHT_SLOTS" 
         :equipped="store.equipped" 
         :selected="store.selectedSlot" 
         @pick="store.openPicker"
+      />
+    </div>
+
+    <ItemPicker
+      :slot-id="store.selectedSlot"
+      :open="!!store.selectedSlot"
+      :equipped="store.equipped"
+      :item-pool="store.itemPool"
+      :slot-names="SLOT_NAMES"
+      @close="store.openPicker(null)"
+      @select="store.selectItem" 
     />
-
-</div>
-
-        <ItemPicker
-            :slot-id="store.selectedSlot"  :open="!!store.selectedSlot"   :equipped="store.equipped"
-            :item-pool="store.itemPool"
-            :slot-names="SLOT_NAMES"
-            @close="store.openPicker(null)"
-            @select="store.selectItem" 
-        />
-    </section>
+  </section>
 </template>
 
 <script setup>

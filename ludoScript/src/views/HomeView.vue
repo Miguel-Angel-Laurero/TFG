@@ -1,18 +1,24 @@
 <template>
   <div class="h-screen flex flex-col">
     <header class="flex sticky top-0 z-10">
-      <Header/>
+      <Header />
     </header>
     <main class="flex-grow">
-      <div v-if="showAuthenticatedHome" class="h-full">
-        <DailyReward v-if="showDailyReward"/>  <!-- ← espera a ready y oculta durante tutorial -->
-        <Home/>
+      <div
+        v-if="showAuthenticatedHome"
+        class="h-full"
+      >
+        <DailyReward v-if="showDailyReward" />  <!-- ← espera a ready y oculta durante tutorial -->
+        <Home />
       </div>
-      <HomeNoLogin v-else-if="showGuestHome"/>
+      <HomeNoLogin v-else-if="showGuestHome" />
     </main>
     <footer class="bottom-0 z-10">
-      <Footer v-if="showAuthenticatedHome" class="sticky"/>
-      <FooterNoLogin v-else-if="showGuestHome"/>
+      <Footer
+        v-if="showAuthenticatedHome"
+        class="sticky"
+      />
+      <FooterNoLogin v-else-if="showGuestHome" />
     </footer>
   </div>
 </template>

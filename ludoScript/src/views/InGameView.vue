@@ -1,13 +1,13 @@
 <template>
-      <div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col">
     <header>
-      <Header/>
+      <Header />
     </header>
     <main class="flex-grow">
-        <InGame :initialGame="selectedGame" />
+      <InGame :initial-game="selectedGame" />
     </main>
     <footer>
-        <Footer/>
+      <Footer />
     </footer>
   </div>
 </template>

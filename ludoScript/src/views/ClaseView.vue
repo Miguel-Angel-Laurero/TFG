@@ -1,116 +1,199 @@
 ﻿<template>
-    <Header/>
-    <div class="w-full min-h-[80vh] p-2 md:p-4 bg-blue-950/20">
-        <!-- Volver al inicio -->
-        <!-- <div class="max-w-4xl mx-auto mb-3">
+  <Header />
+  <div class="w-full min-h-[80vh] p-2 md:p-4 bg-blue-950/20">
+    <!-- Volver al inicio -->
+    <!-- <div class="max-w-4xl mx-auto mb-3">
             <button @click="router.push('/')"
                 class="flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors">
                 <i class="pi pi-arrow-left text-xs"></i> Volver al inicio
             </button>
         </div> -->
 
-        <!-- H1: loader mientras se carga la clase -->
-        <div v-if="store.loading && !store.group" class="flex justify-center items-center h-64">
-            <div class="text-slate-400 text-sm animate-pulse">Cargando clase…</div>
-        </div>
-
-        <!-- H9: error global con texto humano -->
-        <div v-else-if="store.error && !store.group && !store.loading"
-            class="max-w-lg mx-auto mt-12 bg-red-900/30 border border-red-500/30 rounded-xl p-5 text-center">
-            <p class="text-red-300 font-semibold">{{ store.error }}</p>
-            <button @click="store.clearError(); store.fetchMyGroup()" class="mt-3 text-xs text-slate-400 underline">
-                Reintentar
-            </button>
-        </div>
-
-        <!-- Sin clase: panel de unirse / crear -->
-        <NoClasePanel v-else-if="!store.isMember" :loading="store.loading" :error="store.error" @join="handleJoin"
-            @create="handleCreate" />
-
-        <!-- Con clase -->
-        <div v-else class="flex flex-col gap-4 max-w-4xl mx-auto">
-
-            <!-- Header de la clase -->
-            <ClaseHeader :group="store.group" :member-count="store.memberCount" :is-owner="store.isOwner"
-                @openTransfer="transferModal = true" @openDissolve="dissolveModal = true"
-                @openLeave="leaveModal = true" />
-
-
-
-            <!-- H1: error localizado en la zona de stats -->
-            <div v-if="store.error"
-                class="bg-red-900/20 border border-red-500/20 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
-                <p class="text-red-300 text-sm">{{ store.error }}</p>
-                <button @click="store.clearError()"
-                    class="text-slate-400 hover:text-white text-lg leading-none">&times;</button>
-            </div>
-
-            <!-- Ranking / Stats -->
-            <div class="bg-indigo-900/20 rounded-3xl p-2 border border-white/5">
-                <div class="flex items-center justify-between px-2 pt-1 pb-3">
-                    <h3 class="text-white font-semibold text-lg">Ranking de la clase</h3>
-                    <div class="flex items-center gap-2">
-                        <!-- Botón de partida de grupo: solo visible al propietario -->
-                        <button  @click="gameSetupModal = true"
-                            class="flex items-center gap-1.5 text-xs font-bold cursor-pointer bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 px-3 py-1.5 rounded-xl transition-all">
-                            <i class="pi pi-users text-xs"></i> Jugar con la clase
-                        </button>
-                        <!-- Botón de duelo: solo visible al propietario -->
-                        <button  @click="duelModal = true"
-                            class="flex items-center gap-1.5 text-xs font-bold cursor-pointer bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-xl transition-all">
-                            <i class="pi pi-bolt text-xs"></i> Duelo 1v1
-                        </button>
-                        <button @click="store.fetchStats()" :disabled="store.loading"
-                            class="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 transition-colors cursor-pointer">
-                            🔄 Actualizar
-                        </button>
-                    </div>
-                </div>
-
-                <!-- H1: skeleton durante carga de stats -->
-                <div v-if="store.loadingStats" class="flex flex-col gap-2 px-2">
-                    <div v-for="i in 3" :key="i" class="h-16 bg-slate-700/40 rounded-xl animate-pulse"></div>
-                </div>
-
-                <ClaseStatsTable v-else :stats="store.stats" :owner-id="store.group.ownerId"
-                    :current-user-id="auth.user?.id" :is-owner="store.isOwner" @kick="openKick"
-                    @transfer="openTransfer" />
-            </div>
-        </div>
-
-        <!-- ── Modales de confirmación ─────────────────────────────────────────── -->
-
-        <!-- H5: modal de salir -->
-        <ConfirmModal v-if="leaveModal" title="¿Salir de la clase?"
-            message="Podrás unirte a otra clase o crear una nueva después." confirm-label="Salir"
-            confirm-class="bg-slate-600 hover:bg-slate-500" :loading="store.loading" @confirm="handleLeave"
-            @cancel="leaveModal = false" />
-
-        <!-- H5: modal disolver -->
-        <ConfirmModal v-if="dissolveModal" title="¿Disolver la clase?"
-            :message="`Esto eliminará '${store.group?.name}' y expulsará a todos los ${store.memberCount} miembros. Esta acción es irreversible.`"
-            confirm-label="Disolver" confirm-class="bg-red-600 hover:bg-red-500" :loading="store.loading"
-            @confirm="handleDissolve" @cancel="dissolveModal = false" />
-
-        <!-- Transferir liderazgo: selector de miembro -->
-        <TransferModal v-if="transferModal" :members="store.stats.filter(m => m.userId !== auth.user?.id)"
-            :loading="store.loading" @confirm="handleTransfer" @cancel="transferModal = false" />
-
-        <!-- Expulsar miembro -->
-        <ConfirmModal v-if="kickTarget" title="¿Expulsar miembro?"
-            :message="`¿Seguro que quieres expulsar a '${kickTarget.username}' de la clase?`" confirm-label="Expulsar"
-            confirm-class="bg-red-600 hover:bg-red-500" :loading="store.loading" @confirm="handleKick"
-            @cancel="kickTarget = null" />
-
-        <!-- Modal de duelo 1v1 -->
-        <DuelSetupModal v-if="duelModal" @close="duelModal = false" />
-
-        <!-- Modal de partida de grupo -->
-        <GroupGameSetupModal v-if="gameSetupModal" :loading="startingGroupGame"
-            @start="handleStartGroupGame" @close="gameSetupModal = false" />
-
+    <!-- H1: loader mientras se carga la clase -->
+    <div
+      v-if="store.loading && !store.group"
+      class="flex justify-center items-center h-64"
+    >
+      <div class="text-slate-400 text-sm animate-pulse">
+        Cargando clase…
+      </div>
     </div>
-    <Footer/>
+
+    <!-- H9: error global con texto humano -->
+    <div
+      v-else-if="store.error && !store.group && !store.loading"
+      class="max-w-lg mx-auto mt-12 bg-red-900/30 border border-red-500/30 rounded-xl p-5 text-center"
+    >
+      <p class="text-red-300 font-semibold">
+        {{ store.error }}
+      </p>
+      <button
+        class="mt-3 text-xs text-slate-400 underline"
+        @click="store.clearError(); store.fetchMyGroup()"
+      >
+        Reintentar
+      </button>
+    </div>
+
+    <!-- Sin clase: panel de unirse / crear -->
+    <NoClasePanel
+      v-else-if="!store.isMember"
+      :loading="store.loading"
+      :error="store.error"
+      @join="handleJoin"
+      @create="handleCreate"
+    />
+
+    <!-- Con clase -->
+    <div
+      v-else
+      class="flex flex-col gap-4 max-w-4xl mx-auto"
+    >
+      <!-- Header de la clase -->
+      <ClaseHeader
+        :group="store.group"
+        :member-count="store.memberCount"
+        :is-owner="store.isOwner"
+        @open-transfer="transferModal = true"
+        @open-dissolve="dissolveModal = true"
+        @open-leave="leaveModal = true"
+      />
+
+
+
+      <!-- H1: error localizado en la zona de stats -->
+      <div
+        v-if="store.error"
+        class="bg-red-900/20 border border-red-500/20 rounded-xl px-4 py-3 flex items-center justify-between gap-3"
+      >
+        <p class="text-red-300 text-sm">
+          {{ store.error }}
+        </p>
+        <button
+          class="text-slate-400 hover:text-white text-lg leading-none"
+          @click="store.clearError()"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Ranking / Stats -->
+      <div class="bg-indigo-900/20 rounded-3xl p-2 border border-white/5">
+        <div class="flex items-center justify-between px-2 pt-1 pb-3">
+          <h3 class="text-white font-semibold text-lg">
+            Ranking de la clase
+          </h3>
+          <div class="flex items-center gap-2">
+            <!-- Botón de partida de grupo: solo visible al propietario -->
+            <button
+              class="flex items-center gap-1.5 text-xs font-bold cursor-pointer bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 px-3 py-1.5 rounded-xl transition-all"
+              @click="gameSetupModal = true"
+            >
+              <i class="pi pi-users text-xs" /> Jugar con la clase
+            </button>
+            <!-- Botón de duelo: solo visible al propietario -->
+            <button
+              class="flex items-center gap-1.5 text-xs font-bold cursor-pointer bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-xl transition-all"
+              @click="duelModal = true"
+            >
+              <i class="pi pi-bolt text-xs" /> Duelo 1v1
+            </button>
+            <button
+              :disabled="store.loading"
+              class="text-xs text-indigo-400 hover:text-indigo-300 disabled:opacity-50 transition-colors cursor-pointer"
+              @click="store.fetchStats()"
+            >
+              🔄 Actualizar
+            </button>
+          </div>
+        </div>
+
+        <!-- H1: skeleton durante carga de stats -->
+        <div
+          v-if="store.loadingStats"
+          class="flex flex-col gap-2 px-2"
+        >
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="h-16 bg-slate-700/40 rounded-xl animate-pulse"
+          />
+        </div>
+
+        <ClaseStatsTable
+          v-else
+          :stats="store.stats"
+          :owner-id="store.group.ownerId"
+          :current-user-id="auth.user?.id"
+          :is-owner="store.isOwner"
+          @kick="openKick"
+          @transfer="openTransfer"
+        />
+      </div>
+    </div>
+
+    <!-- ── Modales de confirmación ─────────────────────────────────────────── -->
+
+    <!-- H5: modal de salir -->
+    <ConfirmModal
+      v-if="leaveModal"
+      title="¿Salir de la clase?"
+      message="Podrás unirte a otra clase o crear una nueva después."
+      confirm-label="Salir"
+      confirm-class="bg-slate-600 hover:bg-slate-500"
+      :loading="store.loading"
+      @confirm="handleLeave"
+      @cancel="leaveModal = false"
+    />
+
+    <!-- H5: modal disolver -->
+    <ConfirmModal
+      v-if="dissolveModal"
+      title="¿Disolver la clase?"
+      :message="`Esto eliminará '${store.group?.name}' y expulsará a todos los ${store.memberCount} miembros. Esta acción es irreversible.`"
+      confirm-label="Disolver"
+      confirm-class="bg-red-600 hover:bg-red-500"
+      :loading="store.loading"
+      @confirm="handleDissolve"
+      @cancel="dissolveModal = false"
+    />
+
+    <!-- Transferir liderazgo: selector de miembro -->
+    <TransferModal
+      v-if="transferModal"
+      :members="store.stats.filter(m => m.userId !== auth.user?.id)"
+      :loading="store.loading"
+      @confirm="handleTransfer"
+      @cancel="transferModal = false"
+    />
+
+    <!-- Expulsar miembro -->
+    <ConfirmModal
+      v-if="kickTarget"
+      title="¿Expulsar miembro?"
+      :message="`¿Seguro que quieres expulsar a '${kickTarget.username}' de la clase?`"
+      confirm-label="Expulsar"
+      confirm-class="bg-red-600 hover:bg-red-500"
+      :loading="store.loading"
+      @confirm="handleKick"
+      @cancel="kickTarget = null"
+    />
+
+    <!-- Modal de duelo 1v1 -->
+    <DuelSetupModal
+      v-if="duelModal"
+      @close="duelModal = false"
+    />
+
+    <!-- Modal de partida de grupo -->
+    <GroupGameSetupModal
+      v-if="gameSetupModal"
+      :loading="startingGroupGame"
+      @start="handleStartGroupGame"
+      @close="gameSetupModal = false"
+    />
+  </div>
+  <Footer />
 </template>
 
 <script setup>

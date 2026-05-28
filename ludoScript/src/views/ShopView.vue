@@ -1,13 +1,13 @@
 <template>
   <div class="h-screen flex flex-col">
     <header>
-      <Header/>
+      <Header />
     </header>
     <main class="flex-grow">
-      <Shop/>
+      <Shop />
     </main>
     <footer>
-      <Footer/>
+      <Footer />
     </footer>
   </div>
 </template>

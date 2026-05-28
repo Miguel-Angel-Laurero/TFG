@@ -5,7 +5,7 @@
 </script>
 <template>
   <div v-if="canScrollDown">
-    <i class="pi pi-angle-double-down scroll-icon"></i>
+    <i class="pi pi-angle-double-down scroll-icon" />
   </div>
 </template>
 

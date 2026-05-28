@@ -1,78 +1,78 @@
 <template>
-    <div class="min-h-[80vh] px-2 md:px-4 lg:px-6">
-
-        <!-- Header -->
-        <div class="flex items-center gap-4 mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-white">Editar Perfil</h1>
-                <p class="text-gray-400 text-sm mt-0.5">Actualiza tu nombre de usuario, tu icono y tu banner.</p>
-            </div>
-        </div>
-
-        <!-- Layout de dos columnas -->
-        <div class="flex flex-col lg:flex-row gap-6 items-start">
-
-            <!-- Columna izquierda: avatar/banner + stats -->
-            <div class=" lg:w-72 shrink-0 flex flex-col gap-4">
-                <div class="bg-blue-900/40 backdrop-blur-sm rounded-xl p-5 shadow-xl flex flex-col gap-3">
-                    <label class="text-gray-300 font-semibold text-sm">Imagen de perfil</label>
-                    <p class="text-xs text-gray-400">
-                        Se muestran tu icono y banner actuales. Usa los botones para abrir el selector.
-                    </p>
-                    <EditProfile
-                        :avatar="selectedAvatar"
-                        :banner="selectedBanner"
-                        @select-avatar="selectedAvatar = $event"
-                        @select-banner="selectedBanner = $event"
-                    />
-                </div>
-            </div>
-
-            <!-- Columna derecha: formularios -->
-            <div class="flex-1 flex flex-col gap-4">
-
-                <!-- Nombre de usuario -->
-                <div class="bg-blue-900/40 backdrop-blur-sm rounded-xl p-5 shadow-xl flex flex-col gap-3">
-                    <label class="text-gray-300 font-semibold text-sm">Nombre de usuario</label>
-                    <input
-                        v-model="newUsername"
-                        type="text"
-                        maxlength="40"
-                        class="bg-slate-700/80 text-white rounded-lg px-4 py-2 border border-slate-600 focus:outline-none focus:border-blue-400 transition-colors"
-                        placeholder="Tu nombre de usuario"
-                    />
-                </div>
-
-                <!-- Equipamiento del avatar -->
-                <div class="bg-blue-900/40 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden h-[320px] sm:h-[420px]">
-                    <div class="px-5 pt-5 pb-3">
-                        <label class="text-gray-300 font-semibold text-sm">Equipamiento del avatar</label>
-                    </div>
-                    <div class="h-[260px] sm:h-[360px]">
-                        <AvatarProfile />
-                    </div>
-                </div>
-
-                <!-- Acciones -->
-                <div class="flex justify-end gap-3 pb-4">
-                    <button
-                        @click="router.back()"
-                        class="px-5 py-2 rounded-lg text-gray-300 hover:text-white border border-slate-600 hover:border-slate-400 transition-colors"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        @click="save"
-                        :disabled="saving || loadingProfile"
-                        class="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold transition-colors"
-                    >
-                        {{ loadingProfile ? 'Cargando perfil...' : saving ? 'Guardando...' : 'Guardar cambios' }}
-                    </button>
-                </div>
-            </div>
-
-        </div>
+  <div class="min-h-[80vh] px-2 md:px-4 lg:px-6">
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white">
+          Editar Perfil
+        </h1>
+        <p class="text-gray-400 text-sm mt-0.5">
+          Actualiza tu nombre de usuario, tu icono y tu banner.
+        </p>
+      </div>
     </div>
+
+    <!-- Layout de dos columnas -->
+    <div class="flex flex-col lg:flex-row gap-6 items-start">
+      <!-- Columna izquierda: avatar/banner + stats -->
+      <div class=" lg:w-72 shrink-0 flex flex-col gap-4">
+        <div class="bg-blue-900/40 backdrop-blur-sm rounded-xl p-5 shadow-xl flex flex-col gap-3">
+          <label class="text-gray-300 font-semibold text-sm">Imagen de perfil</label>
+          <p class="text-xs text-gray-400">
+            Se muestran tu icono y banner actuales. Usa los botones para abrir el selector.
+          </p>
+          <EditProfile
+            :avatar="selectedAvatar"
+            :banner="selectedBanner"
+            @select-avatar="selectedAvatar = $event"
+            @select-banner="selectedBanner = $event"
+          />
+        </div>
+      </div>
+
+      <!-- Columna derecha: formularios -->
+      <div class="flex-1 flex flex-col gap-4">
+        <!-- Nombre de usuario -->
+        <div class="bg-blue-900/40 backdrop-blur-sm rounded-xl p-5 shadow-xl flex flex-col gap-3">
+          <label class="text-gray-300 font-semibold text-sm">Nombre de usuario</label>
+          <input
+            v-model="newUsername"
+            type="text"
+            maxlength="40"
+            class="bg-slate-700/80 text-white rounded-lg px-4 py-2 border border-slate-600 focus:outline-none focus:border-blue-400 transition-colors"
+            placeholder="Tu nombre de usuario"
+          >
+        </div>
+
+        <!-- Equipamiento del avatar -->
+        <div class="bg-blue-900/40 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden h-[320px] sm:h-[420px]">
+          <div class="px-5 pt-5 pb-3">
+            <label class="text-gray-300 font-semibold text-sm">Equipamiento del avatar</label>
+          </div>
+          <div class="h-[260px] sm:h-[360px]">
+            <AvatarProfile />
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="flex justify-end gap-3 pb-4">
+          <button
+            class="px-5 py-2 rounded-lg text-gray-300 hover:text-white border border-slate-600 hover:border-slate-400 transition-colors"
+            @click="router.back()"
+          >
+            Cancelar
+          </button>
+          <button
+            :disabled="saving || loadingProfile"
+            class="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold transition-colors"
+            @click="save"
+          >
+            {{ loadingProfile ? 'Cargando perfil...' : saving ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>

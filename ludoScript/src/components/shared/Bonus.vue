@@ -1,16 +1,26 @@
 <template>
-    <div class="mt-2 text-center">
-        <!-- Bonus activo -->
-        <div v-if="rewardsStore.hasBonus" class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
-            <p class="text-emerald-400 font-bold">¡Multiplicador de Bonus Activo!</p>
-            <p class="text-3xl font-black text-emerald-300">x{{ rewardsStore.currentMultiplier }}</p>
-        </div>
-
-        <!-- Sin bonus: muestra probabilidad actual del jugador (reactiva vía computed) -->
-        <div v-else class="text-white/60 text-[0.65rem] uppercase tracking-widest">
-            Próximo bonus en aumento: {{ bonusPercentage }}%
-        </div>
+  <div class="mt-2 text-center">
+    <!-- Bonus activo -->
+    <div
+      v-if="rewardsStore.hasBonus"
+      class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl"
+    >
+      <p class="text-emerald-400 font-bold">
+        ¡Multiplicador de Bonus Activo!
+      </p>
+      <p class="text-3xl font-black text-emerald-300">
+        x{{ rewardsStore.currentMultiplier }}
+      </p>
     </div>
+
+    <!-- Sin bonus: muestra probabilidad actual del jugador (reactiva vía computed) -->
+    <div
+      v-else
+      class="text-white/60 text-[0.65rem] uppercase tracking-widest"
+    >
+      Próximo bonus en aumento: {{ bonusPercentage }}%
+    </div>
+  </div>
 </template>
 
 <script setup>
