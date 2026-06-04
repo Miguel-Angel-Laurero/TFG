@@ -97,6 +97,15 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function logout() {
+    // Limpiar datos de sesiones en localStorage antes de borrar el usuario
+    const userId = user.value?.id;
+    if (userId) {
+      try {
+        localStorage.removeItem(`ludoscript_weeklySessions_user_${userId}`);
+        localStorage.removeItem(`ludoscript_lastSession_user_${userId}`);
+      } catch (_) { /* ignorar errores de localStorage */ }
+    }
+
     user.value = null;
     userData.value = null;
     token.value = null;

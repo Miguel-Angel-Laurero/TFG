@@ -17,7 +17,7 @@ const Game = sequelize.define("Game", {
     allowNull: false,
   },
   score: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.FLOAT,
     defaultValue: 0,
   },
   duration: {

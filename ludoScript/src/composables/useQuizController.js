@@ -76,7 +76,7 @@ export function useQuizController(opts = {}) {
             : "loss";
         await gameSvc.createGame({
           gameName: "Quiz",
-          score: Math.round(score.value),
+          score: totalItems.value > 0 ? Number(((score.value / totalItems.value) * 10).toFixed(2)) : 0,
           duration: summary?.elapsedMin ?? 0,
           result: resultEnum,
         });

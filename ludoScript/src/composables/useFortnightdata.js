@@ -127,14 +127,7 @@ export function useFortnightData() {
 
   // ── Métricas resumen ──────────────────────────────────────────
   const summaryMetrics = computed(() => {
-    const accuracy = getAccuracy(totals.value.correct, totals.value.total);
     return [
-      {
-        label: "Precisión media",
-        icon: "pi-chart-bar",
-        value: accuracy !== null ? `${accuracy}%` : "-",
-        helper: `${totals.value.correct}/${totals.value.total} respuestas correctas`,
-      },
       {
         label: "Mejor día",
         icon: "pi-star",

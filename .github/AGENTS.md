@@ -1,111 +1,50 @@
 # LudoScript — Agent Instructions
 
-> Gamified learning platform (TFG). Vue 3 SPA + Node.js REST API + Socket.IO real-time multiplayer.
+> Plataforma web educativa gamificada (TFG). Vue 3 SPA + Express REST API + Socket.IO + PostgreSQL.
+> **Las reglas detalladas, skills y convenciones están en `.opencode/`** — este archivo es solo el contexto mínimo.
 
-## Quick Start
+## Arranque
 
 ```bash
-# From repo root — starts backend (port 3000) + frontend (port 5173) concurrently
-npm run dev
-
-# Backend only (from backend/)
-npm run dev    # nodemon server.js
-
-# Frontend only (from ludoScript/)
-npm run dev    # vite
-npm test       # vitest
+npm run dev            # backend (:3000) + frontend (:5173) concurrently
+npm test --prefix ludoScript -- --run   # tests frontend (Vitest)
 ```
 
-## Environment Variables
+## Reglas críticas
 
-| File              | Key vars                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------ |
-| `backend/.env`    | `PORT`, `JWT_SECRET`, `CLIENT_URL`, `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`, `GEMINI_API_KEY` |
-| `ludoScript/.env` | `VITE_API_URL` (dev default: `http://localhost:3000/api`)                                        |
+1. `req.user.id` del JWT middleware — **nunca del body**
+2. Stores: acciones devuelven `data` o `null` — nunca lanzan. Componente: `if (!result)`
+3. `storeToRefs()` para estado reactivo; acciones se desestructuran directamente
+4. Rutas Vue con trailing slash: `/profile-view/` ✓  `/profile-view` ✗
+5. Nunca exponer `password` en respuestas API
+6. Todo `socket.on()` requiere `socket.off()` en `onUnmounted`
 
-Dev uses MySQL locally. Production uses PostgreSQL on Render. `sequelize.sync({ alter: true })` handles schema automatically in dev.
+## Documentación detallada
 
-## Architecture
+Las reglas completas están en `.opencode/rules/`. Carga el archivo relevante según lo que vayas a tocar:
 
-See [`project-architecture.instructions.md`](.github/instructions/project-architecture.instructions.md) for full structure.
+| Archivo | Cuándo cargarlo |
+|---------|----------------|
+| `.opencode/rules/project-map.md` | Estructura, endpoints, tablas DB |
+| `.opencode/rules/backend-conventions.md` | Backend (controllers, modelos, rutas) |
+| `.opencode/rules/frontend-conventions.md` | Frontend (stores, composables, componentes) |
+| `.opencode/rules/sockets-architecture.md` | Socket.IO |
+| `.opencode/rules/quiz-system.md` | Quiz adaptativo (composables interdependientes) |
+| `.opencode/rules/decisions-log.md` | Decisiones técnicas ya tomadas |
 
-```
-backend/               Node.js + Express + Sequelize
-  server.js            Entry point — Express + Socket.IO + Sequelize.sync
-  config/config.js     All env vars in one place
-  src/controllers/     Business logic (try/catch/next pattern)
-  src/models/index.js  All model imports + Sequelize associations
-  src/routes/index.js  All route prefixes (/api/auth, /api/users, …)
-  src/socket/          Socket.IO: gameHandler, duelHandler, groupGameHandler
+## Automatización disponible (prompts Copilot)
 
-ludoScript/src/
-  api/axios.js         Axios instance (baseURL + JWT interceptor)
-  api/*.service.js     One file per resource
-  stores/*.store.js    Pinia setup stores
-  views/*.vue          One view per route
-  components/{domain}/ Grouped by feature domain
-  composables/         20+ composables for quiz/game logic (use* prefix)
-  router/router.js     Vue Router — trailing slash convention (/route-name/)
-```
+Usa `/` en el chat:
 
-## Key Conventions
+| Prompt | Propósito |
+|--------|-----------|
+| `/nueva-feature` | Feature full-stack completa |
+| `/nuevo-endpoint` | Nuevo endpoint REST |
+| `/debug-error` | Diagnosticar error |
+| `/escribir-tests` | Generar tests |
+| `/planificar-arquitectura` | Planificar antes de implementar |
 
-- **Backend**: [backend-conventions.instructions.md](.github/instructions/backend-conventions.instructions.md)
-- **Frontend**: [frontend-conventions.instructions.md](.github/instructions/frontend-conventions.instructions.md)
-- **Technical decisions already made**: [decisions-log.instructions.md](.github/instructions/decisions-log.instructions.md)
+## Agents disponibles
 
-### Critical rules (summary)
-
-- `req.user.id` always comes from the JWT middleware, **never from the body**
-- Store actions return data or `null` on error — never throw. Component checks `if (!result)`.
-- `storeToRefs()` for reactive state; actions destructured directly
-- Vue routes end with trailing slash: `/profile-view/` ✓ `/profile-view` ✗
-- Never expose `password` field in API responses
-
-## Socket.IO Architecture
-
-Three namespaces/event sets on the same server:
-
-- `gameHandler` — solo quiz rooms (`create-room`, `join-room`, `game-start`, `submit-answer`)
-- `duelHandler` — 1v1 duels
-- `groupGameHandler` — class (grupo) multiplayer sessions
-
-Frontend connects via `ludoScript/src/api/socket.service.js`. Token passed in `socket.handshake.auth.token`. Unauthenticated connections become guest spectators.
-
-See [`/memories/repo/socket-io-architecture.md`](../memories/repo/socket-io-architecture.md) for details.
-
-## Adaptive Quiz System (Composables)
-
-The adaptive quiz system lives entirely in `ludoScript/src/composables/`. Key composables:
-
-| Composable             | Responsibility                                           |
-| ---------------------- | -------------------------------------------------------- |
-| `useAdaptiveHistory`   | Tracks game count; unlocks adaptive mode after threshold |
-| `useAdaptiveSelection` | Picks questions biased toward weak categories            |
-| `useQuizController`    | Main quiz flow controller (state machine)                |
-| `useQuizLoader`        | Fetches and prepares question pool                       |
-| `useActivitySession`   | Generic lifecycle for quizzes and flashcards             |
-| `useActivityReward`    | Computes coins/XP based on performance                   |
-| `useCategoryStats`     | Reads/writes per-category accuracy stats                 |
-
-When modifying quiz logic, these composables work together — check dependencies before editing one in isolation.
-
-## Tests
-
-Frontend tests (Vitest) live in `ludoScript/src/composables/__tests__/` and `ludoScript/src/components/{domain}/__tests__/`. Run with `npm test` from `ludoScript/`.
-
-No backend tests currently. Use the `write-tests-backend` skill to add them.
-
-## Available Automation
-
-Use `/` in chat to access:
-
-| Skill / Prompt             | Purpose                                   |
-| -------------------------- | ----------------------------------------- |
-| `/nueva-feature`           | Full-stack feature (backend + frontend)   |
-| `/nuevo-endpoint`          | New REST endpoint with controller + route |
-| `/debug-error`             | Diagnose backend or frontend error        |
-| `/escribir-tests`          | Generate tests for a component/endpoint   |
-| `/planificar-arquitectura` | Design solution before implementing       |
-
-Agents: **Arquitecto** (plan/design), **Vue Refactoring Expert** (Vue code quality), **Arquitecto Refactor** (separation of concerns)
+- **Arquitecto** — Planificación y diseño arquitectónico
+- **Vue Refactoring Expert** — Calidad de código Vue y refactorización

@@ -58,7 +58,32 @@
           </div>
         </div>
       </div>
-      <!-- Summary metrics -->
+      <!-- Nota media -->
+      <article
+        class="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-2xl p-3 transition-all duration-300"
+      >
+        <p class="text-[9px] uppercase font-black text-indigo-300/50 tracking-widest mb-2">
+          Nota media
+        </p>
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors shrink-0"
+          >
+            <i class="pi pi-chart-bar text-indigo-400 text-base" />
+          </div>
+          <div>
+            <p
+              class="text-xl font-black text-white group-hover:text-indigo-300 transition-colors leading-none"
+            >
+              {{ avgScore !== null ? avgScore : '-' }}
+            </p>
+            <p class="text-[10px] text-white/55 mt-0.5 font-medium">
+              {{ totalGames > 0 ? `sobre ${totalGames} test${totalGames !== 1 ? 's' : ''}` : 'sin tests todavía' }}
+            </p>
+          </div>
+        </div>
+      </article>
+      <!-- Resto de métricas (mejor día, etc.) -->
       <article
         v-for="metric in summaryMetrics"
         :key="metric.label"
@@ -104,6 +129,7 @@ const props = defineProps({
 
 const auth = useAuthStore()
 const totalGames = ref(0)
+const avgScore = ref(null)
 const categoriesPlayed = ref(0)
 
 onMounted(async () => {
@@ -112,7 +138,12 @@ onMounted(async () => {
     }
     try {
         const { data } = await gameService.getMine()
-        totalGames.value = data.filter(g => g.gameName === 'Quiz').length
+        const quizGames = data.filter(g => g.gameName === 'Quiz')
+        totalGames.value = quizGames.length
+        if (quizGames.length > 0) {
+            const sum = quizGames.reduce((acc, g) => acc + (Number(g.score) || 0), 0)
+            avgScore.value = (sum / quizGames.length).toFixed(2)
+        }
     } catch (_) { }
     try {
         const { data } = await categoryStatsService.getAll()
