@@ -1,14 +1,76 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { GoogleAIFileManager } = require("@google/generative-ai/server");
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
+const { createPartFromUri, createUserContent, FileState, GoogleGenAI } = require("@google/genai");
 
 const apiKey = process.env.GEMINI_API_KEY;
-let model = null;
-let fileManager = null;
-const GEMINI_MAX_RETRIES = 3;
+const DEFAULT_GEMINI_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-flash-latest",
+  "gemini-3.5-flash",
+  "gemini-2.5-flash-lite",
+];
+const geminiModels =
+  (process.env.GEMINI_MODEL || process.env.GEMINI_MODELS)
+    ?.split(",")
+    .map((name) => name.trim())
+    .filter(Boolean) ?? DEFAULT_GEMINI_MODELS;
+
+let genAI = null;
+const GEMINI_MAX_RETRIES = Math.max(1, Number(process.env.GEMINI_MAX_RETRIES || 1));
 const GEMINI_RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+const FILE_PROCESSING_MAX_POLLS = 12;
+const FILE_PROCESSING_POLL_MS = 1500;
+
+const USAGE_LOG_MAX = 500;
+const geminiUsageLog = [];
+let geminiLogLoaded = false;
+
+const GEMINI_TOKEN_BUDGET = Number(process.env.GEMINI_TOKEN_BUDGET) || 15_000_000;
+
+async function loadGeminiUsageLog() {
+  if (geminiLogLoaded) return;
+  const { GeminiUsageLog } = require("../models");
+  const rows = await GeminiUsageLog.findAll({ order: [["id", "ASC"]] });
+  for (const row of rows) {
+    geminiUsageLog.push({
+      timestamp: row.timestamp,
+      model: row.model,
+      promptTokens: row.promptTokens,
+      outputTokens: row.outputTokens,
+      totalTokens: row.totalTokens,
+      cost: Number(row.cost),
+    });
+  }
+  geminiLogLoaded = true;
+}
+
+function getTotalTokensUsed() {
+  return geminiUsageLog.reduce((sum, entry) => sum + entry.totalTokens, 0);
+}
+
+async function isTokenBudgetExceeded() {
+  await loadGeminiUsageLog();
+  return getTotalTokensUsed() >= GEMINI_TOKEN_BUDGET;
+}
+
+const GEMINI_PRICES = {
+  "gemini-2.5-flash":       { input: 0.15, output: 0.60 },
+  "gemini-flash-latest":    { input: 0.15, output: 0.60 },
+  "gemini-3.5-flash":       { input: 0.15, output: 0.60 },
+  "gemini-2.5-flash-lite":  { input: 0.075, output: 0.30 },
+};
+const DEFAULT_PRICE = { input: 0.15, output: 0.60 };
+
+function calculateCost(usageMetadata, modelName) {
+  const promptTokens = usageMetadata?.promptTokenCount ?? 0;
+  const outputTokens = usageMetadata?.candidatesTokenCount ?? 0;
+  const price = GEMINI_PRICES[modelName] ?? DEFAULT_PRICE;
+  const cost = (promptTokens * price.input + outputTokens * price.output) / 1_000_000;
+  return { promptTokens, outputTokens, totalTokens: promptTokens + outputTokens, cost };
+}
+
+async function getGeminiUsageLog() {
+  await loadGeminiUsageLog();
+  return geminiUsageLog;
+}
 
 function isGeminiConfigured() {
   return Boolean(apiKey);
@@ -22,14 +84,8 @@ function ensureGeminiClient() {
     throw error;
   }
 
-  if (!model) {
-    model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
-  }
-
-  if (!fileManager) {
-    fileManager = new GoogleAIFileManager(apiKey);
+  if (!genAI) {
+    genAI = new GoogleGenAI({ apiKey });
   }
 }
 
@@ -117,10 +173,7 @@ const DIFFICULTY_CLASSIFICATION_SCHEMA = {
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function validateGameContent(parsed) {
-  if (
-    !Array.isArray(parsed?.quizQuestions) ||
-    !Array.isArray(parsed?.flashCards)
-  )
+  if (!Array.isArray(parsed?.quizQuestions) || !Array.isArray(parsed?.flashCards))
     throw new Error("Faltan 'quizQuestions' o 'flashCards' como arrays.");
 }
 
@@ -143,23 +196,42 @@ function isRetryableGeminiError(error) {
 }
 
 // Sube un buffer a la Gemini Files API y devuelve el objeto file resultante.
-// Escribe el buffer en un fichero temporal, lo sube y elimina el temporal.
 async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
   ensureGeminiClient();
-  const tempPath = path.join(
-    os.tmpdir(),
-    `gemini-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-  );
-  fs.writeFileSync(tempPath, fileBuffer);
-  try {
-    const { file } = await fileManager.uploadFile(tempPath, {
+
+  const file = await genAI.files.upload({
+    file: new Blob([fileBuffer], { type: mimeType }),
+    config: {
       mimeType,
-      displayName: `upload-${Date.now()}`,
-    });
-    return file;
-  } finally {
-    fs.unlinkSync(tempPath);
+      displayName: `upload-${Date.now()}.pdf`,
+    },
+  });
+
+  let currentFile = file;
+  for (
+    let poll = 0;
+    currentFile?.state === FileState.PROCESSING && poll < FILE_PROCESSING_MAX_POLLS;
+    poll += 1
+  ) {
+    await sleep(FILE_PROCESSING_POLL_MS);
+    currentFile = await genAI.files.get({ name: file.name });
   }
+
+  if (currentFile?.state === FileState.FAILED) {
+    const error = new Error(currentFile.error?.message || "Gemini no pudo procesar el archivo.");
+    error.status = 502;
+    throw error;
+  }
+
+  if (currentFile?.state === FileState.PROCESSING) {
+    const error = new Error(
+      "Gemini sigue procesando el archivo. Intentalo de nuevo en unos segundos.",
+    );
+    error.status = 503;
+    throw error;
+  }
+
+  return currentFile;
 }
 
 // Llama a Gemini con un prompt de texto y, opcionalmente, un archivo subido
@@ -169,6 +241,17 @@ async function uploadBufferToFilesAPI(fileBuffer, mimeType) {
 //   limpiar markdown ni capturar SyntaxError.
 async function callGemini(prompt, fileBuffer, mimeType, responseSchema = null) {
   ensureGeminiClient();
+
+  if (await isTokenBudgetExceeded()) {
+    const used = getTotalTokensUsed();
+    const error = new Error(
+      `Presupuesto de tokens agotado: ${used.toLocaleString()} / ${GEMINI_TOKEN_BUDGET.toLocaleString()} tokens usados. Contacta al administrador o aumenta GEMINI_TOKEN_BUDGET.`,
+    );
+    error.code = "GEMINI_BUDGET_EXCEEDED";
+    error.status = 429;
+    throw error;
+  }
+
   const parts = [{ text: prompt }];
   let uploadedFile = null;
 
@@ -176,46 +259,73 @@ async function callGemini(prompt, fileBuffer, mimeType, responseSchema = null) {
     // La Files API evita el límite de ~20 MB de inlineData y es el método
     // recomendado por Google para PDFs y archivos de tamaño considerable.
     uploadedFile = await uploadBufferToFilesAPI(fileBuffer, mimeType);
-    parts.push({
-      fileData: { mimeType: uploadedFile.mimeType, fileUri: uploadedFile.uri },
-    });
+    parts.push(createPartFromUri(uploadedFile.uri, uploadedFile.mimeType));
   }
 
   const generationConfig = { responseMimeType: "application/json" };
   if (responseSchema) generationConfig.responseSchema = responseSchema;
 
   try {
-    for (let attempt = 1; attempt <= GEMINI_MAX_RETRIES; attempt += 1) {
-      try {
-        const result = await model.generateContent({
-          generationConfig,
-          contents: [{ role: "user", parts }],
-        });
+    let lastError = null;
 
-        // Con responseSchema Gemini garantiza JSON válido → JSON.parse directo.
-        // Sin schema se limpia por si acaso lleva envoltorio de markdown.
-        const raw = result.response.text().trim();
-        const clean = responseSchema
-          ? raw
-          : raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-        return JSON.parse(clean);
-      } catch (error) {
-        if (
-          attempt >= GEMINI_MAX_RETRIES ||
-          !isRetryableGeminiError(error)
-        ) {
-          throw error;
+    for (const modelName of geminiModels) {
+      for (let attempt = 1; attempt <= GEMINI_MAX_RETRIES; attempt += 1) {
+        try {
+          const result = await genAI.models.generateContent({
+            model: modelName,
+            config: generationConfig,
+            contents: createUserContent(parts),
+          });
+
+          if (result.usageMetadata) {
+            const entry = {
+              timestamp: new Date(),
+              model: modelName,
+              ...calculateCost(result.usageMetadata, modelName),
+            };
+            geminiUsageLog.push(entry);
+            if (geminiUsageLog.length > USAGE_LOG_MAX) geminiUsageLog.shift();
+            const { GeminiUsageLog } = require("../models");
+            GeminiUsageLog.create({
+              model: entry.model,
+              promptTokens: entry.promptTokens,
+              outputTokens: entry.outputTokens,
+              totalTokens: entry.totalTokens,
+              cost: entry.cost,
+              timestamp: entry.timestamp,
+            }).catch(() => {});
+          }
+
+          // Con responseSchema Gemini garantiza JSON válido → JSON.parse directo.
+          // Sin schema se limpia por si acaso lleva envoltorio de markdown.
+          const raw = result.text.trim();
+          const clean = responseSchema
+            ? raw
+            : raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+          return JSON.parse(clean);
+        } catch (error) {
+          lastError = error;
+          if (!isRetryableGeminiError(error)) {
+            throw error;
+          }
+
+          if (attempt < GEMINI_MAX_RETRIES) {
+            const backoffMs = 700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 250);
+            await sleep(backoffMs);
+          }
         }
-
-        const backoffMs =
-          700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 250);
-        await sleep(backoffMs);
       }
+
+      console.warn(
+        `[Gemini] Modelo ${modelName} no disponible temporalmente. Probando fallback...`,
+      );
     }
+
+    throw lastError;
   } finally {
     // Elimina el archivo de los servidores de Gemini una vez procesado
     if (uploadedFile) {
-      fileManager.deleteFile(uploadedFile.name).catch(() => {});
+      genAI.files.delete({ name: uploadedFile.name }).catch(() => {});
     }
   }
 }
@@ -240,12 +350,7 @@ Reglas:
 - Exactamente 50 preguntas de quiz y 20 flashcards
 - "category" en kebab-case (ej: "tipos-coercion", "herencia-prototipos")`;
 
-  const parsed = await callGemini(
-    prompt,
-    fileBuffer,
-    mimeType,
-    GAME_CONTENT_SCHEMA,
-  );
+  const parsed = await callGemini(prompt, fileBuffer, mimeType, GAME_CONTENT_SCHEMA);
   validateGameContent(parsed);
   return { quizQuestions: parsed.quizQuestions, flashCards: parsed.flashCards };
 }
@@ -269,12 +374,7 @@ Reglas:
 - "correct" es el índice (0-3) de la opción correcta
 - Las 4 opciones deben ser plausibles pero solo una correcta`;
 
-  const parsed = await callGemini(
-    prompt,
-    null,
-    null,
-    ADAPTIVE_REINFORCEMENT_SCHEMA,
-  );
+  const parsed = await callGemini(prompt, null, null, ADAPTIVE_REINFORCEMENT_SCHEMA);
   return { explanation: parsed.explanation, question: parsed.question };
 }
 
@@ -302,9 +402,7 @@ Reglas:
 
   const parsed = await callGemini(prompt, null, null, ADAPTIVE_QUIZ_SCHEMA);
   if (!Array.isArray(parsed?.questions)) {
-    throw new Error(
-      "[generateAdaptiveQuizQuestions] Gemini no devolvió el formato esperado.",
-    );
+    throw new Error("[generateAdaptiveQuizQuestions] Gemini no devolvió el formato esperado.");
   }
   return parsed.questions;
 }
@@ -317,4 +415,10 @@ module.exports = {
   generateAdaptiveQuizQuestions,
   DIFFICULTY_CLASSIFICATION_SCHEMA,
   callGemini,
+  getGeminiUsageLog,
+  calculateCost,
+  GEMINI_TOKEN_BUDGET,
+  getTotalTokensUsed,
+  isTokenBudgetExceeded,
+  loadGeminiUsageLog,
 };

@@ -388,7 +388,7 @@ El tutorial activa automáticamente tras el primer registro o login:
 - `express-validator`
 - `socket.io`
 - `multer`
-- `@google/generative-ai`
+- `@google/genai`
 - `@supabase/supabase-js`
 
 ### Frontend

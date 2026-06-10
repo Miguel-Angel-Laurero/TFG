@@ -1,0 +1,157 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation [ref=e5]:
+      - button "Ir al inicio" [ref=e6] [cursor=pointer]:
+        - img [ref=e8]
+        - heading "LudoScript" [level=1] [ref=e10]:
+          - generic [ref=e11]: LudoScript
+      - generic [ref=e12]:
+        - link "Clase" [ref=e13] [cursor=pointer]:
+          - /url: /clase
+        - link "Area de aprendizaje" [ref=e14] [cursor=pointer]:
+          - /url: /learning-area
+      - generic [ref=e16]:
+        - link "🛒 Tienda 12520 coin" [ref=e17] [cursor=pointer]:
+          - /url: /shop-view/
+          - generic [ref=e18]: 🛒 Tienda
+          - generic [ref=e19]:
+            - generic [ref=e20]: "12520"
+            - img "coin" [ref=e21]
+        - button "Avatar" [ref=e22] [cursor=pointer]:
+          - img "Avatar" [ref=e23]
+  - main [ref=e24]:
+    - main [ref=e27]:
+      - text:   
+      - complementary [ref=e28]:
+        - text: 
+        - heading "Configuración" [level=3] [ref=e30]
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - heading "Documentos" [level=3] [ref=e33]
+            - generic [ref=e34] [cursor=pointer]:
+              - img [ref=e35]
+              - text: Subir apuntes
+          - generic [ref=e37]:
+            - generic [ref=e38] [cursor=pointer]:
+              - img [ref=e40]
+              - generic [ref=e42]: Predefinidos
+            - generic [ref=e43] [cursor=pointer]:
+              - img [ref=e45]
+              - generic [ref=e47]:
+                - paragraph [ref=e48]: Tutorial local de programacion
+                - paragraph [ref=e49]: Fundamentos JS, arrays, funciones, objetos y asincronia
+              - generic [ref=e50]: Base
+          - generic [ref=e51]:
+            - generic [ref=e54] [cursor=pointer]: Apuntes
+            - list [ref=e55]:
+              - listitem [ref=e56] [cursor=pointer]:
+                - generic [ref=e58]:
+                  - paragraph [ref=e59]: Práctica LDAP-1.pdf
+                  - paragraph [ref=e60]: 23 may 2026
+                - button "Eliminar PDF" [ref=e61]:
+                  - img [ref=e62]
+                - generic "Guardado en la nube" [ref=e65]:
+                  - img [ref=e66]
+      - generic [ref=e70]:
+        - heading "Modos de estudio" [level=2] [ref=e71]
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - heading "¿Cómo quieres avanzar hoy?" [level=2] [ref=e74]
+            - paragraph [ref=e75]: "Elige según tu objetivo: practicar, repasar o competir."
+          - generic [ref=e77]:
+            - generic [ref=e78]: 📚
+            - generic [ref=e79]:
+              - heading "Modo seleccionado" [level=3] [ref=e80]
+              - generic [ref=e82]: Modo General - Apuntes predefinidos
+          - generic [ref=e83]:
+            - button "Quiz Recomendado para ti Pon a prueba tu conocimiento del tema." [ref=e84] [cursor=pointer]:
+              - generic [ref=e86]:
+                - generic [ref=e87]:
+                  - heading "Quiz" [level=4] [ref=e88]
+                  - generic [ref=e89]: Recomendado para ti
+                - paragraph [ref=e90]: Pon a prueba tu conocimiento del tema.
+              - generic:
+                - generic: 
+            - button "FlashCards Practica y repasa mediante tarjetas sobre el tema que prefieras." [ref=e91] [cursor=pointer]:
+              - generic [ref=e93]:
+                - heading "FlashCards" [level=4] [ref=e95]
+                - paragraph [ref=e96]: Practica y repasa mediante tarjetas sobre el tema que prefieras.
+              - generic:
+                - generic: 
+            - button "Multijugador Compite con otros jugadores en tiempo real." [ref=e97] [cursor=pointer]:
+              - generic [ref=e99]:
+                - heading "Multijugador" [level=4] [ref=e101]
+                - paragraph [ref=e102]: Compite con otros jugadores en tiempo real.
+              - generic:
+                - generic: 
+      - complementary [ref=e103]:
+        - text: 
+        - generic [ref=e104]:
+          - heading "📈 Tu Progreso" [level=3] [ref=e105]:
+            - generic [ref=e106]: 📈
+            - text: Tu Progreso
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - paragraph [ref=e110]: Aciertos
+              - generic [ref=e111]:
+                - generic [ref=e112]: "33"
+                - generic [ref=e113]: "%"
+              - paragraph [ref=e116]: Sigue practicando
+            - generic [ref=e118]:
+              - paragraph [ref=e119]: Para ti, hoy
+              - generic [ref=e120]:
+                - generic [ref=e121]:
+                  - generic [ref=e123]: ↑
+                  - generic [ref=e124]:
+                    - paragraph [ref=e125]: Tu punto fuerte
+                    - paragraph [ref=e126]: sintaxis-es6
+                    - paragraph [ref=e127]: 65% de aciertos
+                - generic [ref=e128]:
+                  - generic [ref=e130]: ◈
+                  - generic [ref=e131]:
+                    - paragraph [ref=e132]: A reforzar
+                    - paragraph [ref=e133]: Objetos
+                    - paragraph [ref=e134]: 12% · sigue practicando
+            - generic [ref=e136]:
+              - paragraph [ref=e137]: Por tema
+              - generic [ref=e138]:
+                - button "evaluacion-heuristica 0%" [ref=e139]:
+                  - generic [ref=e140]:
+                    - generic [ref=e141]: evaluacion-heuristica
+                    - generic [ref=e142]: 0%
+                - button "coincidencia-mundo-real 0%" [ref=e144]:
+                  - generic [ref=e145]:
+                    - generic [ref=e146]: coincidencia-mundo-real
+                    - generic [ref=e147]: 0%
+                - button "control-libertad-usuario 0%" [ref=e149]:
+                  - generic [ref=e150]:
+                    - generic [ref=e151]: control-libertad-usuario
+                    - generic [ref=e152]: 0%
+                - button "consistencia-estandares 0%" [ref=e154]:
+                  - generic [ref=e155]:
+                    - generic [ref=e156]: consistencia-estandares
+                    - generic [ref=e157]: 0%
+                - button "Objetos 12%" [ref=e159]:
+                  - generic [ref=e160]:
+                    - generic [ref=e161]: Objetos
+                    - generic [ref=e162]: 12%
+              - button "+9 categorías más" [ref=e165]
+            - generic [ref=e167]:
+              - generic [ref=e168]:
+                - generic [ref=e169]: "1"
+                - generic [ref=e170]: días
+              - generic [ref=e171]:
+                - paragraph [ref=e172]: 1 día seguido
+                - paragraph [ref=e173]: ¡Buen comienzo!
+  - contentinfo [ref=e174]:
+    - contentinfo [ref=e175]:
+      - paragraph [ref=e176]: LudoScript - Aprende a programar jugando. Retos, puntos y logros que harán tu aprendizaje adictivo.
+      - generic [ref=e177]:
+        - paragraph [ref=e178]: © 2026 LudoScript - Todos los derechos reservados
+        - generic [ref=e179]:
+          - link "Privacidad" [ref=e180] [cursor=pointer]:
+            - /url: "#"
+          - link "Términos de uso" [ref=e181] [cursor=pointer]:
+            - /url: "#"
+          - link "Cookies" [ref=e182] [cursor=pointer]:
+            - /url: "#"

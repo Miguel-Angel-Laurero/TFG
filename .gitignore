@@ -37,3 +37,10 @@ ludoScript/ludoScript/
 
 # Scratch files
 prueba.html
+
+# Playwright MCP snapshots
+.playwright-mcp/
+
+
+# Playwright MCP snapshots
+.playwright-mcp/

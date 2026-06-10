@@ -1,5 +1,6 @@
 const { User, UserData } = require("../models");
 const { Op } = require("sequelize");
+const { getGeminiUsageLog, GEMINI_TOKEN_BUDGET, getTotalTokensUsed } = require("./gemini-service");
 
 const adminController = {
   // GET /api/admin/users
@@ -110,6 +111,32 @@ createUser: async (req, res, next) => {
       }
       next(err);
     }
+  },
+
+  // GET /api/admin/gemini-usage
+  getGeminiUsage: async (req, res) => {
+    const log = await getGeminiUsageLog();
+    const totals = log.reduce(
+      (acc, entry) => {
+        acc.promptTokens += entry.promptTokens;
+        acc.outputTokens += entry.outputTokens;
+        acc.totalTokens += entry.totalTokens;
+        acc.cost += entry.cost;
+        return acc;
+      },
+      { promptTokens: 0, outputTokens: 0, totalTokens: 0, cost: 0 },
+    );
+    const used = getTotalTokensUsed();
+    res.status(200).json({
+      log,
+      totals,
+      budget: {
+        limit: GEMINI_TOKEN_BUDGET,
+        used,
+        remaining: Math.max(0, GEMINI_TOKEN_BUDGET - used),
+        exhausted: used >= GEMINI_TOKEN_BUDGET,
+      },
+    });
   },
 
   // DELETE /api/admin/users/:id

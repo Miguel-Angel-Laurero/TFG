@@ -27,7 +27,7 @@
           </h1>
         </div>
         <p class="text-gray-400 text-sm">
-          Repasa las preguntas que fallaste en tu ultima sesion y entiende por que la respuesta correcta es la que es.
+          Repasa las preguntas que has fallado y entiende por que la respuesta correcta es la que es.
         </p>
       </div>
 
@@ -52,7 +52,7 @@
           Sin errores en esta categoria
         </p>
         <p class="text-gray-400 text-sm max-w-xs">
-          No cometiste ningun fallo en <strong>{{ categoryLabel }}</strong> durante tu ultima sesion.
+          No has fallado ninguna pregunta de <strong>{{ categoryLabel }}</strong>.
           Sigue practicando para mantener el nivel.
         </p>
         <button
@@ -133,8 +133,6 @@ import { userScopedStorageKey } from '@/utils/storageKeys'
 const route = useRoute()
 const categoryKey = computed(() => route.query.category ?? '')
 
-const LS_LAST_SESSION = 'ludoscript_lastSession'
-
 function masteryColor(correct, total) {
   if (total === 0) return '#374151'
   const ratio = correct / total
@@ -148,19 +146,11 @@ const categoryLabel = computed(() => getQuizCategoryLabel(categoryKey.value))
 
 const loading = ref(true)
 const allQuestions = ref([])
-const lastSession = ref(null)
-
-// Failed IDs from the last session for this category
-const failedIds = computed(() =>
-  lastSession.value?.stats?.[categoryKey.value]?.failedIds ?? []
-)
-
-const categoryStats = computed(() =>
-  lastSession.value?.stats?.[categoryKey.value] ?? { correct: 0, total: 0 }
-)
+const failedIds = ref([])
+const categoryStatsData = ref({ correct: 0, total: 0 })
 
 const categoryColor = computed(() =>
-  masteryColor(categoryStats.value.correct, categoryStats.value.total)
+  masteryColor(categoryStatsData.value.correct, categoryStatsData.value.total)
 )
 
 const failedQuestions = computed(() => {
@@ -171,29 +161,65 @@ const failedQuestions = computed(() => {
 })
 
 onMounted(async () => {
-  // Cargar la última sesión desde la API, fallback a localStorage
+  // Cargar TODAS las sesiones recientes y acumular failedIds
+  const allSessions = []
   try {
-    lastSession.value = await sessionService.getLastSession()
-  } catch (_) {
-    try {
-      lastSession.value = JSON.parse(
-        localStorage.getItem(userScopedStorageKey(LS_LAST_SESSION)) || 'null',
-      )
-    } catch (__) { /* ignorar */ }
+    const res = await sessionService.getRecentSessions(50)
+    if (res.data) allSessions.push(...res.data)
+  } catch (_) { /* ignorar */ }
+
+  // Acumular failedIds y stats de todas las sesiones para esta categoría
+  const accumulated = new Set()
+  let totalCorrect = 0
+  let totalTotal = 0
+  const pdfIds = new Set()
+
+  for (const session of allSessions) {
+    const catStats = session.stats?.[categoryKey.value]
+    if (catStats) {
+      totalCorrect += catStats.correct ?? 0
+      totalTotal += catStats.total ?? 0
+      for (const id of (catStats.failedIds ?? [])) {
+        accumulated.add(id)
+      }
+    }
+    if (session.pdfId) pdfIds.add(session.pdfId)
   }
+
+  // Fallback a localStorage si no hay sesiones en la nube
+  if (allSessions.length === 0) {
+    try {
+      const raw = localStorage.getItem(userScopedStorageKey('ludoscript_weeklySessions'))
+      const stored = JSON.parse(raw || '[]')
+      for (const session of stored) {
+        const catStats = session.stats?.[categoryKey.value]
+        if (catStats) {
+          totalCorrect += catStats.correct ?? 0
+          totalTotal += catStats.total ?? 0
+          for (const id of (catStats.failedIds ?? [])) {
+            accumulated.add(id)
+          }
+        }
+        if (session.pdfId) pdfIds.add(session.pdfId)
+      }
+    } catch { /* ignorar */ }
+  }
+
+  failedIds.value = [...accumulated]
+  categoryStatsData.value = { correct: totalCorrect, total: totalTotal }
 
   try {
     const res = await fetch('/quizQuestions.json')
     allQuestions.value = await res.json()
-    // Si la sesión vino de un PDF, añadir sus preguntas al banco
-    if (lastSession.value?.pdfId) {
+    // Añadir preguntas de todos los PDFs involucrados
+    for (const pdfId of pdfIds) {
       try {
-        const raw = localStorage.getItem(`ludoscript_pdf_questions_${lastSession.value.pdfId}`)
+        const raw = localStorage.getItem(`ludoscript_pdf_questions_${pdfId}`)
         const stored = JSON.parse(raw || 'null')
         if (stored?.questions?.length) {
           allQuestions.value = [...allQuestions.value, ...stored.questions]
         }
-      } catch { /* ignorar si el storage falla */ }
+      } catch { /* ignorar */ }
     }
   } catch (err) {
     console.error('[CategoryReview] Error cargando preguntas:', err)

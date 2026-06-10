@@ -16,6 +16,10 @@ const adminService = {
   },
 
   createUser: (userData) => api.post('/admin/users', userData),
+
+  getGeminiUsage() {
+    return api.get("/admin/gemini-usage");
+  },
 };
 
 export default adminService;

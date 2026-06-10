@@ -27,13 +27,26 @@
 
     <!-- Feedback inmediato -->
     <transition name="fade">
-      <p
+      <div
         v-if="answered"
-        class="text-lg font-semibold"
-        :class="isCorrect ? 'text-emerald-400' : 'text-red-400'"
+        class="w-full flex flex-col items-center gap-3"
       >
-        {{ isCorrect ? '¡Correcto!' : 'Incorrecto' }}
-      </p>
+        <p
+          class="text-lg font-semibold"
+          :class="isCorrect ? 'text-emerald-400' : 'text-red-400'"
+        >
+          {{ isCorrect ? '¡Correcto!' : 'Incorrecto' }}
+        </p>
+
+        <!-- Explicación cuando se falla -->
+        <div
+          v-if="!isCorrect && question.explanation"
+          class="max-w-xl w-full flex gap-3 bg-indigo-950/60 border border-indigo-800 rounded-lg px-4 py-3 text-sm text-indigo-100 leading-relaxed"
+        >
+          <span class="text-indigo-400 shrink-0 mt-0.5" aria-hidden="true">💡</span>
+          <p>{{ question.explanation }}</p>
+        </div>
+      </div>
     </transition>
 
     <!-- Botón siguiente -->

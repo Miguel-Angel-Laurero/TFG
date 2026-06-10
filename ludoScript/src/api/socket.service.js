@@ -6,10 +6,13 @@ const SOCKET_URL =
   "http://localhost:3000";
 
 let socket = null;
+let retryCount = 0
+const MAX_RETRIES = 5
 
 /**
  * Conecta el socket autenticado con el JWT del usuario.
  * Si ya hay una conexión activa, la reutiliza.
+ * Reintenta automáticamente si el servidor está dormido (Render free tier).
  */
 function connect() {
   if (socket?.connected) return socket;
@@ -21,10 +24,21 @@ function connect() {
     auth: { token },
     transports: ["websocket", "polling"],
     autoConnect: true,
+    reconnection: true,
+    reconnectionAttempts: MAX_RETRIES,
+    reconnectionDelay: 3000,
+    reconnectionDelayMax: 15000,
   });
 
-  socket.on("connect_error", (err) => {
-    console.error("[socket] error de conexión:", err.message);
+  socket.on("connect_error", () => {
+    retryCount++
+    if (retryCount <= MAX_RETRIES) {
+      // Reintento silencioso — no alarmar al usuario
+    }
+  });
+
+  socket.on("connect", () => {
+    retryCount = 0
   });
 
   return socket;
@@ -38,6 +52,7 @@ function disconnect() {
     socket.disconnect();
     socket = null;
   }
+  retryCount = 0
 }
 
 /**

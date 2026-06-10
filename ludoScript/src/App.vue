@@ -14,21 +14,52 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import DuelInvitationBanner from '@/components/shared/DuelInvitationBanner.vue'
 import GroupInvitationBanner from '@/components/shared/GroupInvitationBanner.vue'
 
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
-import { useDuelStore } from '@/stores/duel.store'
-import { useGroupStore } from '@/stores/group.store'
 
 const auth = useAuthStore()
-const duel = useDuelStore()
-const group = useGroupStore()
+
+// ── Warm-up y keep-alive para Render ──────────────────────────────────────
+
+function getBackendBaseUrl() {
+  return (
+    import.meta.env.VITE_SOCKET_URL ??
+    import.meta.env.VITE_API_URL?.replace('/api', '') ??
+    'http://localhost:3000'
+  )
+}
+
+let keepAliveTimer = null
+
+function startKeepAlive() {
+  if (keepAliveTimer) return
+  const baseUrl = getBackendBaseUrl()
+  keepAliveTimer = setInterval(() => {
+    fetch(`${baseUrl}/health`).catch(() => {})
+  }, 300_000)
+}
+
+function stopKeepAlive() {
+  if (keepAliveTimer) {
+    clearInterval(keepAliveTimer)
+    keepAliveTimer = null
+  }
+}
+
+// Mantener backend despierto mientras haya sesión activa
+watch(() => auth.isLoggedIn, (loggedIn) => {
+  if (loggedIn) startKeepAlive()
+  else stopKeepAlive()
+})
 
 onMounted(async () => {
+  // Despertar Render inmediatamente (no bloquea el renderizado)
+  const baseUrl = getBackendBaseUrl()
+  fetch(`${baseUrl}/health`).catch(() => {})
+
   if (auth.hasToken) {
     await auth.fetchMe()
-    // Registrar listeners de duelo para recibir invitaciones en cualquier pantalla
-    duel.setupListeners()
-    group.connectNotifications()
+    // El keep-alive se activa automáticamente vía el watch de isLoggedIn
     // Hidrata el localStorage con los PDFs de la nube al recargar la página
     try {
       const { pdfService } = await import('@/api/pdf.service')
@@ -41,6 +72,10 @@ onMounted(async () => {
   } else {
     auth.ready = true  // si no hay token, marcar como listo igualmente
   }
+})
+
+onUnmounted(() => {
+  stopKeepAlive()
 })
 </script>
 

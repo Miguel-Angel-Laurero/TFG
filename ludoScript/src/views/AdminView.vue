@@ -33,11 +33,13 @@ import { ref, computed } from 'vue'
 import Header from '@/components/shared/Header.vue'
 import UsersTab from '@/components/admin/UsersTab.vue'
 import ItemsTab from '@/components/admin/ItemsTab.vue'
+import GeminiUsageTab from '@/components/admin/GeminiUsageTab.vue'
 import Footer from '@/components/shared/Footer.vue'
 
 const tabs = [
     { id: 'users', label: 'Usuarios', component: UsersTab },
     { id: 'items', label: 'Objetos',    component: ItemsTab },
+    { id: 'gemini', label: 'Uso Gemini', component: GeminiUsageTab },
 ]
 
 const activeTab = ref('users')

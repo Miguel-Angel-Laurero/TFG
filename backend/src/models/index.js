@@ -11,6 +11,7 @@ const Activities = require("./Activities.model");
 const Group = require("./Group.model");
 const GroupMember = require("./GroupMember.model");
 const UserSession = require("./UserSession.model");
+const GeminiUsageLog = require("./GeminiUsageLog.model");
 
 // ── Asociaciones ────────────────────────────────────────────────────────────
 User.hasMany(Game, { foreignKey: "userId", as: "games", onDelete: "CASCADE" });
@@ -79,4 +80,5 @@ module.exports = {
   Group,
   GroupMember,
   UserSession,
+  GeminiUsageLog,
 };
