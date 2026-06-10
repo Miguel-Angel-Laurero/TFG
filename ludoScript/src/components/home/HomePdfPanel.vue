@@ -667,6 +667,8 @@ async function handleFileChange(event) {
         } else if (err.response?.data?.code === 'GEMINI_UNAVAILABLE') {
             uploadFallbackMode.value = err.response?.data?.fallbackMode ?? null
             uploadError.value = 'Ahora mismo no se pueden generar preguntas desde PDF. Puedes seguir practicando con el modo tutorial local.'
+        } else if (err.response?.status === 503) {
+            uploadError.value = 'La generacion por IA esta temporalmente saturada. Intentalo de nuevo mas tarde.'
         } else {
             uploadError.value =
                 err.response?.data?.error ?? 'Error al subir el PDF. Intentalo de nuevo.'
