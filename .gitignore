@@ -41,6 +41,6 @@ prueba.html
 # Playwright MCP snapshots
 .playwright-mcp/
 
-
-# Playwright MCP snapshots
-.playwright-mcp/
+# AI agent instructions (local use only)
+CLAUDE.md
+.opencode/AGENTS.md
