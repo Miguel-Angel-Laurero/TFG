@@ -30,7 +30,9 @@ const upload = multer({
       cb(null, true); // Acepta el archivo
     } else {
       // Rechaza el archivo con un error descriptivo (código 400 en el handler de errores)
-      cb(new Error("Solo se permiten archivos PDF."), false);
+      const err = new Error("Solo se permiten archivos PDF.");
+      err.status = 400;
+      cb(err, false);
     }
   },
 });

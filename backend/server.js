@@ -14,7 +14,10 @@ const app = express();
 const httpServer = http.createServer(app);
 
 // ── Middlewares globales ────────────────────────────────────────────────────
-app.use(cors({ origin: config.clientUrl, credentials: true }));
+const corsOrigin = config.nodeEnv === "production"
+  ? [config.clientUrl].concat(process.env.CORS_ORIGINS?.split(",").filter(Boolean) || [])
+  : config.clientUrl;
+app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(morgan(config.nodeEnv === "production" ? "combined" : "dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

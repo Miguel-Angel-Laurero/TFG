@@ -658,6 +658,7 @@ async function handleFileChange(event) {
         // Auto-seleccionar el PDF recién subido
         selectedFiles.value = [id, ...selectedFiles.value]
     } catch (err) {
+        console.error('[uploadPdf] Error:', err)
         if (axios.isCancel(err) || err.code === 'ERR_CANCELED') {
             uploadError.value = 'La subida se canceló antes de terminar.'
         } else if (err.code === 'ECONNABORTED') {

@@ -15,9 +15,15 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Errores de multer (tamaño excedido, etc.)
+  if (err.name === "MulterError") {
+    const status = err.code === "LIMIT_FILE_SIZE" ? 413 : 400;
+    return res.status(status).json({ error: err.message });
+  }
+
   const status = err.status || 500;
   res.status(status).json({
-    message: err.message || "Error interno del servidor",
+    error: err.message || "Error interno del servidor",
     // Stack solo en desarrollo
     ...(config.nodeEnv === "development" && { stack: err.stack }),
   });
